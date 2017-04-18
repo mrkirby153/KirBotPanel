@@ -1,4 +1,4 @@
 $(document).ready(function () {
     // Initialize Semantic UI components
-    $("ui.dropdown").dropdown();
+    $(".ui.dropdown").dropdown();
 });

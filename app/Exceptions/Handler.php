@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 use Whoops\Handler\PrettyPageHandler;
 
 class Handler extends ExceptionHandler {
@@ -46,10 +47,10 @@ class Handler extends ExceptionHandler {
         if($this->isHttpException($exception)){
             return $this->renderHttpException($exception);
         }
-        if(config('app.debug')){
+        if(config('app.debug') && !($exception instanceof ValidationException)){
             return $this->renderExceptionWithWhoops($exception);
         }
-        return parent::render($exception);
+        return parent::render($request, $exception);
     }
 
     public function renderExceptionWithWhoops(Exception $e){

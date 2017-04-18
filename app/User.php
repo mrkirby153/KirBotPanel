@@ -28,4 +28,8 @@ class User extends Authenticatable
     ];
 
     public $incrementing = false;
+
+    public function info(){
+        return $this->hasOne(UserInfo::class, 'id');
+    }
 }

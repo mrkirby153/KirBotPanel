@@ -18,6 +18,8 @@ require('./form/bootstrapper');
 
 Vue.component('example', require('./components/Example.vue'));
 
+require('./components/UserInfo');
+
 const app = new Vue({
     el: '#app'
 });
