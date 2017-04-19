@@ -23,12 +23,13 @@ class AuthenticateUser {
             return $this->getAuthorization();
         }
 
-        $user = $this->users->getUser(Socialite::with('discord')->user());
+        $request = Socialite::with('discord')->user();
+        $user = $this->users->getUser($request);
         Auth::login($user, true);
         return $listener->userHasLoggedIn($user);
     }
 
     private function getAuthorization() {
-        return Socialite::with('discord')->redirect();
+        return Socialite::with('discord')->scopes(['identify', 'email', 'guilds'])->redirect();
     }
 }
