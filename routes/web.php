@@ -17,5 +17,7 @@ Route::get('/', function () {
 
 Route::get('/name', 'UserController@displaySettings');
 Route::post('/name', 'UserController@updateName');
+
+Route::get('/servers', 'ServerController@displayOverview')->middleware('auth');
 Route::get('login', 'AuthController@login');
 Route::get('logout', 'AuthController@logout');
