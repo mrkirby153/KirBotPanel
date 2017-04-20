@@ -12,7 +12,7 @@ class UserRepository {
         $user = $request->user;
         $expiresIn = Carbon::now();
         $expiresIn->addSecond($request->expiresIn);
-        return User::firstOrCreate([
+        return User::updateOrCreate(['id' => $request->id], [
             'id' => $request->id,
             'username' => $user['username'],
             'email' => $user['email'],
