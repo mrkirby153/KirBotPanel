@@ -3,6 +3,7 @@
 @section('title', 'Select a Server')
 
 @section('content')
+    <h1>Please select a server to manage</h1>
     <div class="ui cards">
         @foreach($servers as $server)
             <div class="ui card">

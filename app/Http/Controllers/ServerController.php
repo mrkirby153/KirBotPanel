@@ -11,13 +11,35 @@ class ServerController extends Controller {
         return view('server.serverlist')->with(['servers' => $servers]);
     }
 
+    public function showDashboard($server) {
+        return view('server.dashboard.general')->with(['server' => $this->getServerById($server),'tab'=>'general']);
+    }
+
     private function getServers() {
+        $servers = array();
+        foreach ($this->getServersFromAPI() as $server) {
+            if (($server->permissions & 32) > 0) {
+                $server->has_icon = $server->icon != null;
+                $servers[] = $server;
+            }
+        }
+        return $servers;
+    }
+
+    private function getServerById($id) {
+        foreach ($this->getServersFromAPI() as $server) {
+            if ($server->id == $id)
+                return $server;
+        }
+        return null;
+    }
+
+    private function getServersFromAPI() {
         $token = \Auth::user()->token;
         $cacheId = "SERVERS-$token";
         $body = "[]";
         if (\Cache::has($cacheId)) {
             $body = \Cache::get($cacheId);
-            \Log::info("Loading from cache");
         } else {
             \Log::info("Loading from Discord");
             $client = new \GuzzleHttp\Client();
@@ -29,16 +51,8 @@ class ServerController extends Controller {
                 ]
             ]);
             $body = $response->getBody();
-            \Log::info($body);
             \Cache::put($cacheId, "$body", 5);
         }
-        $servers = array();
-        foreach (json_decode($body) as $server) {
-            if (($server->permissions & 32) > 0) {
-                $server->has_icon = $server->icon != null;
-                $servers[] = $server;
-            }
-        }
-        return $servers;
+        return json_decode($body);
     }
 }
