@@ -179,7 +179,9 @@ return [
 
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
-        \SocialiteProviders\Manager\ServiceProvider::class
+        \SocialiteProviders\Manager\ServiceProvider::class,
+
+        \Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class
 
     ],
 

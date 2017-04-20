@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\ServerSettings;
 use Illuminate\Http\Request;
 
 class ServerController extends Controller {
@@ -12,7 +13,21 @@ class ServerController extends Controller {
     }
 
     public function showDashboard($server) {
-        return view('server.dashboard.general')->with(['server' => $this->getServerById($server),'tab'=>'general']);
+        $serverById = $this->getServerById($server);
+        $serverData = ServerSettings::whereId($server)->first();
+        \JavaScript::put([
+            'Server' => $serverById,
+            'ServerData' => $serverData
+        ]);
+        return view('server.dashboard.general')->with(['server' => $serverById, 'tab' => 'general']);
+    }
+
+    public function setRealnameSettings($server, Request $request) {
+        ServerSettings::updateOrCreate(['id' => $server], [
+            'id' => $server,
+            'realname' => $request->realnameSetting,
+            'require_realname' => ($request->realnameSetting == 'OFF')? false : $request->requireRealname
+        ]);
     }
 
     private function getServers() {

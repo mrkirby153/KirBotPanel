@@ -7,6 +7,8 @@
     "require": {
         "php": ">=5.6.4",
         "filp/whoops": "^2.1",
+        "gladcodes/keygen": "^1.1",
+        "laracasts/utilities": "^2.1",
         "laravel/framework": "5.4.*",
         "laravel/socialite": "^3.0",
         "laravel/tinker": "~1.0",

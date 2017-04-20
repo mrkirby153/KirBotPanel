@@ -9,5 +9,8 @@ class ServerSettings extends Model {
 
     public $incrementing = false;
 
+    public $fillable = [
+        'id', 'realname', 'require_realname', 'command_discriminator'
+    ];
 
 }
