@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Validator;
 
 class AppServiceProvider extends ServiceProvider {
     /**
@@ -11,7 +12,9 @@ class AppServiceProvider extends ServiceProvider {
      * @return void
      */
     public function boot() {
-        //
+        Validator::extend('without_spaces', function($attr, $value){
+            return preg_match('/^\S*$/u', $value);
+        });
     }
 
     /**
