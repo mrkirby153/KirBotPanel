@@ -17,6 +17,7 @@ require('./form/bootstrapper');
  */
 
 Vue.component('example', require('./components/Example.vue'));
+Vue.component('form-messages', require('./components/Messages.vue'));
 
 require('./components/UserInfo');
 require('./components/ServerDashboard');
