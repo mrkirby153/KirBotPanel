@@ -23,6 +23,7 @@ Route::get('/dashboard/{server}', 'ServerController@showDashboard')->middleware(
 Route::get('/dashboard/{server}/commands', 'ServerController@showCommands')->middleware('auth')->name('dashboard.commands');
 Route::patch('/dashboard/{server}/commands', 'ServerController@updateCommand')->middleware('auth');
 Route::delete('/dashboard/{server}/command/{command}', 'ServerController@deleteCommand')->middleware('auth');
+Route::patch('/dashboard/{server}/discriminator', 'ServerController@updateDiscrim')->middleware('auth');
 Route::put('/dashboard/{server}/commands', 'ServerController@createCommand')->middleware('auth');
 
 Route::post('/dashboard/{server}/realname', 'ServerController@setRealnameSettings');

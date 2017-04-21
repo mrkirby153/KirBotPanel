@@ -5,7 +5,7 @@
         <div>
             <h2>Command Discriminator</h2>
             <p>The prefix which all commands on the server use</p>
-            <form class="ui form" :class="{'success': forms.cmdDiscriminator.successful, 'error':forms.cmdDiscriminator.errors.hasErrors(), 'busy': forms.cmdDiscriminator.busy}" @submit.prevent="saveDiscrim">
+            <form class="ui form" :class="{'success': forms.cmdDiscriminator.successful, 'error':forms.cmdDiscriminator.errors.hasErrors(), 'loading': forms.cmdDiscriminator.busy}" @submit.prevent="saveDiscrim">
                 <form-messages success-header="Success!" success-body="Saved!" :error-array="forms.cmdDiscriminator.errors.flatten()"></form-messages>
                 <div class="one field">
                     <div class="ui field">

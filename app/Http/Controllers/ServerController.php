@@ -64,6 +64,12 @@ class ServerController extends Controller {
         CustomCommand::destroy($command);
     }
 
+    public function updateDiscrim($server, Request $request){
+        ServerSettings::updateOrCreate(['id' => $server], [
+            'command_discriminator'=>$request->discriminator
+        ]);
+    }
+
     public function createCommand($server, Request $request) {
         $this->validate($request, [
             'name' => 'required|max:255|without_spaces',

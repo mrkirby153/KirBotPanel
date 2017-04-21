@@ -144,7 +144,7 @@ Vue.component('settings-commands', {
         },
 
         saveDiscrim(){
-            Panel.sendForm('patch', '/dashboard/' + Server.id + '/discriminator', vm.forms.cmdDiscriminator);
+            Panel.sendForm('patch', '/dashboard/' + Server.id + '/discriminator', this.forms.cmdDiscriminator);
         },
 
         refreshCommands(){
