@@ -120,11 +120,12 @@ Vue.component('settings-commands', {
                         return false
                     }
                 },
-                onDeny(){
+                onHide(){
                     vm.forms.editCommand.name = "";
-                    vm.forms.editCommand.clearance = "BOT";
+                    vm.forms.editCommand.clearance = "";
                     vm.forms.editCommand.description = "";
-                },
+                    vm.forms.editCommand.id = "";
+                }
 
             }).modal('show');
         },
