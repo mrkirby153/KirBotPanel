@@ -116,6 +116,12 @@ class ServerController extends Controller {
         ]);
     }
 
+    public function showCommandList($server) {
+        $customCommands = CustomCommand::whereServer($server)->get();
+        $server = ServerSettings::whereId($server)->first();
+        return view('server.commandlist')->with(['commands' => $customCommands, 'server'=>$server]);
+    }
+
     private function getServers() {
         $servers = array();
         foreach ($this->getServersFromAPI() as $server) {

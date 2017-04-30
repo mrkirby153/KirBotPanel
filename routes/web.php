@@ -30,5 +30,7 @@ Route::group(['middleware' => 'has_discord_token'], function () {
     Route::post('/dashboard/{server}/realname', 'ServerController@setRealnameSettings');
 });
 
+Route::get('/commands/{server}', 'ServerController@showCommandList');
+
 Route::get('login', 'AuthController@login');
 Route::get('logout', 'AuthController@logout');
