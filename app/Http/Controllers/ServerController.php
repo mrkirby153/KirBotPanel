@@ -16,6 +16,9 @@ class ServerController extends Controller {
 
     public function showDashboard($server) {
         $serverById = $this->getServerById($server);
+        if (($serverById->permissions & 32) <= 0) {
+            return redirect('/servers');
+        }
         $serverData = ServerSettings::whereId($server)->first();
         \JavaScript::put([
             'Server' => $serverById,
@@ -29,6 +32,9 @@ class ServerController extends Controller {
             return response()->json(CustomCommand::whereServer($server)->get());
         }
         $serverById = $this->getServerById($server);
+        if (($serverById->permissions & 32) <= 0) {
+            return redirect('/servers');
+        }
         $serverData = ServerSettings::whereId($server)->first();
         \JavaScript::put([
             'Server' => $serverById,
@@ -47,12 +53,15 @@ class ServerController extends Controller {
             'validation.without_spaces' => 'Spaces are not allowed in command names'
         ]);
         $cmd = CustomCommand::whereId($request->id)->first();
+        if ($this->getServerById($server) == null || ($this->getServerById($server)->permissions & 32) <= 0) {
+            return response()->json(['server' => 'You do not have access to this server!'], 422);
+        }
         if ($cmd == null) {
             return response()->json(['id' => 'No command was found with that ID!'], 422);
         }
         $exist = CustomCommand::whereName($request->name)->whereServer($server)->first();
-        if($exist->id != $cmd->id){
-            return response()->json(['name'=>'A command already exists with that name on the server'], 422);
+        if ($exist->id != $cmd->id) {
+            return response()->json(['name' => 'A command already exists with that name on the server'], 422);
         }
         $cmd->name = $request->name;
         $cmd->data = $request->description;
@@ -60,13 +69,16 @@ class ServerController extends Controller {
         $cmd->save();
     }
 
-    public function deleteCommand($server, $command){
+    public function deleteCommand($server, $command) {
         CustomCommand::destroy($command);
     }
 
-    public function updateDiscrim($server, Request $request){
+    public function updateDiscrim($server, Request $request) {
+        if ($this->getServerById($server) == null || ($this->getServerById($server)->permissions & 32) <= 0) {
+            return response()->json(['server' => 'You do not have access to this server!'], 422);
+        }
         ServerSettings::updateOrCreate(['id' => $server], [
-            'command_discriminator'=>$request->discriminator
+            'command_discriminator' => $request->discriminator
         ]);
     }
 
@@ -78,6 +90,9 @@ class ServerController extends Controller {
         ], [
             'validation.without_spaces' => 'Spaces are not allowed in command names'
         ]);
+        if ($this->getServerById($server) == null || ($this->getServerById($server)->permissions & 32) <= 0) {
+            return response()->json(['server' => 'You do not have access to this server!'], 422);
+        }
         if (CustomCommand::whereName($request->name)->whereServer($server)->count() > 0) {
             return response()->json(['name' => 'A command already exists with that name on this server!'], 422);
         }
@@ -91,6 +106,9 @@ class ServerController extends Controller {
     }
 
     public function setRealnameSettings($server, Request $request) {
+        if ($this->getServerById($server) == null || ($this->getServerById($server)->permissions & 32) <= 0) {
+            return response()->json(['server' => 'You do not have access to this server!'], 422);
+        }
         ServerSettings::updateOrCreate(['id' => $server], [
             'id' => $server,
             'realname' => $request->realnameSetting,
