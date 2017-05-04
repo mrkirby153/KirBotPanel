@@ -32,5 +32,5 @@ Route::group(['middleware' => 'has_discord_token'], function () {
 
 Route::get('/commands/{server}', 'ServerController@showCommandList');
 
-Route::get('login', 'AuthController@login');
-Route::get('logout', 'AuthController@logout');
+Route::get('login', 'AuthController@login')->name('login');
+Route::get('logout', 'AuthController@logout')->name('logout');
