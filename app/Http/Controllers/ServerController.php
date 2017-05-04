@@ -127,6 +127,7 @@ class ServerController extends Controller {
         foreach ($this->getServersFromAPI() as $server) {
             if (($server->permissions & 32) > 0) {
                 $server->has_icon = $server->icon != null;
+                $server->on = ServerSettings::whereId($server->id)->count() > 0;
                 $servers[] = $server;
             }
         }
