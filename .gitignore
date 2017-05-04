@@ -17,3 +17,9 @@ _ide_helper\.php
 _ide_helper_models\.php
 
 storage/app/public/
+
+public/css/app\.css
+
+public/js/app\.js
+
+public/mix-manifest\.json
