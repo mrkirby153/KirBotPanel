@@ -10,5 +10,5 @@
             </a>
         @endforeach
     </div>
-    @yield('body')
+    @yield('panel')
 @endsection

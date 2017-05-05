@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('body')
+@section('panel')
     <settings-commands inline-template>
         <div>
             <h2>Command Discriminator</h2>

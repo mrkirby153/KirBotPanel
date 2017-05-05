@@ -137,7 +137,7 @@ Vue.component('settings-commands', {
                 closable: false,
                 transition: 'scale',
                 onApprove(){
-                    axios.delete('/dashboard/' + Server.id + '/command/' + id).then(resp=>{
+                    axios.delete('/dashboard/' + Server.id + '/command/' + id).then(resp => {
                         vm.refreshCommands();
                     })
                 }
@@ -152,6 +152,34 @@ Vue.component('settings-commands', {
             axios.get('/dashboard/' + Server.id + '/commands').then(response => {
                 this.commands = response.data;
             })
+        }
+    }
+});
+
+Vue.component('settings-logging', {
+    data(){
+        return {
+            forms: {
+                logging: $.extend(true, new Form({
+                    enabled: false,
+                    channel: ''
+                }), {})
+            },
+            loaded: false
+        }
+    },
+
+    beforeMount(){
+        this.forms.logging.enabled = ServerData.log_channel !== null;
+        this.forms.logging.channel = ServerData.log_channel !== null ? ServerData.log_channel : null;
+    },
+
+    methods: {
+        save(){
+            if (!this.forms.logging.enabled) {
+                this.forms.logging.channel = null
+            }
+            Panel.sendForm('patch', '/dashboard/' + Server.id + '/logging', this.forms.logging);
         }
     }
 });

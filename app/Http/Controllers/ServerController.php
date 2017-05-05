@@ -116,6 +116,19 @@ class ServerController extends Controller {
         ]);
     }
 
+    public function updateLogging($server, Request $request){
+        if ($this->getServerById($server) == null || ($this->getServerById($server)->permissions & 32) <= 0) {
+            return response()->json(['server' => 'You do not have access to this server!'], 422);
+        }
+        if($request->channel == null && $request->enabled){
+            return response()->json(['error'=>'You must specify a channel to log to!'], 422);
+        }
+        ServerSettings::updateOrCreate(['id'=>$server], [
+           'id' => $server,
+            'log_channel' => $request->enabled? $request->channel : null
+        ]);
+    }
+
     public function showCommandList($server) {
         $customCommands = CustomCommand::whereServer($server)->get();
         $server = ServerSettings::whereId($server)->first();

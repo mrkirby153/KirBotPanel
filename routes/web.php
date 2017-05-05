@@ -27,6 +27,8 @@ Route::group(['middleware' => 'has_discord_token'], function () {
     Route::patch('/dashboard/{server}/discriminator', 'ServerController@updateDiscrim')->middleware('auth');
     Route::put('/dashboard/{server}/commands', 'ServerController@createCommand')->middleware('auth');
 
+    Route::patch('/dashboard/{server}/logging', 'ServerController@updateLogging')->middleware(['auth']);
+
     Route::post('/dashboard/{server}/realname', 'ServerController@setRealnameSettings');
 });
 
