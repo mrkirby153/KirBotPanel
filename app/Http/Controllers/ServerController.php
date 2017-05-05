@@ -19,12 +19,12 @@ class ServerController extends Controller {
         if (($serverById->permissions & 32) <= 0) {
             return redirect('/servers');
         }
-        $serverData = ServerSettings::whereId($server)->first();
+        $serverData = ServerSettings::whereId($server)->with('channels')->first();
         \JavaScript::put([
             'Server' => $serverById,
             'ServerData' => $serverData
         ]);
-        return view('server.dashboard.general')->with(['server' => $serverById, 'tab' => 'general']);
+        return view('server.dashboard.general')->with(['server' => $serverById, 'tab' => 'general', 'serverData'=>$serverData]);
     }
 
     public function showCommands($server, Request $request) {

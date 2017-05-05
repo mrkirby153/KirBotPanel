@@ -13,4 +13,8 @@ class ServerSettings extends Model {
         'id', 'realname', 'require_realname', 'command_discriminator'
     ];
 
+    public function channels() {
+        return $this->hasMany(Channel::class, 'server', 'id');
+    }
+
 }

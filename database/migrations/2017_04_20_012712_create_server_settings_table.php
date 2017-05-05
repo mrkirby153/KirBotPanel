@@ -13,7 +13,7 @@ class CreateServerSettingsTable extends Migration
     public function up()
     {
         Schema::create('server_settings', function (Blueprint $table) {
-            $table->string('id')->unique();
+            $table->string('id')->unique()->primary();
             $table->enum('realname', ['OFF', 'FIRST_ONLY', 'FIRST_LAST'])->default('OFF');
             $table->boolean('require_realname')->default(false);
             $table->char('command_discriminator', 1)->default('!');
