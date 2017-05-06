@@ -7,7 +7,7 @@
     <div class="ui cards">
         @foreach($servers as $server)
             <?php
-                $url = $server->on? url('/dashboard/'.$server->id) : 'https://discordapp.com/oauth2/authorize?client_id=261292113046667276&scope=bot&permissions=8';
+                $url = $server->on? url('/dashboard/'.$server->id) : 'https://discordapp.com/oauth2/authorize?client_id=261292113046667276&scope=bot&permissions=8&guild_id='.$server->id;
                 ?>
             <div class="ui card">
                 @if($server->has_icon)
