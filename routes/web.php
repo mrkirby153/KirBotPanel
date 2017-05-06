@@ -35,6 +35,7 @@ Route::group(['middleware' => 'has_discord_token'], function () {
 
     // Music
     Route::get('/dashboard/{server}/music', 'Dashboard\MusicController@index')->middleware('auth')->name('dashboard.music');
+    Route::post('/dashboard/{server}/music', 'Dashboard\MusicController@update')->middleware('auth');
 });
 
 Route::get('/commands/{server}', 'Dashboard\GeneralController@showCommandList');

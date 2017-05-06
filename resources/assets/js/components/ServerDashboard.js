@@ -205,7 +205,7 @@ Vue.component('settings-music', {
     mounted(){
         this.forms.music.enabled = Music.enabled;
         this.forms.music.whitelist_mode = Music.mode;
-        this.forms.music.blacklisted_urls = Music.blacklist_songs;
+        this.forms.music.blacklisted_urls = Music.blacklist_songs.replace(new RegExp(',', 'g'), "\n");
         if (Music.mode !== 'OFF')
             this.forms.music.channels = Music.channels.split(",");
 
@@ -214,4 +214,14 @@ Vue.component('settings-music', {
         this.forms.music.skip_cooldown = Music.skip_cooldown;
         this.forms.music.skip_timer = Music.skip_timer;
     },
+
+    methods: {
+        sendForm(){
+            Panel.post('/dashboard/' + Server.id + '/music', this.forms.music)
+        },
+        capitalizeFirstLetter(string) {
+            string = string.toLowerCase();
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+    }
 });

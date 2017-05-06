@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Channel;
-use App\CustomCommand;
 use App\Http\Controllers\Controller;
 use App\MusicSettings;
-use App\ServerSettings;
 use Illuminate\Http\Request;
 
 class MusicController extends Controller {
@@ -34,6 +32,21 @@ class MusicController extends Controller {
             'Music' => $musicSettings
         ]);
         return view('server.dashboard.music')->with(['server' => $serverById, 'tab' => 'music', 'channels'=>$channels]);
+
+    }
+
+    public function update(Request $request, $server){
+        if ($this->getServerById($server) == null || ($this->getServerById($server)->permissions & 32) <= 0) {
+            return response()->json(['server' => 'You do not have access to this server!'], 422);
+        }
+
+        $musicSettings = MusicSettings::whereId($server)->first();
+        $musicSettings->fill($request->all());
+        $musicSettings->mode = $request->whitelist_mode;
+        $musicSettings->channels = implode(',', $request->channels);
+        $musicSettings->blacklist_songs = implode(',', explode("\n", $request->blacklisted_urls));
+
+        $musicSettings->save();
 
     }
 }
