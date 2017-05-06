@@ -1,7 +1,10 @@
 @extends('layouts.dashboard')
 
 @section('panel')
-    <div class="ui segment">
+    <?php
+    $color = \App\Menu\Panel::getPanelColor($tab)
+    ?>
+    <div class="ui {{$color}} segment">
         <h2>Real Name Settings</h2>
         <settings-realname inline-template>
             <form class="ui form" :class="{'loading': forms.realName.busy, 'success': forms.realName.successful}" @submit.prevent="sendForm">
@@ -18,7 +21,7 @@
                     </div>
                     <div class="field">
                         <label>Real Name</label>
-                        <select name="real_name_setting" id="real_name_setting" v-model="forms.realName.realnameSetting">
+                        <select class="ui fluid dropdown" name="real_name_setting" id="real_name_setting" v-model="forms.realName.realnameSetting">
                             <option value="OFF">Disabled</option>
                             <option value="FIRST_ONLY">Display first name only</option>
                             <option value="FIRST_LAST">Display first and last name</option>
@@ -29,7 +32,7 @@
             </form>
         </settings-realname>
     </div>
-    <div class="ui segment">
+    <div class="ui {{$color}} segment">
         <h2>Logging</h2>
         <p>Enabling this module will log various actions taken by the bot to a designated channel</p>
         <settings-logging inline-template>
@@ -44,7 +47,7 @@
                     </div>
                     <div class="field" :class="{'disabled': !forms.logging.enabled}">
                         <label>Logging Channel</label>
-                        <select name="logging_channel" id="logging_channel" v-model="forms.logging.channel">
+                        <select class="ui search selection fluid dropdown" name="logging_channel" id="logging_channel" v-model="forms.logging.channel">
                             @foreach($serverData->channels as $channel)
                                 @if($channel->type == 'TEXT')
                                     <option value="{{$channel->id}}">#{{$channel->channel_name}}</option>

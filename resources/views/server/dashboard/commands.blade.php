@@ -1,56 +1,63 @@
 @extends('layouts.dashboard')
 
 @section('panel')
+    <?php
+    $color = \App\Menu\Panel::getPanelColor($tab)
+    ?>
     <settings-commands inline-template>
         <div>
-            <h2>Command Discriminator</h2>
-            <p>The prefix which all commands on the server use</p>
-            <form class="ui form" :class="{'success': forms.cmdDiscriminator.successful, 'error':forms.cmdDiscriminator.errors.hasErrors(), 'loading': forms.cmdDiscriminator.busy}" @submit.prevent="saveDiscrim">
-                <form-messages success-header="Success!" success-body="Saved!" :error-array="forms.cmdDiscriminator.errors.flatten()"></form-messages>
-                <div class="one field">
-                    <div class="ui field">
-                        <label>Discriminator</label>
-                        <input type="text" maxlength="1" v-model="forms.cmdDiscriminator.discriminator"/>
-                    </div>
-                </div>
-                <button class="ui button fluid green" @click.prevent="saveDiscrim">Save</button>
-            </form>
-            <h2>Custom Commands</h2>
-            <p>Below are all the custom commands registered on the server</p>
-            <table class="ui celled table">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Created</th>
-                    <th>Command Name</th>
-                    <th>Command Response</th>
-                    <th>Clearance</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="command in commands">
-                    <td>@{{ command.id }}</td>
-                    <td>@{{ command.created_at }}</td>
-                    <td>@{{ command.name }}</td>
-                    <td>@{{ command.data }}</td>
-                    <td>@{{ localizeClearance(command.clearance) }}</td>
-                    <td>
-                        <div class="ui buttons">
-                            <button class="ui button blue" @click="editCommand(command.id, false)">Edit</button>
-                            <button class="ui button red" @click="confirmDelete(command.id)">Delete</button>
+            <div class="ui {{$color}} segment">
+                <h2>Command Discriminator</h2>
+                <p>The prefix which all commands on the server use</p>
+                <form class="ui form" :class="{'success': forms.cmdDiscriminator.successful, 'error':forms.cmdDiscriminator.errors.hasErrors(), 'loading': forms.cmdDiscriminator.busy}" @submit.prevent="saveDiscrim">
+                    <form-messages success-header="Success!" success-body="Saved!" :error-array="forms.cmdDiscriminator.errors.flatten()"></form-messages>
+                    <div class="one field">
+                        <div class="ui field">
+                            <label>Discriminator</label>
+                            <input type="text" maxlength="1" v-model="forms.cmdDiscriminator.discriminator"/>
                         </div>
-                    </td>
-                </tr>
-                </tbody>
-                <tfoot>
-                <tr>
-                    <th colspan="6">
-                        <button class="ui right floated button" @click="editCommand(null, true)">Add Command</button>
-                    </th>
-                </tr>
-                </tfoot>
-            </table>
+                    </div>
+                    <button class="ui button fluid green" @click.prevent="saveDiscrim">Save</button>
+                </form>
+            </div>
+            <div class="ui {{$color}} segment">
+                <h2>Custom Commands</h2>
+                <p>Below are all the custom commands registered on the server</p>
+                <table class="ui celled table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Created</th>
+                        <th>Command Name</th>
+                        <th>Command Response</th>
+                        <th>Clearance</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="command in commands">
+                        <td>@{{ command.id }}</td>
+                        <td>@{{ command.created_at }}</td>
+                        <td>@{{ command.name }}</td>
+                        <td>@{{ command.data }}</td>
+                        <td>@{{ localizeClearance(command.clearance) }}</td>
+                        <td>
+                            <div class="ui buttons">
+                                <button class="ui button blue" @click="editCommand(command.id, false)">Edit</button>
+                                <button class="ui button red" @click="confirmDelete(command.id)">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th colspan="6">
+                            <button class="ui right floated button" @click="editCommand(null, true)">Add Command</button>
+                        </th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
 
             <!-- Delete Confirm Modal -->
 
@@ -111,7 +118,7 @@
                     </form>
                 </div>
                 <div class="actions">
-                    <div class="ui green ok button">Save</div>
+                    <div class="ui green ok button" :class="{'loading': forms.editCommand.busy}">Save</div>
                     <div class="ui cancel button">Cancel</div>
                 </div>
             </div>
