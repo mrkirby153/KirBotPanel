@@ -6,7 +6,10 @@ namespace App\Menu;
 
 class ServerDashboardSettingsTab extends Tab {
 
-    public function __construct($name, $route, $icon, $label) {
+    public $color;
+
+    public function __construct($name, $route, $icon, $label, $color) {
         parent::__construct($name, $route, $icon, $label);
+        $this->color = $color;
     }
 }
