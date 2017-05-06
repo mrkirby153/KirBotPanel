@@ -163,7 +163,7 @@ class ServerController extends Controller {
             $body = \Cache::get($cacheId);
         } else {
             \Log::info("Loading from Discord");
-            $client = new \GuzzleHttp\Client();
+            $client = new \GuzzleHttp\Client(['http_errors'=>false]);
             $response = $client->request('GET', "https://discordapp.com/api/users/@me/guilds", [
                 'headers' => [
                     'User-Agent' => 'KirBotPanel v1.0',
@@ -171,6 +171,10 @@ class ServerController extends Controller {
                     'Content-Type' => 'application/json'
                 ]
             ]);
+            if($response->getStatusCode() == 401){
+                // Abort and immediately go to the login page
+                \App::abort(302, '', ['Location'=>'/login']);
+            }
             $body = $response->getBody();
             \Cache::put($cacheId, "$body", 5);
         }
