@@ -183,3 +183,35 @@ Vue.component('settings-logging', {
         }
     }
 });
+
+Vue.component('settings-music', {
+    data(){
+        return {
+            forms: {
+                music: $.extend(true, new Form({
+                    enabled: true,
+                    whitelist_mode: 'OFF',
+                    channels: [],
+                    blacklisted_urls: '',
+                    max_queue_length: -1,
+                    max_song_length: -1,
+                    skip_cooldown: 0,
+                    skip_timer: 30,
+                }), {})
+            }
+        }
+    },
+
+    mounted(){
+        this.forms.music.enabled = Music.enabled;
+        this.forms.music.whitelist_mode = Music.mode;
+        this.forms.music.blacklisted_urls = Music.blacklist_songs;
+        if (Music.mode !== 'OFF')
+            this.forms.music.channels = Music.channels.split(",");
+
+        this.forms.music.max_queue_length = Music.max_queue_length;
+        this.forms.music.max_song_length = Music.max_song_length;
+        this.forms.music.skip_cooldown = Music.skip_cooldown;
+        this.forms.music.skip_timer = Music.skip_timer;
+    },
+});

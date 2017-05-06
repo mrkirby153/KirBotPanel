@@ -32,6 +32,9 @@ Route::group(['middleware' => 'has_discord_token'], function () {
     Route::delete('/dashboard/{server}/command/{command}', 'Dashboard\CommandController@deleteCommand')->middleware('auth');
     Route::patch('/dashboard/{server}/discriminator', 'Dashboard\CommandController@updateDiscrim')->middleware('auth');
     Route::put('/dashboard/{server}/commands', 'Dashboard\CommandController@createCommand')->middleware('auth');
+
+    // Music
+    Route::get('/dashboard/{server}/music', 'Dashboard\MusicController@index')->middleware('auth')->name('dashboard.music');
 });
 
 Route::get('/commands/{server}', 'Dashboard\GeneralController@showCommandList');

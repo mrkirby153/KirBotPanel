@@ -16,3 +16,10 @@ code {
   border-radius: .25rem;
   font-family: Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
 }
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0
+}
