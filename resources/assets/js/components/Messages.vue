@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="ui success message">
+        <div class="ui success message" style="margin-top: 15px">
             <div class="header">{{successHeader}}</div>
             <p>{{successBody}}</p>
         </div>
