@@ -62,7 +62,7 @@
                         <div class="ui horizontal segments">
                             <div class="ui {{$color}} segment">
                                 <h2>Queue Settings</h2>
-                                <div class="two fields">
+                                <div class="three fields">
                                     <div class="field">
                                         <label>Queue Length</label>
                                         <p>The maximum length (in minutes) that the queue can be. -1 to disable</p>
@@ -72,6 +72,14 @@
                                         <label>Max Song Length</label>
                                         <p>The maximum song length (in minutes) that can be queued. -1 to disable</p>
                                         <input type="number" v-model="forms.music.max_song_length"/>
+                                    </div>
+                                    <div class="field">
+                                        <label>Playlists</label>
+                                        <p>If users are allowed to queue playlists</p>
+                                        <select class="ui fluid dropdown" v-model="forms.music.playlists">
+                                            <option value="0">No</option>
+                                            <option value="1">Yes</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>

@@ -197,6 +197,7 @@ Vue.component('settings-music', {
                     max_song_length: -1,
                     skip_cooldown: 0,
                     skip_timer: 30,
+                    playlists: false,
                 }), {})
             }
         }
@@ -213,6 +214,7 @@ Vue.component('settings-music', {
         this.forms.music.max_song_length = Music.max_song_length;
         this.forms.music.skip_cooldown = Music.skip_cooldown;
         this.forms.music.skip_timer = Music.skip_timer;
+        this.forms.music.playlists = Music.playlists;
     },
 
     methods: {
