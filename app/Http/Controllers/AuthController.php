@@ -10,7 +10,11 @@ use Illuminate\Http\Request;
 class AuthController extends Controller implements AuthenticateUserListener {
 
     public function login(AuthenticateUser $authenticateUser, Request $request) {
-        return $authenticateUser->execute($request->has('code'), $this);
+        $returnUrl = '/';
+        if($request->has('returnUrl')){
+            $returnUrl = $request->returnUrl;
+        }
+        return $authenticateUser->execute($request->has('code'), $this, $returnUrl);
     }
 
     public function logout() {
@@ -18,7 +22,7 @@ class AuthController extends Controller implements AuthenticateUserListener {
         return redirect('/');
     }
 
-    public function userHasLoggedIn(User $user){
-        return redirect('/');
+    public function userHasLoggedIn(User $user, $returnUrl){
+        return redirect($returnUrl);
     }
 }
