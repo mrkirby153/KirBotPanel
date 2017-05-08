@@ -22,7 +22,9 @@
             'csrfToken' => csrf_token(),
         ]) !!};
         window.User = {!! json_encode(Auth::user()) !!}
+         @if(!Auth::guest())
             window.User.info = {!! json_encode(Auth::guest()? null : Auth::user()->info) !!}
+        @endif
     </script>
 </head>
 
