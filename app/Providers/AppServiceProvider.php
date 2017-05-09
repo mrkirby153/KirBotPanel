@@ -12,6 +12,8 @@ class AppServiceProvider extends ServiceProvider {
      * @return void
      */
     public function boot() {
+        // Fix for MariaDB < 10.2.2 and MySQL < 5.7.7
+        \Schema::defaultStringLength(191);
         Validator::extend('without_spaces', function($attr, $value){
             return preg_match('/^\S*$/u', $value);
         });
