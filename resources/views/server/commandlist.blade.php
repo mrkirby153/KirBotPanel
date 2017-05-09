@@ -13,7 +13,7 @@
         </tr>
         </thead>
         <tbody>
-        @if(empty($commands))
+        @if(sizeof($commands) < 1)
             <tr>
                 <th colspan="2">
                     <div class="ui center aligned segment">

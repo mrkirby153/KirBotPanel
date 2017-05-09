@@ -57,6 +57,10 @@ class GeneralController extends Controller {
     public function showCommandList($server) {
         $customCommands = CustomCommand::whereServer($server)->get();
         $server = ServerSettings::whereId($server)->first();
+        if($server == null){
+            $server = new ServerSettings(['id'=>'UNKNOWN']);
+            $server->name = 'Unknown Server';
+        }
         return view('server.commandlist')->with(['commands' => $customCommands, 'server'=>$server]);
     }
 }
