@@ -10,7 +10,7 @@
                     KirBot
                 </h1>
                 <h2>The only Discord robot you'll ever need</h2>
-                <a href="{{Auth::guest()? route('login') : url('/servers')}}" class="ui huge primary button">Get Started
+                <a href="{{route('dashboard.all')}}" class="ui huge primary button">Get Started
                     <i class="right arrow icon"></i></a>
             </div>
 

@@ -11,6 +11,9 @@ use Illuminate\Http\Request;
 
 class GeneralController extends Controller {
     public function displayOverview(Request $request) {
+        if(\Auth::guest()){
+            return redirect('/login?returnUrl=/servers');
+        }
         $servers = $this->getServers();
         return view('server.serverlist')->with(['servers' => $servers]);
     }
