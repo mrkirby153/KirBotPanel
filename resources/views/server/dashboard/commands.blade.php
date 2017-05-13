@@ -39,7 +39,7 @@
                         <td>@{{ command.id }}</td>
                         <td>@{{ command.created_at }}</td>
                         <td>@{{ command.name }}</td>
-                        <td>@{{ command.data }}</td>
+                        <td style="-ms-word-wrap: break-word;word-wrap: break-word; max-width: 500px">@{{ command.data }}</td>
                         <td>@{{ localizeClearance(command.clearance) }}</td>
                         <td>
                             <div class="ui buttons">
