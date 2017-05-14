@@ -48,7 +48,7 @@
                     <div class="field" :class="{'disabled': !forms.logging.enabled}">
                         <label>Logging Channel</label>
                         <select class="ui search selection fluid dropdown" name="logging_channel" id="logging_channel" v-model="forms.logging.channel">
-                            @foreach($serverData->channels as $channel)
+                            @foreach($textChannels as $channel)
                                 @if($channel->type == 'TEXT')
                                     <option value="{{$channel->id}}">#{{$channel->channel_name}}</option>
                                 @endif

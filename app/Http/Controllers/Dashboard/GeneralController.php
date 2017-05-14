@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\CustomCommand;
 use App\Http\Controllers\Controller;
 use App\ServerSettings;
+use GuzzleHttp\Exception\ConnectException;
 use Illuminate\Http\Request;
 
 class GeneralController extends Controller {
@@ -32,7 +33,7 @@ class GeneralController extends Controller {
             'Server' => $serverById,
             'ServerData' => $serverData
         ]);
-        return view('server.dashboard.general')->with(['server' => $serverById, 'tab' => 'general', 'serverData'=>$serverData]);
+        return view('server.dashboard.general')->with(['server' => $serverById, 'tab' => 'general', 'serverData'=>$serverData, 'textChannels'=>$this->getTextChannelsFromBot($server)]);
     }
 
 
@@ -46,6 +47,12 @@ class GeneralController extends Controller {
             'realname' => $request->realnameSetting,
             'require_realname' => ($request->realnameSetting == 'OFF') ? false : $request->requireRealname
         ]);
+        try{
+            $guzzle = new \GuzzleHttp\Client();
+            $guzzle->get(env('KIRBOT_URL').'v1/name/update');
+        } catch(ConnectException $exception){
+            // Ignore
+        }
     }
 
     public function updateLogging($server, Request $request){

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\ServerSettings;
 use App\UserInfo;
 use Auth;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
 use Illuminate\Http\Request;
 
 class UserController extends Controller {
@@ -42,6 +44,12 @@ class UserController extends Controller {
         $info->last_name = $request->lastname;
         $info->id = Auth::user()->id;
         $info->save();
+        try{
+            $guzzle = new \GuzzleHttp\Client();
+            $guzzle->get(env('KIRBOT_URL').'v1/name/update');
+        } catch(ConnectException $exception){
+            // Ignore
+        }
         return response()->json(['changed'=>$info->changed]);
     }
 

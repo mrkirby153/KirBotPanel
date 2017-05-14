@@ -26,12 +26,11 @@ class MusicController extends Controller {
             'skip_cooldown'=>0,
             'skip_timer'=>30,
         ]);
-        $channels = Channel::whereServer($server)->get();
         \JavaScript::put([
             'Server' => $serverById,
             'Music' => $musicSettings
         ]);
-        return view('server.dashboard.music')->with(['server' => $serverById, 'tab' => 'music', 'channels'=>$channels]);
+        return view('server.dashboard.music')->with(['server' => $serverById, 'tab' => 'music', 'channels'=>$this->getVoiceChannelsFromBot($server)]);
 
     }
 
