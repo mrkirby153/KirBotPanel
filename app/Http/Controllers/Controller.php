@@ -50,7 +50,7 @@ class Controller extends BaseController
             ]);
             if($response->getStatusCode() == 401){
                 // Abort and immediately go to the login page
-                \App::abort(302, '', ['Location'=>'/login?returnUrl='.\Request::getUri()]);
+                \App::abort(302, '', ['Location'=>'/login?returnUrl='.\Request::getRequestUri().'&requireGuilds=true']);
             }
             $body = $response->getBody();
             \Cache::put($cacheId, "$body", 5);

@@ -18,10 +18,10 @@ class AuthenticateUser {
         $this->users = $users;
     }
 
-    public function execute($hasCode, AuthenticateUserListener $listener, $returnUrl = '/') {
+    public function execute($hasCode, AuthenticateUserListener $listener, $returnUrl = '/', $guilds = false) {
         if (!$hasCode) {
             \Session::put('auth-return-url', $returnUrl);
-            return $this->getAuthorization();
+            return $this->getAuthorization($guilds);
         }
         $request = Socialite::with('discord')->user();
         $user = $this->users->getUser($request);
@@ -29,7 +29,10 @@ class AuthenticateUser {
         return $listener->userHasLoggedIn($user, \Session::get('auth-return-url', '/'));
     }
 
-    private function getAuthorization() {
-        return Socialite::with('discord')->scopes(['identify', 'email', 'guilds'])->redirect("testing");
+    private function getAuthorization($guilds = false) {
+        $authArray = ['identify'];
+        if($guilds)
+            $authArray[] = 'guilds';
+        return Socialite::with('discord')->scopes($authArray)->redirect("testing");
     }
 }

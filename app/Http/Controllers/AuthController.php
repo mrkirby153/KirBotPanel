@@ -14,7 +14,7 @@ class AuthController extends Controller implements AuthenticateUserListener {
         if($request->has('returnUrl')){
             $returnUrl = $request->returnUrl;
         }
-        return $authenticateUser->execute($request->has('code'), $this, $returnUrl);
+        return $authenticateUser->execute($request->has('code'), $this, $returnUrl, $request->has('requireGuilds'));
     }
 
     public function logout() {

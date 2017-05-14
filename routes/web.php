@@ -19,8 +19,8 @@ Route::get('/name', 'UserController@displaySettings');
 Route::post('/name', 'UserController@updateName')->middleware('auth');
 
 
+Route::get('/servers', 'Dashboard\GeneralController@displayOverview')->name('dashboard.all');
 Route::group(['middleware' => 'has_discord_token'], function () {
-    Route::get('/servers', 'Dashboard\GeneralController@displayOverview')->name('dashboard.all');
     // General
     Route::get('/dashboard/{server}', 'Dashboard\GeneralController@showDashboard')->middleware('auth')->name('dashboard.general');
     Route::patch('/dashboard/{server}/logging', 'Dashboard\GeneralController@updateLogging')->middleware(['auth']);

@@ -12,7 +12,11 @@ use Illuminate\Http\Request;
 class GeneralController extends Controller {
     public function displayOverview(Request $request) {
         if(\Auth::guest()){
-            return redirect('/login?returnUrl=/servers');
+            return redirect('/login?returnUrl=/servers&requireGuilds=true');
+        }
+        \Log::info("Token: ".\Auth::user()->token_type);
+        if(\Auth::user()->token_type == 'NAME_ONLY'){
+            return redirect('/login?returnUrl=/servers&requireGuilds=true');
         }
         $servers = $this->getServers();
         return view('server.serverlist')->with(['servers' => $servers]);
