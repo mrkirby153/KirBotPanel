@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Channel;
 use App\Http\Controllers\Controller;
 use App\MusicSettings;
+use App\ServerSettings;
 use Illuminate\Http\Request;
+use Mockery\Exception;
 
 class MusicController extends Controller {
 
@@ -15,26 +16,34 @@ class MusicController extends Controller {
         if (($serverById->permissions & 32) <= 0) {
             return redirect('/servers');
         }
-        $musicSettings = MusicSettings::firstOrCreate(['id'=>$server], [
-            'id'=>$server,
-            'enabled'=>true,
-            'mode'=>'OFF',
-            'channels'=>'',
-            'blacklist_songs'=>'',
-            'max_queue_length'=>-1,
-            'max_song_length'=>-1,
-            'skip_cooldown'=>0,
-            'skip_timer'=>30,
+        $musicSettings = MusicSettings::firstOrCreate(['id' => $server], [
+            'id' => $server,
+            'enabled' => true,
+            'mode' => 'OFF',
+            'channels' => '',
+            'blacklist_songs' => '',
+            'max_queue_length' => -1,
+            'max_song_length' => -1,
+            'skip_cooldown' => 0,
+            'skip_timer' => 30,
         ]);
         \JavaScript::put([
             'Server' => $serverById,
             'Music' => $musicSettings
         ]);
-        return view('server.dashboard.music')->with(['server' => $serverById, 'tab' => 'music', 'channels'=>$this->getVoiceChannelsFromBot($server)]);
+        return view('server.dashboard.music')->with(['server' => $serverById, 'tab' => 'music', 'channels' => $this->getVoiceChannelsFromBot($server)]);
 
     }
 
-    public function update(Request $request, $server){
+    public function displayQueue($server) {
+        $queue = $this->getQueue($server);
+        $server = ServerSettings::whereId($server)->first();
+        if($server == null)
+            $server = new ServerSettings(['name'=>'Unknown']);
+        return view('server.queue')->with(['queue'=>$queue, 'server'=>$server]);
+    }
+
+    public function update(Request $request, $server) {
         if ($this->getServerById($server) == null || ($this->getServerById($server)->permissions & 32) <= 0) {
             return response()->json(['server' => 'You do not have access to this server!'], 422);
         }
@@ -46,6 +55,23 @@ class MusicController extends Controller {
         $musicSettings->blacklist_songs = implode(',', explode("\n", $request->blacklisted_urls));
 
         $musicSettings->save();
+
+    }
+
+    private function getQueue($server) {
+        try {
+            $guzzle = new \GuzzleHttp\Client();
+            $data = $guzzle->get(env('KIRBOT_URL') . 'v1/server/' . $server . '/queue');
+            return json_decode($data->getBody());
+        } catch (Exception $exception) {
+            // Fall through
+        }
+        return [
+            'length' => 0,
+            'nowPlaying' => null,
+            'playing' => false,
+            'songs' => []
+        ];
 
     }
 }

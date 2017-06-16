@@ -38,7 +38,8 @@ Route::group(['middleware' => 'has_discord_token'], function () {
     Route::post('/dashboard/{server}/music', 'Dashboard\MusicController@update')->middleware('auth');
 });
 
-Route::get('/commands/{server}', 'Dashboard\GeneralController@showCommandList');
+Route::get('/{server}/commands', 'Dashboard\GeneralController@showCommandList');
+Route::get('/{server}/queue', 'Dashboard\MusicController@displayQueue');
 
 Route::get('login', 'AuthController@login')->name('login');
 Route::get('logout', 'AuthController@logout')->name('logout');
