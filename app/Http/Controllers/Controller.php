@@ -62,7 +62,8 @@ class Controller extends BaseController {
         $client = new \GuzzleHttp\Client();
         try {
             $response = $client->request('GET', env('KIRBOT_URL') . 'v1/channels/' . $server . '');
-            return json_decode($response->getBody());
+            $channels = json_decode($response->getBody());
+            return $channels != null? $channels : Channel::whereServer($server)->get();
         } catch (ConnectException $exception) {
             return Channel::whereServer($server)->get();
         }
@@ -73,7 +74,8 @@ class Controller extends BaseController {
         $client = new \GuzzleHttp\Client();
         try{
             $response = $client->request('GET', env('KIRBOT_URL') . 'v1/channels/' . $server . '/text');
-            return json_decode($response->getBody());
+            $channels = json_decode($response->getBody());
+            return $channels != null? $channels : Channel::whereServer($server)->whereType('TEXT')->get();
         } catch(ConnectException $exception){
             return Channel::whereServer($server)->whereType('TEXT')->get();
         }
@@ -84,7 +86,8 @@ class Controller extends BaseController {
         $client = new \GuzzleHttp\Client();
         try{
             $response = $client->request('GET', env('KIRBOT_URL') . 'v1/channels/' . $server . '/voice');
-            return json_decode($response->getBody());
+            $channels = json_decode($response->getBody());
+            return $channels != null? $channels : Channel::whereServer($server)->get();
         } catch(ConnectException $exception){
             return Channel::whereServer($server)->whereType('VOICE')->get();
         }
