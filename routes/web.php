@@ -36,6 +36,11 @@ Route::group(['middleware' => 'has_discord_token'], function () {
     // Music
     Route::get('/dashboard/{server}/music', 'Dashboard\MusicController@index')->middleware('auth')->name('dashboard.music');
     Route::post('/dashboard/{server}/music', 'Dashboard\MusicController@update')->middleware('auth');
+
+    // Channels
+    Route::get('/dashboard/{server}/channels', 'Dashboard\ChannelController@index')->middleware('auth')->name('dashboard.channels');
+    Route::post('/dashboard/{server}/channels/{channel}/visibility', 'Dashboard\ChannelController@visibility')->middleware('auth');
+    Route::post('/dashboard/{server}/channels/{channel}/access', 'Dashboard\ChannelController@regainAccess')->middleware('auth');
 });
 
 Route::get('/{server}/commands', 'Dashboard\GeneralController@showCommandList');
