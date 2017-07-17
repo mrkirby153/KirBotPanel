@@ -14,7 +14,7 @@
                     <div class="one field">
                         <div class="ui field">
                             <label>Discriminator</label>
-                            <input type="text" maxlength="1" v-model="forms.cmdDiscriminator.discriminator"/>
+                            <input type="text" v-model="forms.cmdDiscriminator.discriminator"/>
                         </div>
                     </div>
                     <button class="ui button fluid green" @click.prevent="saveDiscrim">Save</button>
