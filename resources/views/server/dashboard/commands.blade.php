@@ -114,7 +114,7 @@
                         </p>
                         <div class="required field">
                             <label>Clearance</label>
-                            <select v-model="forms.editCommand.clearance">
+                            <select v-model="forms.editCommand.clearance" class="ui fluid dropdown">
                                 <option value="SERVER_OWNER">Server Owner</option>
                                 <option value="SERVER_ADMINISTRATOR">Server Administrator</option>
                                 <option value="BOT_MANAGER">Bot Manager</option>
