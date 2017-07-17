@@ -258,7 +258,29 @@ Vue.component('settings-channels', {
         },
         regainAccess(channel){
             let chan = this.textChannels[channel];
-            axios.post('/dashboard/'+ServerId+'/channels/'+chan.id+'/access')
+            axios.post('/dashboard/' + ServerId + '/channels/' + chan.id + '/access')
+        }
+    }
+});
+
+Vue.component('settings-channel-whitelist', {
+    data(){
+        return {
+            forms: {
+                whitelist: $.extend(true, new Form({
+                    channels: []
+                }), {})
+            }
+        }
+    },
+
+    mounted(){
+        this.forms.whitelist.channels = ServerData.cmd_whitelist.split(",")
+    },
+
+    methods: {
+        save(){
+            Panel.sendForm('post', '/dashboard/'+Server.id+'/whitelist', this.forms.whitelist)
         }
     }
 });

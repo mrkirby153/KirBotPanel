@@ -68,6 +68,16 @@ class GeneralController extends Controller {
         ]);
     }
 
+    public function updateChannelWhitelist($server, Request $request){
+        if ($this->getServerById($server) == null || ($this->getServerById($server)->permissions & 32) <= 0) {
+            return response()->json(['server' => 'You do not have access to this server!'], 422);
+        }
+        ServerSettings::updateOrCreate(['id'=>$server], [
+            'id'=>$server,
+            'cmd_whitelist'=>implode(',', $request->get('channels'))
+        ]);
+    }
+
     public function showCommandList($server) {
         $customCommands = CustomCommand::whereServer($server)->get();
         $server = ServerSettings::whereId($server)->first();

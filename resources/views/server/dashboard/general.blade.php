@@ -60,4 +60,24 @@
             </form>
         </settings-logging>
     </div>
+    <div class="ui {{$color}} segment">
+        <h2>Channel Whitelist</h2>
+        <settings-channel-whitelist inline-template>
+            <form class="ui form" :class="{'loading': forms.whitelist.busy, 'success': forms.whitelist.successful, 'error': forms.whitelist.errors.hasErrors()}">
+                <form-messages success-header="Success!" success-body="Settings have been saved!" :error-array="forms.whitelist.errors.flatten()"></form-messages>
+                <p>Channels specified here are the only channels in which bot commands can be run. The bot will ignore commands from other channels. Leave blank to allow all channels</p>
+                <div class="field">
+                    <label><b>Channels</b></label>
+                    <select class="ui fluid search dropdown" multiple="" name="channels[]" v-model="forms.whitelist.channels">
+                        @foreach($textChannels as $channel)
+                            @if($channel->type == 'TEXT')
+                                <option value="{{$channel->id}}">#{{$channel->channel_name}}</option>
+                            @endif
+                        @endforeach
+                    </select>
+                </div>
+                <button class="ui button fluid green" @click.prevent="save">Save</button>
+            </form>
+        </settings-channel-whitelist>
+    </div>
 @endsection
