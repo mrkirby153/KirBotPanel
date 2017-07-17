@@ -88,6 +88,13 @@
                             <input type="text" v-model="forms.editCommand.name"/>
                         </div>
                         <div class="required field">
+                            <div class="ui checkbox">
+                                <input type="checkbox" v-model="forms.editCommand.respect_whitelist"/>
+                                <label><b>Respect Whitelist</b></label>
+                            </div>
+                            <p>If this command respects the global whitelist setting for commands</p>
+                        </div>
+                        <div class="required field">
                             <label>Command Response</label>
                             <p>
                                 Arguments can be accessed with the following syntax:

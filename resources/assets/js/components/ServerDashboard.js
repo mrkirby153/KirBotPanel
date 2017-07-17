@@ -40,7 +40,8 @@ Vue.component('settings-commands', {
                     name: '',
                     description: '',
                     clearance: '',
-                    id: ''
+                    id: '',
+                    respect_whitelist: true
                 }), {})
             },
             commands: [],
@@ -88,6 +89,7 @@ Vue.component('settings-commands', {
                         this.forms.editCommand.clearance = c.clearance;
                         this.forms.editCommand.description = c.data;
                         this.forms.editCommand.id = c.id;
+                        this.forms.editCommand.respect_whitelist = c.respect_whitelist === 1;
                     }
                 });
             }

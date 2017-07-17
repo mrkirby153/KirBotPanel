@@ -51,6 +51,7 @@ class CommandController extends Controller {
         $cmd->name = $request->name;
         $cmd->data = $request->description;
         $cmd->clearance = $request->clearance;
+        $cmd->respect_whitelist = $request->respect_whitelist;
         $cmd->save();
     }
 
