@@ -14,7 +14,7 @@ class UpdateServerSettingsAddCmdWhitelist extends Migration
     public function up()
     {
         Schema::table('server_settings', function (Blueprint $table){
-            $table->text("cmd_whitelist")->after('log_channel')->default("");
+            $table->text("cmd_whitelist")->after('log_channel');
         });
     }
 
