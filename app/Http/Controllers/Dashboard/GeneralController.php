@@ -6,7 +6,9 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\CustomCommand;
 use App\Http\Controllers\Controller;
+use App\Log;
 use App\ServerSettings;
+use App\Utils\AuditLogger;
 use GuzzleHttp\Exception\ConnectException;
 use Illuminate\Http\Request;
 
@@ -47,6 +49,7 @@ class GeneralController extends Controller {
             'realname' => $request->realnameSetting,
             'require_realname' => ($request->realnameSetting == 'OFF') ? false : $request->requireRealname
         ]);
+        AuditLogger::log($server, "realname_update", ['enabled'=>$request->realnameSetting, 'required'=>$request->requireRealname]);
         try{
             $guzzle = new \GuzzleHttp\Client();
             $guzzle->get(env('KIRBOT_URL').'v1/name/update');
@@ -66,16 +69,19 @@ class GeneralController extends Controller {
             'id' => $server,
             'log_channel' => $request->enabled? $request->channel : null
         ]);
+        AuditLogger::log($server, "log_channel", ['enabled'=>$request->enabled, 'channel'=>$request->enabled? $request->channel : null]);
     }
 
     public function updateChannelWhitelist($server, Request $request){
         if ($this->getServerById($server) == null || ($this->getServerById($server)->permissions & 32) <= 0) {
             return response()->json(['server' => 'You do not have access to this server!'], 422);
         }
+        $whitelist = implode(',', $request->get('channels'));
         ServerSettings::updateOrCreate(['id'=>$server], [
             'id'=>$server,
-            'cmd_whitelist'=>implode(',', $request->get('channels'))
+            'cmd_whitelist'=> $whitelist
         ]);
+        AuditLogger::log($server, "command_whitelist_update", $request->get('channels'));
     }
 
     public function showCommandList($server) {
@@ -86,5 +92,18 @@ class GeneralController extends Controller {
             $server->name = 'Unknown Server';
         }
         return view('server.commandlist')->with(['commands' => $customCommands, 'server'=>$server]);
+    }
+
+    public function showLog($server){
+        if ($this->getServerById($server) == null || ($this->getServerById($server)->permissions & 32) <= 0) {
+            return response()->json(['server' => 'You do not have access to this server!'], 422);
+        }
+        $logData = Log::whereServerId($server)->orderBy('created_at', 'desc')->paginate(10);
+        $server = ServerSettings::whereId($server)->first();
+        if($server == null){
+            $server = new ServerSettings(['id'=>'UNKNOWN']);
+            $server->name = 'Unknown Server';
+        }
+        return view('server.dashboard.log')->with(['logData'=>$logData, 'tab'=>'log', 'server'=>$server]);
     }
 }

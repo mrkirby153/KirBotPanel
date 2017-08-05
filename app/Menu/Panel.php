@@ -13,6 +13,7 @@ class Panel {
             new ServerDashboardSettingsTab('commands', 'dashboard.commands', 'sticky note', 'Commands', 'red'),
             new ServerDashboardSettingsTab('music', 'dashboard.music', 'music', 'Music Settings', 'violet'),
             new ServerDashboardSettingsTab('channels', 'dashboard.channels', 'hashtag', 'Channels', 'orange'),
+            new ServerDashboardSettingsTab('log', 'dashboard.log', 'hashtag', 'Log', 'orange'),
         ];
         return $tabs;
     }

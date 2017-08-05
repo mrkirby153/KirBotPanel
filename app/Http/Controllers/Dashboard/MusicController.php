@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\MusicSettings;
 use App\ServerSettings;
+use App\Utils\AuditLogger;
 use Illuminate\Http\Request;
 use Mockery\Exception;
 
@@ -53,6 +54,8 @@ class MusicController extends Controller {
         $musicSettings->mode = $request->whitelist_mode;
         $musicSettings->channels = implode(',', $request->channels);
         $musicSettings->blacklist_songs = implode(',', explode("\n", $request->blacklisted_urls));
+
+        AuditLogger::log($server, "music_update", $musicSettings);
 
         $musicSettings->save();
 

@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\CustomCommand;
 use App\Http\Controllers\Controller;
 use App\ServerSettings;
+use App\Utils\AuditLogger;
 use Illuminate\Http\Request;
 use Keygen\Keygen;
 
@@ -52,6 +53,7 @@ class CommandController extends Controller {
         $cmd->data = $request->description;
         $cmd->clearance = $request->clearance;
         $cmd->respect_whitelist = $request->respect_whitelist;
+        AuditLogger::log($server, "command_update", ['name'=>$cmd->name, 'clearance'=>$cmd->clearance, 'description'=>$request->description]);
         $cmd->save();
     }
 
@@ -62,6 +64,7 @@ class CommandController extends Controller {
         ServerSettings::updateOrCreate(['id' => $server], [
             'command_discriminator' => $request->discriminator
         ]);
+        AuditLogger::log($server, "discrim_update", $request->discriminator);
     }
 
 
@@ -85,10 +88,12 @@ class CommandController extends Controller {
         $cmd->server = $server;
         $cmd->clearance = $request->clearance;
         $cmd->data = $request->description;
+        AuditLogger::log($server, "command_create", ['name'=>$cmd->name, 'clearance'=>$cmd->clearance, 'data'=>$cmd->data]);
         $cmd->save();
     }
 
     public function deleteCommand($server, $command) {
+        AuditLogger::log($server, "command_destroy", ['name'=>CustomCommand::whereId($command)->first()->name]);
         CustomCommand::destroy($command);
     }
 

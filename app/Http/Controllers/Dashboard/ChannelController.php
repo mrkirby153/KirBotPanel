@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 
 
 use App\Http\Controllers\Controller;
+use App\Utils\AuditLogger;
 use Illuminate\Http\Request;
 
 class ChannelController extends Controller {
@@ -30,6 +31,7 @@ class ChannelController extends Controller {
                 'visible' => $request->get('visible')
             ]
         ]);
+        AuditLogger::log($server, 'channel_visibility', ['channel'=>$channel, 'visible'=>$request->get('visible')]);
     }
 
     public function regainAccess($server, $channel) {

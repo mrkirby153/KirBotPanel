@@ -42,6 +42,8 @@ Route::group(['middleware' => 'has_discord_token'], function () {
     Route::get('/dashboard/{server}/channels', 'Dashboard\ChannelController@index')->middleware('auth')->name('dashboard.channels');
     Route::post('/dashboard/{server}/channels/{channel}/visibility', 'Dashboard\ChannelController@visibility')->middleware('auth');
     Route::post('/dashboard/{server}/channels/{channel}/access', 'Dashboard\ChannelController@regainAccess')->middleware('auth');
+
+    Route::get('/dashboard/{server}/log', 'Dashboard\GeneralController@showLog')->name('dashboard.log');
 });
 
 Route::get('/{server}/commands', 'Dashboard\GeneralController@showCommandList');
