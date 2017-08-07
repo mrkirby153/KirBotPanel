@@ -81,7 +81,7 @@ class GeneralController extends Controller {
             'id'=>$server,
             'cmd_whitelist'=> $whitelist
         ]);
-        AuditLogger::log($server, "command_whitelist_update", $request->get('channels'));
+        AuditLogger::log($server, "command_whitelist_update", ['channels'=>$request->get('channels')]);
     }
 
     public function showCommandList($server) {

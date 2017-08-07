@@ -64,7 +64,7 @@ class CommandController extends Controller {
         ServerSettings::updateOrCreate(['id' => $server], [
             'command_discriminator' => $request->discriminator
         ]);
-        AuditLogger::log($server, "discrim_update", $request->discriminator);
+        AuditLogger::log($server, "discrim_update", ['discriminator'=>$request->discriminator]);
     }
 
 
