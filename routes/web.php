@@ -44,6 +44,9 @@ Route::group(['middleware' => 'has_discord_token'], function () {
     Route::post('/dashboard/{server}/channels/{channel}/access', 'Dashboard\ChannelController@regainAccess')->middleware('auth');
 
     Route::get('/dashboard/{server}/log', 'Dashboard\GeneralController@showLog')->name('dashboard.log');
+
+
+    Route::get('/chat', 'BotChatController@index');
 });
 
 Route::get('/{server}/commands', 'Dashboard\GeneralController@showCommandList');

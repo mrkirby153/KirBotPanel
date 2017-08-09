@@ -16,3 +16,7 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/chat/servers/{server}', 'BotChatController@getChannels');
+Route::post('/chat', 'BotChatController@sendMessage');
+Route::get('/chat/servers', 'BotChatController@getServers');

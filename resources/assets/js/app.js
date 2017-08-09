@@ -21,6 +21,7 @@ Vue.component('form-messages', require('./components/Messages.vue'));
 
 require('./components/UserInfo');
 require('./components/ServerDashboard');
+require('./components/BotChat');
 
 const app = new Vue({
     el: '#app'
