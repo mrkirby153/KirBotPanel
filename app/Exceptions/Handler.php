@@ -44,8 +44,25 @@ class Handler extends ExceptionHandler {
      * @return \Illuminate\Http\Response
      */
     public function render($request, Exception $exception) {
+        if($exception instanceof AuthenticationException){
+            if($request->expectsJson()){
+                return new Response([
+                    "error" => $exception->getMessage()
+                ], 401);
+            }
+        }
         if($this->isHttpException($exception)){
+            if($request->expectsJson()){
+                return new Response([
+                    "error" => ($exception->getMessage())? $exception->getMessage() : "HTTP ".$exception->getStatusCode()
+                ], $exception->getStatusCode());
+            }
             return $this->renderHttpException($exception);
+        }
+        if($request->acceptsJson() && !($exception instanceof ValidationException)){
+            return new Response([
+                'error' => $exception->getMessage(),
+            ], 500);
         }
         if(config('app.debug') && !($exception instanceof ValidationException)){
             return $this->renderExceptionWithWhoops($exception);
