@@ -20,7 +20,7 @@ class InternalAPI
             return \Response::json(['error'=>'Invalid API key'], 401);
         }
         $response = $next($request);
-        $response->headers->set('cache-control', 'max-age=45');
+//        $response->headers->set('cache-control', 'max-age=45');
         return $response;
     }
 }
