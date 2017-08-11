@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 class ServerController extends Controller {
 
     public function getCommands($server) {
-        return CustomCommand::whereServer($server)->get(['name', 'data', 'clearance', 'type', 'respect_whitelist']);
+        return response()->json(['cmds'=>CustomCommand::whereServer($server)->get(['name', 'data', 'clearance', 'type', 'respect_whitelist'])]);
     }
 
     public function getSettings($server) {
@@ -37,6 +37,7 @@ class ServerController extends Controller {
         $settings->name = $request->get('name');
         $settings->id = $request->get('id');
         $settings->cmd_whitelist = '';
+        $settings->command_discriminator = '!';
         $settings->save();
     }
 
@@ -67,14 +68,14 @@ class ServerController extends Controller {
         ServerMessage::whereChannel($channel)->delete();
     }
 
-    public function logMessage($server, Request $request) {
-        $msg = new ServerMessage();
-        $msg->server_id = $server;
-        $msg->id = $request->get('id');
-        $msg->channel = $request->get('channel');
-        $msg->author = $request->get('author');
-        $msg->message = $request->get('message');
-        $msg->save();
-        return "Saved";
+    public function getChannels($server){
+        return response()->json([
+            'voice' => Channel::whereServer($server)->whereType('VOICE')->get(),
+            'text' => Channel::whereServer($server)->whereType('TEXT')->get()
+        ]);
+    }
+
+    public function getMusicSettings($server){
+        return MusicSettings::whereId($server)->first();
     }
 }

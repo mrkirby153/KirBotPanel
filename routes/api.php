@@ -27,12 +27,20 @@ Route::group(['middleware'=>'internal_api', 'prefix'=>'internal'], function(){
 
     Route::get('/server/{server}/commands', 'API\ServerController@getCommands');
     Route::get('/server/{server}/settings', 'API\ServerController@getSettings');
+    Route::get('/server/{server}/channels', 'API\ServerController@getChannels');
     Route::post('/server/{server}/name', 'API\ServerController@setName');
+    Route::get('/server/{server}/music', 'API\ServerController@getMusicSettings');
     Route::put('/server/{server}/channel', 'API\ServerController@registerChannel');
     Route::put('/server/register', 'API\ServerController@register');
     Route::delete('/server/{server}', 'API\ServerController@unregister');
-    Route::put('/server/{server}/message', 'API\ServerController@logMessage');
+
 
     Route::delete('/channel/{chanel}', 'API\ServerController@removeChannel');
     Route::patch('/channel/{channel}', 'API\ServerController@updateChannel');
+
+    Route::put('/message', 'API\ServerMessageController@store');
+    Route::delete('/message/bulkDelete', 'API\ServerMessageController@bulkDelete');
+    Route::delete('/message/{serverMessage}', 'API\ServerMessageController@destroy');
+    Route::patch('/message/{serverMessage}', 'API\ServerMessageController@update');
+    Route::get('/message/{serverMessage}', 'API\ServerMessageController@show');
 });

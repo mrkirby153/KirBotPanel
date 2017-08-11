@@ -13,6 +13,8 @@ use Illuminate\Routing\Controller as BaseController;
 class Controller extends BaseController {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
+    private $connect_timeout = 0.25; // 1/4 a second
+
     protected function getServers() {
         $servers = array();
         foreach ($this->getServersFromAPI() as $server) {
@@ -61,7 +63,9 @@ class Controller extends BaseController {
     protected function getChannelsFromBot($server) {
         $client = new \GuzzleHttp\Client();
         try {
-            $response = $client->request('GET', env('KIRBOT_URL') . 'v1/channels/' . $server . '');
+            $response = $client->request('GET', env('KIRBOT_URL') . 'v1/channels/' . $server, [
+                'connect_timeout' => $this->connect_timeout
+            ]);
             $channels = json_decode($response->getBody());
             return $channels != null? $channels : Channel::whereServer($server)->get();
         } catch (ConnectException $exception) {
@@ -73,7 +77,9 @@ class Controller extends BaseController {
     protected function getTextChannelsFromBot($server) {
         $client = new \GuzzleHttp\Client();
         try{
-            $response = $client->request('GET', env('KIRBOT_URL') . 'v1/channels/' . $server . '/text');
+            $response = $client->request('GET', env('KIRBOT_URL') . 'v1/channels/' . $server . '/text', [
+                'connect_timeout' => $this->connect_timeout
+            ]);
             $channels = json_decode($response->getBody());
             return $channels != null? $channels : Channel::whereServer($server)->whereType('TEXT')->get();
         } catch(ConnectException $exception){
@@ -85,7 +91,9 @@ class Controller extends BaseController {
     protected function getVoiceChannelsFromBot($server) {
         $client = new \GuzzleHttp\Client();
         try{
-            $response = $client->request('GET', env('KIRBOT_URL') . 'v1/channels/' . $server . '/voice');
+            $response = $client->request('GET', env('KIRBOT_URL') . 'v1/channels/' . $server . '/voice', [
+                'connect_timeout' => $this->connect_timeout
+            ]);
             $channels = json_decode($response->getBody());
             return $channels != null? $channels : Channel::whereServer($server)->get();
         } catch(ConnectException $exception){
