@@ -11,6 +11,7 @@ use App\ServerSettings;
 use App\Utils\AuditLogger;
 use GuzzleHttp\Exception\ConnectException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
 
 class GeneralController extends Controller {
     public function displayOverview(Request $request) {
@@ -50,12 +51,7 @@ class GeneralController extends Controller {
             'require_realname' => ($request->realnameSetting == 'OFF') ? false : $request->requireRealname
         ]);
         AuditLogger::log($server, "realname_update", ['enabled'=>$request->realnameSetting, 'required'=>$request->requireRealname]);
-        try{
-            $guzzle = new \GuzzleHttp\Client();
-            $guzzle->get(env('KIRBOT_URL').'v1/name/update');
-        } catch(ConnectException $exception){
-            // Ignore
-        }
+        Redis::publish('kirbot:update-name', json_encode(['server'=>$server]));
     }
 
     public function updateLogging($server, Request $request){
