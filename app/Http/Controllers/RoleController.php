@@ -18,6 +18,7 @@ class RoleController extends Controller {
         $role->id = $request->get('id');
         $role->server_id = $request->get('server_id');
         $role->name = $request->get('name');
+        $role->permissions = $request->get('permissions');
         $role->save();
         return response()->json($role);
     }
@@ -45,6 +46,8 @@ class RoleController extends Controller {
         if ($role == null)
             return response()->json(['error' => 'Not found'], 404);
         $role->name = $request->get('name');
+        if($request->has('permissions'))
+            $role->permissions = $request->get('permissions');
         $role->save();
         return response()->json($role);
     }
