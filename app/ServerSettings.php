@@ -10,11 +10,15 @@ class ServerSettings extends Model {
     public $incrementing = false;
 
     public $fillable = [
-        'id', 'realname', 'require_realname', 'command_discriminator', 'log_channel', 'cmd_whitelist'
+        'id', 'name', 'realname', 'require_realname', 'command_discriminator', 'log_channel', 'cmd_whitelist'
     ];
 
     public function channels() {
         return $this->hasMany(Channel::class, 'server', 'id');
+    }
+
+    public function roles(){
+        return $this->hasMany(Role::class, 'server_id');
     }
 
 }

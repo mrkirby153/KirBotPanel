@@ -31,6 +31,7 @@ Route::group(['middleware'=>'internal_api', 'prefix'=>'internal'], function(){
     Route::post('/server/{server}/name', 'API\ServerController@setName');
     Route::get('/server/{server}/music', 'API\ServerController@getMusicSettings');
     Route::put('/server/{server}/channel', 'API\ServerController@registerChannel');
+    Route::get('/server/{server}/roles', 'API\ServerController@getRoles');
     Route::put('/server/register', 'API\ServerController@register');
     Route::delete('/server/{server}', 'API\ServerController@unregister');
 
@@ -43,4 +44,6 @@ Route::group(['middleware'=>'internal_api', 'prefix'=>'internal'], function(){
     Route::delete('/message/{serverMessage}', 'API\ServerMessageController@destroy');
     Route::patch('/message/{serverMessage}', 'API\ServerMessageController@update');
     Route::get('/message/{serverMessage}', 'API\ServerMessageController@show');
+
+    Route::resource('role', 'RoleController');
 });

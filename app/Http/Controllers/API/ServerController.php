@@ -6,6 +6,7 @@ use App\Channel;
 use App\CustomCommand;
 use App\Http\Controllers\Controller;
 use App\MusicSettings;
+use App\Role;
 use App\ServerMessage;
 use App\ServerSettings;
 use Illuminate\Http\Request;
@@ -77,5 +78,9 @@ class ServerController extends Controller {
 
     public function getMusicSettings($server){
         return MusicSettings::whereId($server)->first();
+    }
+
+    public function getRoles($server){
+        return response()->json(['roles'=>Role::whereServerId($server)->get()]);
     }
 }
