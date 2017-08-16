@@ -61,6 +61,7 @@ class ServerController extends Controller {
 
     public function updateChannel(Channel $channel, Request $request) {
         $channel->channel_name = $request->get('name');
+        $channel->hidden = $request->get('hidden') == "true";
         $channel->save();
     }
 

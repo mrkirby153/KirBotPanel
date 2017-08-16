@@ -38,12 +38,12 @@
                     <tr v-for="(channel, index) in textChannels">
                         <td>@{{ channel.id }}</td>
                         <td>@{{ channel.channel_name }}</td>
-                        <td>@{{ channel.private? "Yes" : "No" }}</td>
+                        <td>@{{ channel.hidden? "Yes" : "No" }}</td>
                         <td>
                             <div class="ui buttons">
-                                <button class="ui green button" v-if="channel.private" @click="channelVisibility(index, true)">Show</button>
-                                <button class="ui red button" @click="channelVisibility(index, false)" v-else>Hide</button>
-                                <button class="ui blue button" @click="regainAccess(index)">Regain Access</button>
+                                <button class="ui green button" @click="channelVisibility(index, true)">Show</button>
+                                <button class="ui red button" @click="channelVisibility(index, false)">Hide</button>
+                                {{--<button class="ui blue button" @click="regainAccess(index)">Regain Access</button>--}}
                             </div>
                         </td>
                     </tr>

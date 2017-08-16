@@ -4,9 +4,11 @@
 namespace App\Http\Controllers\Dashboard;
 
 
+use App\Channel;
 use App\Http\Controllers\Controller;
 use App\Utils\AuditLogger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
 
 class ChannelController extends Controller {
 
@@ -17,20 +19,14 @@ class ChannelController extends Controller {
             return redirect('/servers');
         }
         \JavaScript::put([
-            'Channels' => $this->getChannelsFromBot($server),
+            'Channels' => Channel::whereServer($server)->get(),
             'ServerId' => $server,
         ]);
         return view('server.dashboard.channels')->with(['tab' => 'channels', 'server' => $serverById]);
     }
 
     public function visibility($server, $channel, Request $request) {
-        $client = new \GuzzleHttp\Client();
-
-        $response = $client->request('POST', env('KIRBOT_URL') . 'v1/server/' . $server . '/channel/' . $channel . '/visibility', [
-            'form_params' => [
-                'visible' => $request->get('visible')
-            ]
-        ]);
+        Redis::publish('kirbot:channel-visibility', json_encode(['server'=>$server, 'channel'=>$channel, 'visible'=>$request->get('visible')]));
         AuditLogger::log($server, 'channel_visibility', ['channel'=>$channel, 'visible'=>$request->get('visible')]);
     }
 

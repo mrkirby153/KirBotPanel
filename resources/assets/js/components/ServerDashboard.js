@@ -255,7 +255,7 @@ Vue.component('settings-channels', {
             axios.post('/dashboard/' + ServerId + '/channels/' + chan.id + '/visibility', {
                 visible: visibility
             }).then(() => {
-                this.channels[_.indexOf(this.channels, chan)].private = !visibility
+                this.channels[_.indexOf(this.channels, chan)].hidden = !visibility
             })
         },
         regainAccess(channel){
