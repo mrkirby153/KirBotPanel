@@ -18,7 +18,11 @@ class ServerController extends Controller {
     }
 
     public function getSettings($server) {
-        $server = ServerSettings::whereId($server)->first(['name', 'realname', 'require_realname', 'command_discriminator', 'log_channel', 'cmd_whitelist']);
+        $server = ServerSettings::whereId($server)->first(['name', 'realname', 'require_realname', 'command_discriminator', 'log_channel', 'cmd_whitelist', 'bot_manager']);
+        $server->bot_manager = explode(',', $server->bot_manager);
+        if(!is_array($server->bot_manager)){
+            $server->bot_manager = [$server->bot_manager];
+        }
         if ($server == null) {
             return response()->json(['error' => 'Server not found!'], 404);
         }
