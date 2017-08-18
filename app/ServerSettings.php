@@ -10,7 +10,7 @@ class ServerSettings extends Model {
     public $incrementing = false;
 
     public $fillable = [
-        'id', 'name', 'realname', 'require_realname', 'command_discriminator', 'log_channel', 'cmd_whitelist'
+        'id', 'name', 'realname', 'require_realname', 'command_discriminator', 'log_channel', 'cmd_whitelist', 'bot_manager'
     ];
 
     public function channels() {

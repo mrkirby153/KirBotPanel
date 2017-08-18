@@ -26,6 +26,7 @@ Route::group(['middleware' => 'has_discord_token'], function () {
     Route::patch('/dashboard/{server}/logging', 'Dashboard\GeneralController@updateLogging')->middleware(['auth']);
     Route::post('/dashboard/{server}/realname', 'Dashboard\GeneralController@setRealnameSettings');
     Route::post('/dashboard/{server}/whitelist', 'Dashboard\GeneralController@updateChannelWhitelist');
+    Route::post('/dashboard/{server}/managers', 'Dashboard\GeneralController@updateBotManagers');
 
     // Commands
     Route::get('/dashboard/{server}/commands', 'Dashboard\CommandController@showCommands')->middleware('auth')->name('dashboard.commands');

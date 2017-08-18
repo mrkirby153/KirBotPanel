@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\CustomCommand;
 use App\Http\Controllers\Controller;
 use App\Log;
+use App\Role;
 use App\ServerSettings;
 use App\Utils\AuditLogger;
 use GuzzleHttp\Exception\ConnectException;
@@ -36,7 +37,8 @@ class GeneralController extends Controller {
             'Server' => $serverById,
             'ServerData' => $serverData
         ]);
-        return view('server.dashboard.general')->with(['server' => $serverById, 'tab' => 'general', 'serverData'=>$serverData, 'textChannels'=>$this->getTextChannelsFromBot($server)]);
+        return view('server.dashboard.general')->with(['server' => $serverById, 'tab' => 'general', 'serverData'=>$serverData,
+            'textChannels'=>$this->getTextChannelsFromBot($server), 'roles'=>Role::whereServerId($server)->get()]);
     }
 
 
@@ -78,6 +80,15 @@ class GeneralController extends Controller {
             'cmd_whitelist'=> $whitelist
         ]);
         AuditLogger::log($server, "command_whitelist_update", ['channels'=>$request->get('channels')]);
+    }
+
+    public function updateBotManagers($server, Request $request){
+        $roles = implode(',', $request->get('roles'));
+        ServerSettings::updateOrCreate(['id'=>$server], [
+            'id'=>$server,
+            'bot_manager' => $roles
+        ]);
+        AuditLogger::log($server, "bot_manager_update", ['roles'=>$request->get('roles')]);
     }
 
     public function showCommandList($server) {

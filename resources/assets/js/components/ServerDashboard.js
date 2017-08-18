@@ -1,6 +1,6 @@
 Vue.component('settings-realname', {
 
-    data(){
+    data() {
         return {
             forms: {
                 realName: $.extend(true, new Form({
@@ -12,7 +12,7 @@ Vue.component('settings-realname', {
     },
 
 
-    mounted(){
+    mounted() {
         if (ServerData != null) {
             this.forms.realName.requireRealname = ServerData.require_realname;
             this.forms.realName.realnameSetting = ServerData.realname;
@@ -20,7 +20,7 @@ Vue.component('settings-realname', {
     },
 
     methods: {
-        sendForm(){
+        sendForm() {
             if (this.forms.realName.realnameSetting === "OFF") {
                 this.forms.realName.requireRealname = false;
             }
@@ -30,7 +30,7 @@ Vue.component('settings-realname', {
 });
 
 Vue.component('settings-commands', {
-    data(){
+    data() {
         return {
             forms: {
                 cmdDiscriminator: $.extend(true, new Form({
@@ -50,7 +50,7 @@ Vue.component('settings-commands', {
         }
     },
 
-    mounted(){
+    mounted() {
         if (ServerData != null) {
             this.forms.cmdDiscriminator.discriminator = ServerData.command_discriminator
         }
@@ -60,7 +60,7 @@ Vue.component('settings-commands', {
     },
 
     methods: {
-        localizeClearance(clearance){
+        localizeClearance(clearance) {
             switch (clearance) {
                 case "BOT_OWNER":
                     return "Bot Owner";
@@ -77,7 +77,7 @@ Vue.component('settings-commands', {
             }
         },
 
-        editCommand(id, newCommand){
+        editCommand(id, newCommand) {
             this.forms.editCommand.successful = false;
             this.forms.editCommand.busy = false;
             this.forms.editCommand.errors.forget();
@@ -97,7 +97,7 @@ Vue.component('settings-commands', {
             $("#edit-command-modal").modal({
                 closable: false,
                 transition: 'scale',
-                onApprove(){
+                onApprove() {
                     if (newCommand) {
                         Panel.put('/dashboard/' + Server.id + '/commands', vm.forms.editCommand).then(() => {
                             // fufilled
@@ -122,7 +122,7 @@ Vue.component('settings-commands', {
                         return false
                     }
                 },
-                onHide(){
+                onHide() {
                     vm.forms.editCommand.name = "";
                     vm.forms.editCommand.clearance = "";
                     vm.forms.editCommand.description = "";
@@ -132,13 +132,13 @@ Vue.component('settings-commands', {
             }).modal('show');
         },
 
-        confirmDelete(id){
+        confirmDelete(id) {
             this.toDelete = id;
             let vm = this;
             $("#delete-command-modal").modal({
                 closable: false,
                 transition: 'scale',
-                onApprove(){
+                onApprove() {
                     axios.delete('/dashboard/' + Server.id + '/command/' + id).then(resp => {
                         vm.refreshCommands();
                     })
@@ -146,11 +146,11 @@ Vue.component('settings-commands', {
             }).modal('show');
         },
 
-        saveDiscrim(){
+        saveDiscrim() {
             Panel.sendForm('patch', '/dashboard/' + Server.id + '/discriminator', this.forms.cmdDiscriminator);
         },
 
-        refreshCommands(){
+        refreshCommands() {
             axios.get('/dashboard/' + Server.id + '/commands').then(response => {
                 this.commands = response.data;
             })
@@ -159,7 +159,7 @@ Vue.component('settings-commands', {
 });
 
 Vue.component('settings-logging', {
-    data(){
+    data() {
         return {
             forms: {
                 logging: $.extend(true, new Form({
@@ -171,13 +171,13 @@ Vue.component('settings-logging', {
         }
     },
 
-    beforeMount(){
+    beforeMount() {
         this.forms.logging.enabled = ServerData.log_channel !== null;
         this.forms.logging.channel = ServerData.log_channel !== null ? ServerData.log_channel : null;
     },
 
     methods: {
-        save(){
+        save() {
             if (!this.forms.logging.enabled) {
                 this.forms.logging.channel = null
             }
@@ -187,7 +187,7 @@ Vue.component('settings-logging', {
 });
 
 Vue.component('settings-music', {
-    data(){
+    data() {
         return {
             forms: {
                 music: $.extend(true, new Form({
@@ -205,7 +205,7 @@ Vue.component('settings-music', {
         }
     },
 
-    mounted(){
+    mounted() {
         this.forms.music.enabled = Music.enabled;
         this.forms.music.whitelist_mode = Music.mode;
         this.forms.music.blacklisted_urls = Music.blacklist_songs.replace(new RegExp(',', 'g'), "\n");
@@ -220,7 +220,7 @@ Vue.component('settings-music', {
     },
 
     methods: {
-        sendForm(){
+        sendForm() {
             Panel.post('/dashboard/' + Server.id + '/music', this.forms.music)
         },
         capitalizeFirstLetter(string) {
@@ -230,27 +230,27 @@ Vue.component('settings-music', {
     }
 });
 Vue.component('settings-channels', {
-    data(){
+    data() {
         return {
             channels: []
         }
     },
 
-    mounted(){
+    mounted() {
         this.channels = Channels;
     },
 
     computed: {
-        textChannels(){
+        textChannels() {
             return _.reject(this.channels, chan => chan.type === "VOICE")
         },
-        voiceChannels(){
+        voiceChannels() {
             return _.reject(this.channels, chan => chan.type === "TEXT")
         }
     },
 
     methods: {
-        channelVisibility(channel, visibility){
+        channelVisibility(channel, visibility) {
             let chan = this.textChannels[channel];
             axios.post('/dashboard/' + ServerId + '/channels/' + chan.id + '/visibility', {
                 visible: visibility
@@ -258,7 +258,7 @@ Vue.component('settings-channels', {
                 this.channels[_.indexOf(this.channels, chan)].hidden = !visibility
             })
         },
-        regainAccess(channel){
+        regainAccess(channel) {
             let chan = this.textChannels[channel];
             axios.post('/dashboard/' + ServerId + '/channels/' + chan.id + '/access')
         }
@@ -266,7 +266,7 @@ Vue.component('settings-channels', {
 });
 
 Vue.component('settings-channel-whitelist', {
-    data(){
+    data() {
         return {
             forms: {
                 whitelist: $.extend(true, new Form({
@@ -276,13 +276,35 @@ Vue.component('settings-channel-whitelist', {
         }
     },
 
-    mounted(){
+    mounted() {
         this.forms.whitelist.channels = ServerData.cmd_whitelist.split(",")
     },
 
     methods: {
-        save(){
-            Panel.sendForm('post', '/dashboard/'+Server.id+'/whitelist', this.forms.whitelist)
+        save() {
+            Panel.sendForm('post', '/dashboard/' + Server.id + '/whitelist', this.forms.whitelist)
+        }
+    }
+});
+
+Vue.component('settings-bot-manager', {
+    data() {
+        return {
+            forms: {
+                roles: $.extend(true, new Form({
+                    roles: []
+                }), {})
+            }
+        }
+    },
+
+    mounted() {
+        this.forms.roles.roles = ServerData.bot_manager.split(",")
+    },
+
+    methods: {
+        save() {
+            Panel.sendForm('post', '/dashboard/' + Server.id + '/managers', this.forms.roles);
         }
     }
 });
