@@ -58,6 +58,9 @@ class CommandController extends Controller {
     }
 
     public function updateDiscrim($server, Request $request) {
+        $this->validate($request, [
+            'discriminator' => 'required'
+        ]);
         if ($this->getServerById($server) == null || ($this->getServerById($server)->permissions & 32) <= 0) {
             return response()->json(['server' => 'You do not have access to this server!'], 422);
         }

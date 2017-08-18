@@ -8,7 +8,7 @@ require('./bootstrap');
 
 require('./semantic');
 
-require('./form/bootstrapper');
+require('./form/form2');
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -19,6 +19,7 @@ require('./form/bootstrapper');
 Vue.component('example', require('./components/Example.vue'));
 Vue.component('form-messages', require('./components/Messages.vue'));
 Vue.component('panel-form', require('./components/Form.vue'));
+Vue.component('field', require('./components/Field.vue'));
 
 require('./components/UserInfo');
 require('./components/ServerDashboard');

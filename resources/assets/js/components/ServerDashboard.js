@@ -1,12 +1,14 @@
+import Form from "../form/form2";
+
 Vue.component('settings-realname', {
 
     data() {
         return {
             forms: {
-                realName: $.extend(true, new Form({
+                realName: new Form('POST', '/dashboard/'+Server.id+'/realname', {
                     requireRealname: false,
-                    realnameSetting: 'OFF',
-                }), {})
+                    realnameSetting: 'OFF'
+                })
             }
         }
     },
@@ -24,7 +26,8 @@ Vue.component('settings-realname', {
             if (this.forms.realName.realnameSetting === "OFF") {
                 this.forms.realName.requireRealname = false;
             }
-            Panel.post('/dashboard/' + Server.id + '/realname', this.forms.realName);
+            // Panel.post('/dashboard/' + Server.id + '/realname', this.forms.realName);
+            this.forms.realName.save();
         }
     }
 });
@@ -33,16 +36,16 @@ Vue.component('settings-commands', {
     data() {
         return {
             forms: {
-                cmdDiscriminator: $.extend(true, new Form({
+                cmdDiscriminator: new Form('patch', '/dashboard/'+Server.id+'/discriminator', {
                     discriminator: '!'
-                }), {}),
-                editCommand: $.extend(true, new Form({
+                }),
+                editCommand: new Form("", "", {
                     name: '',
                     description: '',
                     clearance: '',
                     id: '',
                     respect_whitelist: true
-                }), {})
+                })
             },
             commands: [],
             addingCommand: false,
@@ -80,7 +83,7 @@ Vue.component('settings-commands', {
         editCommand(id, newCommand) {
             this.forms.editCommand.successful = false;
             this.forms.editCommand.busy = false;
-            this.forms.editCommand.errors.forget();
+            this.forms.editCommand.errors.clearAll();
             this.addingCommand = newCommand;
             if (!newCommand) {
                 this.commands.forEach(c => {
@@ -99,25 +102,23 @@ Vue.component('settings-commands', {
                 transition: 'scale',
                 onApprove() {
                     if (newCommand) {
-                        Panel.put('/dashboard/' + Server.id + '/commands', vm.forms.editCommand).then(() => {
-                            // fufilled
+                        vm.forms.editCommand.put('/dashboard/'+Server.id+'/commands').then(()=>{
                             vm.refreshCommands();
-                            setTimeout(() => {
+                            setTimeout(()=>{
                                 $("#edit-command-modal").modal('hide');
                             }, 1000)
-                        }, () => {
-                            // rejected
+                        }, ()=>{
+                            // Rejected
                         });
                         return false;
                     } else {
-                        Panel.sendForm('patch', '/dashboard/' + Server.id + '/commands', vm.forms.editCommand).then(() => {
-                            // fufilled
+                        vm.forms.editCommand.patch('/dashboard/'+Server.id+'/commands').then(()=>{
                             vm.refreshCommands();
-                            setTimeout(() => {
-                                $("#edit-command-modal").modal('hide');
+                            setTimeout(()=>{
+                                $("#edit-command-modal").modal('hide')
                             }, 1000)
-                        }, () => {
-                            // rejected
+                        }, ()=>{
+                            // Rejected
                         });
                         return false
                     }
@@ -147,7 +148,7 @@ Vue.component('settings-commands', {
         },
 
         saveDiscrim() {
-            Panel.sendForm('patch', '/dashboard/' + Server.id + '/discriminator', this.forms.cmdDiscriminator);
+            this.forms.cmdDiscriminator.save();
         },
 
         refreshCommands() {
@@ -162,10 +163,10 @@ Vue.component('settings-logging', {
     data() {
         return {
             forms: {
-                logging: $.extend(true, new Form({
+                logging: new Form('patch', '/dashboard/'+Server.id+'/logging', {
                     enabled: false,
                     channel: ''
-                }), {})
+                })
             },
             loaded: false
         }
@@ -181,7 +182,7 @@ Vue.component('settings-logging', {
             if (!this.forms.logging.enabled) {
                 this.forms.logging.channel = null
             }
-            Panel.sendForm('patch', '/dashboard/' + Server.id + '/logging', this.forms.logging);
+            this.forms.logging.save();
         }
     }
 });
@@ -190,7 +191,7 @@ Vue.component('settings-music', {
     data() {
         return {
             forms: {
-                music: $.extend(true, new Form({
+                music: new Form('post', '/dashboard/'+Server.id+'/music', {
                     enabled: true,
                     whitelist_mode: 'OFF',
                     channels: [],
@@ -199,8 +200,8 @@ Vue.component('settings-music', {
                     max_song_length: -1,
                     skip_cooldown: 0,
                     skip_timer: 30,
-                    playlists: false,
-                }), {})
+                    playlists: false
+                })
             }
         }
     },
@@ -221,7 +222,7 @@ Vue.component('settings-music', {
 
     methods: {
         sendForm() {
-            Panel.post('/dashboard/' + Server.id + '/music', this.forms.music)
+           this.forms.music.save();
         },
         capitalizeFirstLetter(string) {
             string = string.toLowerCase();
@@ -269,9 +270,9 @@ Vue.component('settings-channel-whitelist', {
     data() {
         return {
             forms: {
-                whitelist: $.extend(true, new Form({
+                whitelist: new Form('post', '/dashboard/'+Server.id+'/whitelist', {
                     channels: []
-                }), {})
+                })
             }
         }
     },
@@ -282,7 +283,7 @@ Vue.component('settings-channel-whitelist', {
 
     methods: {
         save() {
-            Panel.sendForm('post', '/dashboard/' + Server.id + '/whitelist', this.forms.whitelist)
+            this.forms.whitelist.send();
         }
     }
 });
@@ -291,9 +292,9 @@ Vue.component('settings-bot-manager', {
     data() {
         return {
             forms: {
-                roles: $.extend(true, new Form({
-                    roles: []
-                }), {})
+                roles: new Form('post', '/dashboard/'+Server.id+'/managers',{
+                    roles:[]
+                })
             }
         }
     },
@@ -304,7 +305,7 @@ Vue.component('settings-bot-manager', {
 
     methods: {
         save() {
-            Panel.sendForm('post', '/dashboard/' + Server.id + '/managers', this.forms.roles);
+            this.forms.roles.save();
         }
     }
 });

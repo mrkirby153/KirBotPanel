@@ -10,21 +10,21 @@
             <panel-form :form="forms.realName">
                 <div slot="inputs">
                     <div class="two fields">
-                        <div class="field" :class="{'disabled': forms.realName.realnameSetting == 'OFF'}">
+                        <field name="requireRealname" :form="forms.realName" :class="{'disabled': forms.realName.realnameSetting == 'OFF'}">
                             <div class="ui checkbox">
-                                <input type="checkbox" name="real_name_required" id="real_name_required" v-model="forms.realName.requireRealname"/>
+                                <input type="checkbox" name="requireRealname" v-model="forms.realName.requireRealname"/>
                                 <label>Require Real Names</label>
                             </div>
                             <p>If checked, users will be assigned a role if they have not set their real name</p>
-                        </div>
-                        <div class="field">
+                        </field>
+                        <field name="realnameSetting" :form="forms.realName">
                             <label>Real Name</label>
-                            <select class="ui fluid dropdown" name="real_name_setting" id="real_name_setting" v-model="forms.realName.realnameSetting">
+                            <select class="ui fluid dropdown" name="realName" v-model="forms.realName.realnameSetting">
                                 <option value="OFF">Disabled</option>
                                 <option value="FIRST_ONLY">Display first name only</option>
                                 <option value="FIRST_LAST">Display first and last name</option>
                             </select>
-                        </div>
+                        </field>
                     </div>
                     <button class="ui button fluid green" @click.prevent="sendForm">Save</button>
                 </div>
@@ -38,22 +38,22 @@
             <panel-form :form="forms.logging">
                 <div slot="inputs">
                     <div class="two fields">
-                        <div class="field">
-                            <div class="ui checkbox">
-                                <input type="checkbox" name="logging_enabled" id="logging_enabled" v-model="forms.logging.enabled"/>
+                        <field name="enabled" :form="forms.logging">
+                            <div class="ui slider checkbox">
+                                <input type="checkbox" name="enabled" v-model="forms.logging.enabled"/>
                                 <label>Enable</label>
                             </div>
-                        </div>
-                        <div class="field" :class="{'disabled': !forms.logging.enabled}">
+                        </field>
+                        <field name="channel" :form="forms.logging" :class="{'disabled': !forms.logging.enabled}">
                             <label>Logging Channel</label>
-                            <select class="ui search selection fluid dropdown" name="logging_channel" id="logging_channel" v-model="forms.logging.channel">
+                            <select class="ui search selection fluid dropdown" name="channel" v-model="forms.logging.channel">
                                 @foreach($textChannels as $channel)
                                     @if($channel->type == 'TEXT')
                                         <option value="{{$channel->id}}">#{{$channel->channel_name}}</option>
                                     @endif
                                 @endforeach
                             </select>
-                        </div>
+                        </field>
                     </div>
                     <button class="ui button fluid green" @click.prevent="save">Save</button>
                 </div>
@@ -70,7 +70,7 @@
                             <p>Channels specified here are the only channels in which bot commands can be run. The bot will ignore
                                 <b>MOST</b> commands from other channels.</p>
                             <em>Leave blank to allow all channels</em>
-                            <div class="field">
+                            <field name="channels" :form="forms.whitelist">
                                 <label><b>Channels</b></label>
                                 <select class="ui fluid search dropdown" multiple="" name="channels[]" v-model="forms.whitelist.channels">
                                     @foreach($textChannels as $channel)
@@ -79,7 +79,7 @@
                                         @endif
                                     @endforeach
                                 </select>
-                            </div>
+                            </field>
                             <button class="ui button fluid green" @click.prevent="save">Save</button>
                         </div>
                     </panel-form>
@@ -94,14 +94,14 @@
                 <settings-bot-manager inline-template>
                     <panel-form :form="forms.roles">
                         <div slot="inputs">
-                            <div class="field">
+                            <field name="roles" :form="forms.roles">
                                 <label><b>Roles</b></label>
                                 <select class="ui fluid search dropdown" multiple="" name="roles[]" v-model="forms.roles.roles">
                                     @foreach($roles as $role)
                                         <option value="{{$role->id}}">{{$role->name}}</option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </field>
                             <button class="ui button fluid green" @click.prevent="save">Save</button>
                         </div>
                     </panel-form>

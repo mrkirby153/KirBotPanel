@@ -45,6 +45,15 @@ class MusicController extends Controller {
     }
 
     public function update(Request $request, $server) {
+        $this->validate($request, [
+            'enabled' => 'required',
+            'whitelist_mode' => 'required',
+            'max_queue_length' => 'required|numeric',
+            'max_song_length' => 'required|numeric',
+            'skip_cooldown' => 'required|numeric',
+            'skip_timer' => 'required',
+            'playlists' => 'required'
+        ]);
         if ($this->getServerById($server) == null || ($this->getServerById($server)->permissions & 32) <= 0) {
             return response()->json(['server' => 'You do not have access to this server!'], 422);
         }

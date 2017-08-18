@@ -9,16 +9,17 @@
             <div class="ui {{$color}} segment">
                 <h2>Command Discriminator</h2>
                 <p>The prefix which all commands on the server use</p>
-                <form class="ui form" :class="{'success': forms.cmdDiscriminator.successful, 'error':forms.cmdDiscriminator.errors.hasErrors(), 'loading': forms.cmdDiscriminator.busy}" @submit.prevent="saveDiscrim">
-                    <form-messages success-header="Success!" success-body="Saved!" :error-array="forms.cmdDiscriminator.errors.flatten()"></form-messages>
-                    <div class="one field">
-                        <div class="ui field">
-                            <label>Discriminator</label>
-                            <input type="text" v-model="forms.cmdDiscriminator.discriminator"/>
+                <panel-form :form="forms.cmdDiscriminator">
+                    <div slot="inputs">
+                        <div class="one field">
+                            <field name="discriminator" :form="forms.cmdDiscriminator">
+                                <label>Discriminator</label>
+                                <input name="discriminator" v-model="forms.cmdDiscriminator.discriminator"/>
+                            </field>
                         </div>
+                        <button class="ui button fluid green" @click.prevent="saveDiscrim">Save</button>
                     </div>
-                    <button class="ui button fluid green" @click.prevent="saveDiscrim">Save</button>
-                </form>
+                </panel-form>
             </div>
             <div class="ui {{$color}} segment">
                 <h2>Custom Commands</h2>
@@ -81,48 +82,48 @@
                     <span v-else>Edit Command: @{{ forms.editCommand.name }}</span>
                 </div>
                 <div class="content">
-                    <form class="ui form" :class="{'error':forms.editCommand.errors.hasErrors(), 'loading': forms.editCommand.busy, 'success':forms.editCommand.successful}">
-                        <form-messages success-body="Saved!" :error-array="forms.editCommand.errors.flatten()"></form-messages>
-                        <div class="required field">
-                            <label>Command Name</label>
-                            <input type="text" v-model="forms.editCommand.name"/>
+                    <panel-form :form="forms.editCommand">
+                        <div slot="inputs">
+                            <field :form="forms.editCommand" name="name" required="true">
+                                <label>Command Name</label>
+                                <input type="text" name="name" v-model="forms.editCommand.name"/>
+                            </field>
+                            <field :form="forms.editCommand" name="respect_whitelist">
+                                <div class="ui checkbox">
+                                    <input type="checkbox" v-model="forms.editCommand.respect_whitelist" name="respect_whitelist"/>
+                                    <label><b>Respect Whitelist</b></label>
+                                </div>
+                            </field>
+                            <field :form="forms.editCommand" name="description" required="true">
+                                <label>Command Response</label>
+                                <p>
+                                    Arguments can be accessed with the following syntax:
+                                    <code>%#</code>, where # is the argument number.
+                                </p>
+                                <p>For example, the first argument can be accessed with <code>%1</code></p>
+                                <textarea v-model="forms.editCommand.description" name="description"></textarea>
+                            </field>
+                            <h3>Clearance Hierarchy</h3>
+                            <p>Below is the clearance hierarchy according to the robot, with the highest memebrs listed first.</p>
+                            <ol>
+                                <li><b>Server Owner: </b>The user who owns the server on Discord</li>
+                                <li><b>Server Administrator:  </b>Anyone with the <code>Server Administrator</code> permission</li>
+                                <li><b>Bot Manager: </b>Anyone with a bot manager role</li>
+                                <li><b>Users: </b>Any user that doesn't meet the above criteria</li>
+                                <li><b>Other Bots: </b>Other robots on the server</li>
+                            </ol>
+                            <field name="clearance" :form="forms.editCommand" required="true">
+                                <label>Clearance</label>
+                                <select v-model="forms.editCommand.clearance" class="ui fluid dropdown" name="clearance">
+                                    <option value="SERVER_OWNER">Server Owner</option>
+                                    <option value="SERVER_ADMINISTRATOR">Server Administrator</option>
+                                    <option value="BOT_MANAGER">Bot Manager</option>
+                                    <option value="USER">Users</option>
+                                    <option value="BOT">Other Bots</option>
+                                </select>
+                            </field>
                         </div>
-                        <div class="required field">
-                            <div class="ui checkbox">
-                                <input type="checkbox" v-model="forms.editCommand.respect_whitelist"/>
-                                <label><b>Respect Whitelist</b></label>
-                            </div>
-                            <p>If this command respects the global whitelist setting for commands</p>
-                        </div>
-                        <div class="required field">
-                            <label>Command Response</label>
-                            <p>
-                                Arguments can be accessed with the following syntax:
-                                <code>%#</code>, where # is the argument number.
-                            </p>
-                            <p>For example, the first argument can be accessed with <code>%1</code></p>
-                            <textarea v-model="forms.editCommand.description"></textarea>
-                        </div>
-                        <h3>Clearance Hierarchy</h3>
-                        <p>
-                            <b>Server Owner: </b>The user who owns the server on discord <br/>
-                            <b>Server Administrator: </b>Anyone with the
-                            <code>Server Administrator</code> permission<br/>
-                            <b>Bot Manager: </b>Anyone with the Bot Manager role (Not yet implemented)<br/>
-                            <b>Users: </b>Any user who doesn't meet the previous criteria<br/>
-                            <b>Other Bots: </b>Other discord robots on the server<br/>
-                        </p>
-                        <div class="required field">
-                            <label>Clearance</label>
-                            <select v-model="forms.editCommand.clearance" class="ui fluid dropdown">
-                                <option value="SERVER_OWNER">Server Owner</option>
-                                <option value="SERVER_ADMINISTRATOR">Server Administrator</option>
-                                <option value="BOT_MANAGER">Bot Manager</option>
-                                <option value="USER">Users</option>
-                                <option value="BOT">Other Bots</option>
-                            </select>
-                        </div>
-                    </form>
+                    </panel-form>
                 </div>
                 <div class="actions">
                     <div class="ui green ok button" :class="{'loading': forms.editCommand.busy}">Save</div>
