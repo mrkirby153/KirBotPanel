@@ -46,4 +46,8 @@ Route::group(['middleware'=>'internal_api', 'prefix'=>'internal'], function(){
     Route::get('/message/{serverMessage}', 'API\ServerMessageController@show');
 
     Route::resource('role', 'RoleController');
+
+    Route::get('/server/{server}/quotes', 'API\QuoteController@getServerQuotes');
+    Route::get('/server/quote/{quoteId}', 'API\QuoteController@get');
+    Route::put('/server/quote', 'API\QuoteController@save');
 });

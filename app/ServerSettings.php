@@ -21,4 +21,8 @@ class ServerSettings extends Model {
         return $this->hasMany(Role::class, 'server_id');
     }
 
+    public function quotes(){
+        return $this->hasMany(Quote::class, 'server_id');
+    }
+
 }
