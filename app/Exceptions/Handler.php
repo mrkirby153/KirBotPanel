@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
@@ -66,6 +67,12 @@ class Handler extends ExceptionHandler {
         }
         if(config('app.debug') && !($exception instanceof ValidationException)){
             return $this->renderExceptionWithWhoops($exception);
+        }
+        if($exception instanceof ModelNotFoundException){
+            return response()->view('errors.404', [], 404);
+        }
+        if(!config('app.debug')){
+            return response()->view('errors.500', [], 500);
         }
         return parent::render($request, $exception);
     }
