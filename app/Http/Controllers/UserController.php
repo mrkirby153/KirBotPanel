@@ -8,6 +8,7 @@ use Auth;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use Illuminate\Http\Request;
+use Redis;
 
 class UserController extends Controller {
 
@@ -44,12 +45,7 @@ class UserController extends Controller {
         $info->last_name = $request->lastname;
         $info->id = Auth::user()->id;
         $info->save();
-        try{
-            $guzzle = new \GuzzleHttp\Client();
-            $guzzle->get(env('KIRBOT_URL').'v1/name/update');
-        } catch(ConnectException $exception){
-            // Ignore
-        }
+        Redis::publish('kirbot:update-names', json_encode([]));
         return response()->json(['changed'=>$info->changed]);
     }
 

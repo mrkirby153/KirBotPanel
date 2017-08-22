@@ -2,10 +2,10 @@ Vue.component('user-information', {
     data(){
         return {
             forms: {
-                userData: $.extend(true, new Form({
+                userData: new Form('post', '/name', {
                     firstname: '',
-                    lastname: '',
-                }), {})
+                    lastname: ''
+                })
             },
             disabled: false,
             alreadyChanged: false,
@@ -27,24 +27,11 @@ Vue.component('user-information', {
     methods: {
         updateProfile(){
             let vm = this;
-            if (!this.forms.userData.firstname || !this.forms.userData.lastname) {
-                $("#missing-name").modal('show');
-                return
-            }
-            $("#confirm-set-name").modal({
-                closable: false,
-                transition: 'scale',
-                blurring: true,
-                onApprove(){
-                    Panel.post('/name', vm.forms.userData).then(resp => {
-                       vm.alreadyChanged = resp.data.changed;
-                        vm.disabled = true;
-                        setTimeout(() => {
-                            vm.forms.userData.successful = false
-                        }, 1500);
-                    });
-                }
-            }).modal('show');
+            this.forms.userData.save();
+            this.alreadyChanged = true;
+            setTimeout(()=>{
+                vm.forms.userData.successful = false;
+            });
         },
         activateForm(){
             let vm = this;

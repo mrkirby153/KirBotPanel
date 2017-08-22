@@ -43,7 +43,7 @@ class GeneralController extends Controller {
         $server->require_realname = ($request->get('realnameSetting') == 'OFF') ? false : $request->get('requireRealname');
         $server->save();
         AuditLogger::log($server, "realname_update", ['enabled' => $request->realnameSetting, 'required' => $request->requireRealname]);
-        Redis::publish('kirbot:update-name', json_encode(['server' => $server]));
+        Redis::publish('kirbot:update-name', json_encode(['server' => $server->id]));
     }
 
     public function updateLogging(ServerSettings $server, Request $request) {
