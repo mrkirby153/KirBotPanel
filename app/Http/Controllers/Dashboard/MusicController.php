@@ -3,11 +3,9 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
-use App\MusicSettings;
 use App\ServerSettings;
 use App\Utils\AuditLogger;
 use Illuminate\Http\Request;
-use Mockery\Exception;
 
 class MusicController extends Controller {
 
@@ -24,10 +22,11 @@ class MusicController extends Controller {
     public function displayQueue($server) {
         // TODO 8/21/2017 - Pull from redis
         $queue = $this->getQueue($server);
+        $playing = $this->getNowPlaying($server);
         $server = ServerSettings::whereId($server)->first();
-        if($server == null)
-            $server = new ServerSettings(['name'=>'Unknown']);
-        return view('server.queue')->with(['queue'=>$queue, 'server'=>$server]);
+        if ($server == null)
+            $server = new ServerSettings(['name' => 'Unknown']);
+        return view('server.queue')->with(['queue' => $queue, 'server' => $server, 'playing'=>$playing]);
     }
 
     public function update(Request $request, ServerSettings $server) {
@@ -53,19 +52,18 @@ class MusicController extends Controller {
     }
 
     private function getQueue($server) {
-        try {
-            $guzzle = new \GuzzleHttp\Client();
-            $data = $guzzle->get(env('KIRBOT_URL') . 'v1/server/' . $server . '/queue');
-            return json_decode($data->getBody());
-        } catch (Exception $exception) {
-            // Fall through
-        }
-        return [
-            'length' => 0,
-            'nowPlaying' => null,
-            'playing' => false,
-            'songs' => []
-        ];
+        $data = \Redis::get("music.queue:$server");
+        if ($data == null)
+            return json_decode("[]");
+        else
+            return json_decode($data);
+    }
 
+    private function getNowPlaying($server){
+        $data = \Redis::get("music.playing:$server");
+        if($data == null)
+            return null;
+        else
+            return json_decode($data);
     }
 }
