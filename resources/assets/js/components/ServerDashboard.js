@@ -15,9 +15,9 @@ Vue.component('settings-realname', {
 
 
     mounted() {
-        if (ServerData != null) {
-            this.forms.realName.requireRealname = ServerData.require_realname;
-            this.forms.realName.realnameSetting = ServerData.realname;
+        if (Server != null) {
+            this.forms.realName.requireRealname = Server.require_realname;
+            this.forms.realName.realnameSetting = Server.realname;
         }
     },
 
@@ -54,8 +54,8 @@ Vue.component('settings-commands', {
     },
 
     mounted() {
-        if (ServerData != null) {
-            this.forms.cmdDiscriminator.discriminator = ServerData.command_discriminator
+        if (Server != null) {
+            this.forms.cmdDiscriminator.discriminator = Server.command_discriminator
         }
         if (Commands != null) {
             this.commands = Commands;
@@ -112,7 +112,7 @@ Vue.component('settings-commands', {
                         });
                         return false;
                     } else {
-                        vm.forms.editCommand.patch('/dashboard/'+Server.id+'/commands').then(()=>{
+                        vm.forms.editCommand.patch('/dashboard/'+Server.id+'/command/'+vm.forms.editCommand.id).then(()=>{
                             vm.refreshCommands();
                             setTimeout(()=>{
                                 $("#edit-command-modal").modal('hide')
@@ -173,8 +173,8 @@ Vue.component('settings-logging', {
     },
 
     beforeMount() {
-        this.forms.logging.enabled = ServerData.log_channel !== null;
-        this.forms.logging.channel = ServerData.log_channel !== null ? ServerData.log_channel : null;
+        this.forms.logging.enabled = Server.log_channel !== null;
+        this.forms.logging.channel = Server.log_channel !== null ? Server.log_channel : null;
     },
 
     methods: {
@@ -278,7 +278,7 @@ Vue.component('settings-channel-whitelist', {
     },
 
     mounted() {
-        this.forms.whitelist.channels = ServerData.cmd_whitelist.split(",")
+        this.forms.whitelist.channels = Server.cmd_whitelist.split(",")
     },
 
     methods: {
@@ -300,7 +300,7 @@ Vue.component('settings-bot-manager', {
     },
 
     mounted() {
-        this.forms.roles.roles = ServerData.bot_manager.split(",")
+        this.forms.roles.roles = Server.bot_manager.split(",")
     },
 
     methods: {

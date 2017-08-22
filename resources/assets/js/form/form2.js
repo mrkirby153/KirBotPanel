@@ -82,7 +82,7 @@ class FormErrors {
     }
 
     all(){
-        return this.errors;
+        return this.errors
     }
 
     clear(error) {

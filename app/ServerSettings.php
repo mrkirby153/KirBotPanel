@@ -25,4 +25,12 @@ class ServerSettings extends Model {
         return $this->hasMany(Quote::class, 'server_id');
     }
 
+    public function commands(){
+        return $this->hasMany(CustomCommand::class, 'server');
+    }
+
+    public function musicSettings(){
+        return $this->hasOne(MusicSettings::class, 'id');
+    }
+
 }

@@ -11,32 +11,18 @@ use Mockery\Exception;
 
 class MusicController extends Controller {
 
-    public function index(Request $request, $server) {
-        \Log::info($request);
-        $serverById = $this->getServerById($server);
-        if (($serverById->permissions & 32) <= 0) {
-            return redirect('/servers');
-        }
-        $musicSettings = MusicSettings::firstOrCreate(['id' => $server], [
-            'id' => $server,
-            'enabled' => true,
-            'mode' => 'OFF',
-            'channels' => '',
-            'blacklist_songs' => '',
-            'max_queue_length' => -1,
-            'max_song_length' => -1,
-            'skip_cooldown' => 0,
-            'skip_timer' => 30,
-        ]);
+    public function index(ServerSettings $server) {
+        $this->authorize('update', $server);
         \JavaScript::put([
-            'Server' => $serverById,
-            'Music' => $musicSettings
+            'Music' => $server->musicSettings,
+            'Server' => $server
         ]);
-        return view('server.dashboard.music')->with(['server' => $serverById, 'tab' => 'music', 'channels' => $this->getVoiceChannelsFromBot($server)]);
+        return view('server.dashboard.music')->with(['server' => $server, 'tab' => 'music', 'channels' => $this->getVoiceChannelsFromBot($server->id)]);
 
     }
 
     public function displayQueue($server) {
+        // TODO 8/21/2017 - Pull from redis
         $queue = $this->getQueue($server);
         $server = ServerSettings::whereId($server)->first();
         if($server == null)
@@ -44,7 +30,8 @@ class MusicController extends Controller {
         return view('server.queue')->with(['queue'=>$queue, 'server'=>$server]);
     }
 
-    public function update(Request $request, $server) {
+    public function update(Request $request, ServerSettings $server) {
+        $this->authorize('update', $server);
         $this->validate($request, [
             'enabled' => 'required',
             'whitelist_mode' => 'required',
@@ -54,18 +41,13 @@ class MusicController extends Controller {
             'skip_timer' => 'required',
             'playlists' => 'required'
         ]);
-        if ($this->getServerById($server) == null || ($this->getServerById($server)->permissions & 32) <= 0) {
-            return response()->json(['server' => 'You do not have access to this server!'], 422);
-        }
 
-        $musicSettings = MusicSettings::whereId($server)->first();
+        $musicSettings = $server->musicSettings;
         $musicSettings->fill($request->all());
         $musicSettings->mode = $request->whitelist_mode;
         $musicSettings->channels = implode(',', $request->channels);
         $musicSettings->blacklist_songs = implode(',', explode("\n", $request->blacklisted_urls));
-
-        AuditLogger::log($server, "music_update", $musicSettings);
-
+        AuditLogger::log($server->id, "music_update", $musicSettings);
         $musicSettings->save();
 
     }

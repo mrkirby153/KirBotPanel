@@ -4,117 +4,89 @@
 namespace App\Http\Controllers\Dashboard;
 
 
-use App\CustomCommand;
 use App\Http\Controllers\Controller;
 use App\Log;
-use App\Quote;
 use App\Role;
 use App\ServerSettings;
 use App\Utils\AuditLogger;
+use App\Utils\DiscordAPI;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 
 class GeneralController extends Controller {
-    public function displayOverview(Request $request) {
+
+    public function displayOverview() {
         if (\Auth::guest()) {
             return redirect('/login?returnUrl=/servers&requireGuilds=true');
         }
-        \Log::info("Token: " . \Auth::user()->token_type);
         if (\Auth::user()->token_type == 'NAME_ONLY') {
             return redirect('/login?returnUrl=/servers&requireGuilds=true');
         }
-        $servers = $this->getServers();
+        $servers = DiscordAPI::getServers(\Auth::user());
         return view('server.serverlist')->with(['servers' => $servers]);
     }
 
-    public function showDashboard($server) {
-        $serverById = $this->getServerById($server);
-        if (($serverById->permissions & 32) <= 0) {
-            return redirect('/servers');
-        }
-        $serverData = ServerSettings::whereId($server)->with('channels')->first();
+    public function showDashboard(ServerSettings $server) {
+        $this->authorize('update', $server);
+        $serverData = $server->with('channels')->first();
         \JavaScript::put([
-            'Server' => $serverById,
-            'ServerData' => $serverData
+            'Server' => $serverData
         ]);
-        return view('server.dashboard.general')->with(['server' => $serverById, 'tab' => 'general', 'serverData' => $serverData,
-            'textChannels' => $this->getTextChannelsFromBot($server), 'roles' => Role::whereServerId($server)->get()]);
+        return view('server.dashboard.general')->with(['tab' => 'general', 'server' => $serverData,
+            'textChannels' => $this->getTextChannelsFromBot($server->id), 'roles' => Role::whereServerId($server->id)->get()]);
     }
 
 
-    public function setRealnameSettings($server, Request $request) {
-        if ($this->getServerById($server) == null || ($this->getServerById($server)->permissions & 32) <= 0) {
-            return response()->json(['server' => 'You do not have access to this server!'], 422);
-        }
-        ServerSettings::updateOrCreate(['id' => $server], [
-            'id' => $server,
-            'realname' => $request->realnameSetting,
-            'require_realname' => ($request->realnameSetting == 'OFF') ? false : $request->requireRealname
-        ]);
+    public function setRealnameSettings(ServerSettings $server, Request $request) {
+        $this->authorize('update', $server);
+        $server->realname = $request->get('realnameSetting');
+        $server->require_realname = ($request->get('realnameSetting') == 'OFF') ? false : $request->get('requireRealname');
+        $server->save();
         AuditLogger::log($server, "realname_update", ['enabled' => $request->realnameSetting, 'required' => $request->requireRealname]);
         Redis::publish('kirbot:update-name', json_encode(['server' => $server]));
     }
 
-    public function updateLogging($server, Request $request) {
-        if ($this->getServerById($server) == null || ($this->getServerById($server)->permissions & 32) <= 0) {
-            return response()->json(['server' => 'You do not have access to this server!'], 422);
-        }
+    public function updateLogging(ServerSettings $server, Request $request) {
+        $this->authorize('update', $server);
         if ($request->channel == null && $request->enabled) {
-            return response()->json(['error' => 'You must specify a channel to log to!'], 422);
+            return response()->json(['channel' => ['You must specify a channel to log to!']], 422);
         }
-        ServerSettings::updateOrCreate(['id' => $server], [
-            'id' => $server,
-            'log_channel' => $request->enabled ? $request->channel : null
-        ]);
-        AuditLogger::log($server, "log_channel", ['enabled' => $request->enabled, 'channel' => $request->enabled ? $request->channel : null]);
+        $server->log_channel = $request->get('enabled') ? $request->get('channel') : null;
+        $server->save();
+        AuditLogger::log($server->id, "log_channel", ['enabled' => $request->get('enabled'), 'channel' => $request->get('enabled') ? $request->get('channel') : null]);
+        return $server;
     }
 
-    public function updateChannelWhitelist($server, Request $request) {
-        if ($this->getServerById($server) == null || ($this->getServerById($server)->permissions & 32) <= 0) {
-            return response()->json(['server' => 'You do not have access to this server!'], 422);
-        }
+    public function updateChannelWhitelist(ServerSettings $server, Request $request) {
+        $this->authorize('update', $server);
         $whitelist = implode(',', $request->get('channels'));
-        ServerSettings::updateOrCreate(['id' => $server], [
-            'id' => $server,
-            'cmd_whitelist' => $whitelist
-        ]);
-        AuditLogger::log($server, "command_whitelist_update", ['channels' => $request->get('channels')]);
+        $server->cmd_whitelist = $whitelist;
+        $server->save();
+        AuditLogger::log($server->id, "command_whitelist_update", ['channels' => $request->get('channels')]);
+        return $server;
     }
 
-    public function updateBotManagers($server, Request $request) {
+    public function updateBotManagers(ServerSettings $server, Request $request) {
+        $this->authorize('update', $server);
         $roles = implode(',', $request->get('roles'));
-        ServerSettings::updateOrCreate(['id' => $server], [
-            'id' => $server,
-            'bot_manager' => $roles
-        ]);
-        AuditLogger::log($server, "bot_manager_update", ['roles' => $request->get('roles')]);
+        $server->bot_manager = $roles;
+        $server->save();
+        AuditLogger::log($server->id, "bot_manager_update", ['roles' => $request->get('roles')]);
+        return $server;
     }
 
-    public function showCommandList($server) {
-        $customCommands = CustomCommand::whereServer($server)->get();
-        $server = ServerSettings::whereId($server)->first();
-        if ($server == null) {
-            $server = new ServerSettings(['id' => 'UNKNOWN']);
-            $server->name = 'Unknown Server';
-        }
-        return view('server.commandlist')->with(['commands' => $customCommands, 'server' => $server]);
+    public function showCommandList(ServerSettings $server) {
+        $this->authorize('update', $server);
+        return view('server.commandlist')->with(['commands' => $server->commands, 'server' => $server]);
     }
 
-    public function showLog($server) {
-        if ($this->getServerById($server) == null || ($this->getServerById($server)->permissions & 32) <= 0) {
-            return response()->json(['server' => 'You do not have access to this server!'], 422);
-        }
-        $logData = Log::whereServerId($server)->orderBy('created_at', 'desc')->paginate(10);
-        $server = ServerSettings::whereId($server)->first();
-        if ($server == null) {
-            $server = new ServerSettings(['id' => 'UNKNOWN']);
-            $server->name = 'Unknown Server';
-        }
+    public function showLog(ServerSettings $server) {
+        $this->authorize('update', $server);
+        $logData = Log::whereServerId($server->id)->orderBy('created_at', 'desc')->paginate(10);
         return view('server.dashboard.log')->with(['logData' => $logData, 'tab' => 'log', 'server' => $server]);
     }
 
-    public function showQuotes($server){
-        $server = ServerSettings::whereId($server)->firstOrFail();
-        return view('server.quotes')->with(['quotes'=> $server->quotes, 'server'=>$server]);
+    public function showQuotes(ServerSettings $server) {
+        return view('server.quotes')->with(['quotes' => $server->quotes, 'server' => $server]);
     }
 }

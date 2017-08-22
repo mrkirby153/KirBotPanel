@@ -20,7 +20,7 @@ Route::post('/name', 'UserController@updateName')->middleware('auth');
 
 
 Route::get('/servers', 'Dashboard\GeneralController@displayOverview')->name('dashboard.all');
-Route::group(['middleware' => 'has_discord_token'], function () {
+Route::group(['middleware' => ['has_discord_token']], function () {
     // General
     Route::get('/dashboard/{server}', 'Dashboard\GeneralController@showDashboard')->middleware('auth')->name('dashboard.general');
     Route::patch('/dashboard/{server}/logging', 'Dashboard\GeneralController@updateLogging')->middleware(['auth']);
@@ -30,7 +30,7 @@ Route::group(['middleware' => 'has_discord_token'], function () {
 
     // Commands
     Route::get('/dashboard/{server}/commands', 'Dashboard\CommandController@showCommands')->middleware('auth')->name('dashboard.commands');
-    Route::patch('/dashboard/{server}/commands', 'Dashboard\CommandController@updateCommand')->middleware('auth');
+    Route::patch('/dashboard/{server}/command/{command}', 'Dashboard\CommandController@updateCommand')->middleware('auth');
     Route::delete('/dashboard/{server}/command/{command}', 'Dashboard\CommandController@deleteCommand')->middleware('auth');
     Route::patch('/dashboard/{server}/discriminator', 'Dashboard\CommandController@updateDiscrim')->middleware('auth');
     Route::put('/dashboard/{server}/commands', 'Dashboard\CommandController@createCommand')->middleware('auth');
@@ -42,10 +42,8 @@ Route::group(['middleware' => 'has_discord_token'], function () {
     // Channels
     Route::get('/dashboard/{server}/channels', 'Dashboard\ChannelController@index')->middleware('auth')->name('dashboard.channels');
     Route::post('/dashboard/{server}/channels/{channel}/visibility', 'Dashboard\ChannelController@visibility')->middleware('auth');
-    Route::post('/dashboard/{server}/channels/{channel}/access', 'Dashboard\ChannelController@regainAccess')->middleware('auth');
 
     Route::get('/dashboard/{server}/log', 'Dashboard\GeneralController@showLog')->name('dashboard.log');
-
 
     Route::get('/chat', 'BotChatController@index');
 });

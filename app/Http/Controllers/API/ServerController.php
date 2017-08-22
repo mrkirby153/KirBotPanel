@@ -43,7 +43,20 @@ class ServerController extends Controller {
         $settings->id = $request->get('id');
         $settings->cmd_whitelist = '';
         $settings->command_discriminator = '!';
+        $settings->bot_manager = '';
         $settings->save();
+        $musicSettings = new MusicSettings([
+            'id' => $settings->id,
+            'enabled' => true,
+            'mode' => 'OFF',
+            'channels' => '',
+            'blacklist_songs' => '',
+            'max_queue_length' => -1,
+            'max_song_length' => -1,
+            'skip_cooldown' => 0,
+            'skip_timer' => 30,
+        ]);
+        $musicSettings->save();
     }
 
     public function unregister(ServerSettings $server) {

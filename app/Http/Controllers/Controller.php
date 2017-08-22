@@ -14,18 +14,6 @@ class Controller extends BaseController {
 
     private $connect_timeout = 0.25; // 1/4 a second
 
-    protected function getServers() {
-        $servers = array();
-        foreach ($this->getServersFromAPI() as $server) {
-            if (($server->permissions & 32) > 0) {
-                $server->has_icon = $server->icon != null;
-                $server->on = ServerSettings::whereId($server->id)->count() > 0;
-                $servers[] = $server;
-            }
-        }
-        return $servers;
-    }
-
     protected function getServerById($id) {
         foreach ($this->getServersFromAPI() as $server) {
             if ($server->id == $id)
@@ -34,7 +22,7 @@ class Controller extends BaseController {
         return null;
     }
 
-    protected function getServersFromAPI() {
+    public static  function getServersFromAPI() {
         $token = \Auth::user()->token;
         $cacheId = "SERVERS-$token";
         $body = "[]";

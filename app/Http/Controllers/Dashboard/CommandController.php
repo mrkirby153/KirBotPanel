@@ -13,24 +13,22 @@ use Keygen\Keygen;
 
 class CommandController extends Controller {
 
-    public function showCommands($server, Request $request) {
+    public function showCommands(ServerSettings $server, Request $request) {
         if ($request->expectsJson()) {
-            return response()->json(CustomCommand::whereServer($server)->get());
+            return response()->json($server->commands);
         }
-        $serverById = $this->getServerById($server);
-        if (($serverById->permissions & 32) <= 0) {
+        if (!\Auth::user()->can('update', $server)) {
             return redirect('/servers');
         }
-        $serverData = ServerSettings::whereId($server)->first();
         \JavaScript::put([
-            'Server' => $serverById,
-            'ServerData' => $serverData,
-            'Commands' => CustomCommand::whereServer($server)->get()
+            'Server' => $server,
+            'Commands' => $server->commands
         ]);
-        return view('server.dashboard.commands')->with(['server' => $serverById, 'tab' => 'commands']);
+        return view('server.dashboard.commands')->with(['server' => $server, 'tab' => 'commands']);
     }
 
-    public function updateCommand($server, Request $request) {
+    public function updateCommand(ServerSettings $server, CustomCommand $command, Request $request) {
+        $this->authorize('update', $server);
         $this->validate($request, [
             'name' => 'required|max:255|without_spaces',
             'description' => 'required',
@@ -38,36 +36,27 @@ class CommandController extends Controller {
         ], [
             'validation.without_spaces' => 'Spaces are not allowed in command names'
         ]);
-        $cmd = CustomCommand::whereId($request->id)->first();
-        if ($this->getServerById($server) == null || ($this->getServerById($server)->permissions & 32) <= 0) {
-            return response()->json(['server' => 'You do not have access to this server!'], 422);
+        $exist = CustomCommand::whereName($request->name)->whereServer($server->id)->first();
+        if ($exist->id != $command->id) {
+            return response()->json(['name' => ['A command already exists with that name on the server']], 422);
         }
-        if ($cmd == null) {
-            return response()->json(['id' => 'No command was found with that ID!'], 422);
-        }
-        $exist = CustomCommand::whereName($request->name)->whereServer($server)->first();
-        if ($exist->id != $cmd->id) {
-            return response()->json(['name' => 'A command already exists with that name on the server'], 422);
-        }
-        $cmd->name = $request->name;
-        $cmd->data = $request->description;
-        $cmd->clearance = $request->clearance;
-        $cmd->respect_whitelist = $request->respect_whitelist;
-        AuditLogger::log($server, "command_update", ['name'=>$cmd->name, 'clearance'=>$cmd->clearance, 'description'=>$request->description]);
-        $cmd->save();
+        $command->name = $request->name;
+        $command->data = $request->description;
+        $command->clearance = $request->clearance;
+        $command->respect_whitelist = $request->respect_whitelist;
+        AuditLogger::log($server->id, "command_update", ['name'=>$command->name, 'clearance'=>$command->clearance, 'description'=>$request->description]);
+        $command->save();
+        return $command;
     }
 
-    public function updateDiscrim($server, Request $request) {
+    public function updateDiscrim(ServerSettings $server, Request $request) {
+        $this->authorize('update', $server);
         $this->validate($request, [
             'discriminator' => 'required'
         ]);
-        if ($this->getServerById($server) == null || ($this->getServerById($server)->permissions & 32) <= 0) {
-            return response()->json(['server' => 'You do not have access to this server!'], 422);
-        }
-        ServerSettings::updateOrCreate(['id' => $server], [
-            'command_discriminator' => $request->discriminator
-        ]);
-        AuditLogger::log($server, "discrim_update", ['discriminator'=>$request->discriminator]);
+        $server->command_discriminator = $request->discriminator;
+        $server->save();
+        AuditLogger::log($server->id, "discrim_update", ['discriminator'=>$request->discriminator]);
     }
 
 

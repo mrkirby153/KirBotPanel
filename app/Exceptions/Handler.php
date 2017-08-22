@@ -59,7 +59,7 @@ class Handler extends ExceptionHandler {
             }
             return $this->renderHttpException($exception);
         }
-        if($request->acceptsJson() && !($exception instanceof ValidationException)){
+        if($request->expectsJson() && !($exception instanceof ValidationException)){
             return new Response([
                 'error' => $exception->getMessage(),
             ], 500);
