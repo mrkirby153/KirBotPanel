@@ -22,11 +22,7 @@ class BotChatController extends Controller
     }
 
     public function sendMessage(Request $request){
-        $guzzle = new \GuzzleHttp\Client();
-        $guzzle->post(env('KIRBOT_URL').'v1/server/'.$request->get('server').'/channel/'.$request->get('channel').'/message', [
-            'form_params'=>[
-                'message' => $request->get('message')
-            ]
-        ]);
+        \Redis::publish("kirbot:botchat", json_encode(['server'=>$request->get('server'),
+            'channel' => $request->get('channel'), 'message' => $request->get('message')]));
     }
 }
