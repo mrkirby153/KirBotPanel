@@ -33,6 +33,10 @@ class DiscordAPI {
                 // User's token is not valid
                 \App::abort(302, '', ['Location' => '/login?returnUrl=' . \Request::getRequestUri() . '&requireGuilds=true']);
             }
+            if($response->getStatusCode() == 429){
+                \Log::info("Hit Discord Ratelimit. Aborting...");
+                \App::abort(503);
+            }
             $body = $response->getBody();
             \Cache::put($cacheId, "$body", 5);
         }
