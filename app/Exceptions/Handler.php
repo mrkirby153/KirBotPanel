@@ -45,39 +45,47 @@ class Handler extends ExceptionHandler {
      * @return \Illuminate\Http\Response
      */
     public function render($request, Exception $exception) {
-        if($exception instanceof AuthenticationException){
-            if($request->expectsJson()){
-                return new Response([
-                    "error" => $exception->getMessage()
-                ], 401);
+        // If the request wants JSON + exception is not ValidationException
+        if (($request->wantsJson()) && (!$exception instanceof ValidationException)) {
+            // Define the response
+            $response = [
+                'errors' => 'Sorry, something went wrong.'
+            ];
+
+            // If the app is in debug mode
+            if (config('app.debug')) {
+                // Add the exception class name, message and stack trace to response
+                $response['exception'] = get_class($exception); // Reflection might be better here
+                $response['message'] = $exception->getMessage();
+                $response['trace'] = $exception->getTrace();
             }
-        }
-        if($this->isHttpException($exception)){
-            if($request->expectsJson()){
-                return new Response([
-                    "error" => ($exception->getMessage())? $exception->getMessage() : "HTTP ".$exception->getStatusCode()
-                ], $exception->getStatusCode());
+
+            // Default response of 400
+            $status = 400;
+
+            // If this exception is an instance of HttpException
+            if ($this->isHttpException($exception)) {
+                // Grab the HTTP status code from the Exception
+                $status = $exception->getCode();
             }
-            return $this->renderHttpException($exception);
+
+            if ($exception instanceof ModelNotFoundException) {
+                $status = 404;
+            }
+
+            // Return a JSON response with the response array and status code
+            return response()->json($response, $status);
         }
-        if($request->expectsJson() && !($exception instanceof ValidationException)){
-            return new Response([
-                'error' => $exception->getMessage(),
-            ], 500);
-        }
-        if(config('app.debug') && !($exception instanceof ValidationException)){
+        if (config('app.debug') && !($exception instanceof ValidationException)) {
             return $this->renderExceptionWithWhoops($exception);
         }
-        if($exception instanceof ModelNotFoundException){
-            return response()->view('errors.404', [], 404);
-        }
-        if(!config('app.debug')){
+        if (!config('app.debug') && !($exception instanceof ValidationException)) {
             return response()->view('errors.500', [], 500);
         }
         return parent::render($request, $exception);
     }
 
-    public function renderExceptionWithWhoops(Exception $e){
+    public function renderExceptionWithWhoops(Exception $e) {
         $whoops = new \Whoops\Run();
         $whoops->pushHandler(new PrettyPageHandler());
 

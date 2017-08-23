@@ -14,13 +14,13 @@ use Illuminate\Http\Request;
 class ServerController extends Controller {
 
     public function getCommands($server) {
-        return response()->json(['cmds'=>CustomCommand::whereServer($server)->get(['name', 'data', 'clearance', 'type', 'respect_whitelist'])]);
+        return response()->json(['cmds' => CustomCommand::whereServer($server)->get(['name', 'data', 'clearance', 'type', 'respect_whitelist'])]);
     }
 
     public function getSettings($server) {
         $server = ServerSettings::whereId($server)->first(['name', 'realname', 'require_realname', 'command_discriminator', 'log_channel', 'cmd_whitelist', 'bot_manager']);
         $server->bot_manager = explode(',', $server->bot_manager);
-        if(!is_array($server->bot_manager)){
+        if (!is_array($server->bot_manager)) {
             $server->bot_manager = [$server->bot_manager];
         }
         if ($server == null) {
@@ -87,18 +87,18 @@ class ServerController extends Controller {
         ServerMessage::whereChannel($channel)->delete();
     }
 
-    public function getChannels($server){
+    public function getChannels($server) {
         return response()->json([
             'voice' => Channel::whereServer($server)->whereType('VOICE')->get(),
             'text' => Channel::whereServer($server)->whereType('TEXT')->get()
         ]);
     }
 
-    public function getMusicSettings($server){
+    public function getMusicSettings($server) {
         return MusicSettings::whereId($server)->first();
     }
 
-    public function getRoles($server){
-        return response()->json(['roles'=>Role::whereServerId($server)->get()]);
+    public function getRoles(ServerSettings $server) {
+        return response()->json(['roles' => Role::whereServerId($server->id)->get()]);
     }
 }
