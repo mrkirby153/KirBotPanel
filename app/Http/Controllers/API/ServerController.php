@@ -29,6 +29,10 @@ class ServerController extends Controller {
         return $server;
     }
 
+    public function serverExists($server){
+        return response()->json(['exists'=>ServerSettings::whereId($server)->first() != null]);
+    }
+
     public function setName(Request $request, $server) {
         if (!$request->has('name')) {
             return response()->json(['name' => 'Name is required'], 422);

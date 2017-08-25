@@ -35,6 +35,8 @@ Route::group(['middleware'=>'internal_api', 'prefix'=>'internal'], function(){
     Route::put('/server/register', 'API\ServerController@register');
     Route::delete('/server/{server}', 'API\ServerController@unregister');
 
+    Route::get('/server/{server}', 'API\ServerController@serverExists');
+
 
     Route::delete('/channel/{chanel}', 'API\ServerController@removeChannel');
     Route::patch('/channel/{channel}', 'API\ServerController@updateChannel');
