@@ -33,4 +33,7 @@ class ServerSettings extends Model {
         return $this->hasOne(MusicSettings::class, 'id');
     }
 
+    public function groups() {
+        return $this->hasMany(Group::class, 'server_id');
+    }
 }

@@ -37,6 +37,10 @@ Route::group(['middleware'=>'internal_api', 'prefix'=>'internal'], function(){
 
     Route::get('/server/{server}', 'API\ServerController@serverExists');
 
+    Route::get('/server/{server}/groups', 'API\GroupController@getServerGroups');
+    Route::put('/server/{server}/groups', 'API\GroupController@createGroup');
+    Route::get('/server/{server}/groups/{name}', 'API\GroupController@getGroupByName');
+
 
     Route::delete('/channel/{chanel}', 'API\ServerController@removeChannel');
     Route::patch('/channel/{channel}', 'API\ServerController@updateChannel');
@@ -52,4 +56,12 @@ Route::group(['middleware'=>'internal_api', 'prefix'=>'internal'], function(){
     Route::get('/server/{server}/quotes', 'API\QuoteController@getServerQuotes');
     Route::get('/server/quote/{quoteId}', 'API\QuoteController@get');
     Route::put('/server/quote', 'API\QuoteController@save');
+
+
+    Route::get('/group/{group}', 'API\GroupController@getMembers');
+    Route::delete('/group/{group}', 'API\GroupController@deleteGroup');
+
+    Route::put('/group/{group}/member', 'API\GroupController@addUserToGroup');
+    Route::get('/group/{group}/members', 'API\GroupController@getMembers');
+    Route::delete('/group/{group}/member/{id}', 'API\GroupController@removeUserByUID');
 });
