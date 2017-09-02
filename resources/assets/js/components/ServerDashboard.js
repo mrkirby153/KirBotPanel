@@ -283,7 +283,7 @@ Vue.component('settings-channel-whitelist', {
 
     methods: {
         save() {
-            this.forms.whitelist.send();
+            this.forms.whitelist.save();
         }
     }
 });
