@@ -36,4 +36,8 @@ class ServerSettings extends Model {
     public function groups() {
         return $this->hasMany(Group::class, 'server_id');
     }
+
+    public function overrides(){
+        return $this->hasMany(ClearanceOverride::class, 'server_id');
+    }
 }

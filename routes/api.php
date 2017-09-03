@@ -64,4 +64,9 @@ Route::group(['middleware'=>'internal_api', 'prefix'=>'internal'], function(){
     Route::put('/group/{group}/member', 'API\GroupController@addUserToGroup');
     Route::get('/group/{group}/members', 'API\GroupController@getMembers');
     Route::delete('/group/{group}/member/{id}', 'API\GroupController@removeUserByUID');
+
+    Route::get('/server/{server}/overrides', 'API\ClearanceOverrideController@getOverrides');
+    Route::put('/server/{server}/overrides', 'API\ClearanceOverrideController@createOverride');
+    Route::patch('/overrides/{override}', 'API\ClearanceOverrideController@updateOverride');
+    Route::delete('/overrides/{override}', 'API\ClearanceOverrideController@deleteOverride');
 });
