@@ -28,11 +28,11 @@ class GeneralController extends Controller {
 
     public function showDashboard(ServerSettings $server) {
         $this->authorize('update', $server);
-        $serverData = $server->with('channels')->first();
+        $server->load('channels');
         \JavaScript::put([
-            'Server' => $serverData
+            'Server' => $server
         ]);
-        return view('server.dashboard.general')->with(['tab' => 'general', 'server' => $serverData,
+        return view('server.dashboard.general')->with(['tab' => 'general', 'server' => $server,
             'textChannels' => $this->getTextChannelsFromBot($server->id), 'roles' => Role::whereServerId($server->id)->get()]);
     }
 
