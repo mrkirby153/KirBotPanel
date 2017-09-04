@@ -2,28 +2,30 @@
 
 namespace App\Exceptions;
 
+use Dotenv\Exception\ValidationException;
 use Exception;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Http\Response;
-use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Whoops\Handler\PrettyPageHandler;
 
-class Handler extends ExceptionHandler {
+class Handler extends ExceptionHandler
+{
     /**
-     * A list of the exception types that should not be reported.
+     * A list of the exception types that are not reported.
      *
      * @var array
      */
     protected $dontReport = [
-        \Illuminate\Auth\AuthenticationException::class,
-        \Illuminate\Auth\Access\AuthorizationException::class,
-        \Symfony\Component\HttpKernel\Exception\HttpException::class,
-        \Illuminate\Database\Eloquent\ModelNotFoundException::class,
-        \Illuminate\Session\TokenMismatchException::class,
-        \Illuminate\Validation\ValidationException::class,
+        //
+    ];
+
+    /**
+     * A list of the inputs that are never flashed for validation exceptions.
+     *
+     * @var array
+     */
+    protected $dontFlash = [
+        'password',
+        'password_confirmation',
     ];
 
     /**
@@ -31,83 +33,45 @@ class Handler extends ExceptionHandler {
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @param  \Exception $exception
+     * @param  \Exception  $exception
      * @return void
      */
-    public function report(Exception $exception) {
+    public function report(Exception $exception)
+    {
         parent::report($exception);
     }
 
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Exception $exception
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Exception  $exception
      * @return \Illuminate\Http\Response
      */
-    public function render($request, Exception $exception) {
-        // If the request wants JSON + exception is not ValidationException
-        if (($request->wantsJson()) && (!$exception instanceof ValidationException)) {
-            // Define the response
+    public function render($request, Exception $exception)
+    {
+        // Handle JSON
+        if($request->wantsJson() && !($exception instanceof ValidationException)){
             $response = [
                 'errors' => 'Sorry, something went wrong.'
             ];
 
-            // If the app is in debug mode
-            if (config('app.debug')) {
-                // Add the exception class name, message and stack trace to response
-                $response['exception'] = get_class($exception); // Reflection might be better here
+            if(config('app.debug')){
+                $response['exception'] = get_class($exception);
                 $response['message'] = $exception->getMessage();
                 $response['trace'] = $exception->getTrace();
+
+                $status = 400;
+                if($this->isHttpException($exception)) {
+                    if ($exception instanceof ModelNotFoundException)
+                        $status = 404;
+                    else
+                        $status = $exception->getCode();
+
+                }
+                return response()->json($response, $status);
             }
-
-            // Default response of 400
-            $status = 400;
-
-            // If this exception is an instance of HttpException
-            if ($this->isHttpException($exception)) {
-                // Grab the HTTP status code from the Exception
-                if ($exception instanceof NotFoundHttpException)
-                    $status = 404;
-                else
-                    $status = $exception->getCode();
-            }
-
-            if ($exception instanceof ModelNotFoundException) {
-                $status = 404;
-            }
-
-            // Return a JSON response with the response array and status code
-            return response()->json($response, $status);
-        }
-        if (config('app.debug') && !($exception instanceof ValidationException)) {
-            return $this->renderExceptionWithWhoops($exception);
-        }
-        if (!config('app.debug') && !($exception instanceof ValidationException)) {
-            return response()->view('errors.500', [], 500);
         }
         return parent::render($request, $exception);
-    }
-
-    public function renderExceptionWithWhoops(Exception $e) {
-        $whoops = new \Whoops\Run();
-        $whoops->pushHandler(new PrettyPageHandler());
-
-        return new Response($whoops->handleException($e), $e->getStatusCode(), $e->getHeaders());
-    }
-
-    /**
-     * Convert an authentication exception into an unauthenticated response.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Illuminate\Auth\AuthenticationException $exception
-     * @return \Illuminate\Http\Response
-     */
-    protected function unauthenticated($request, AuthenticationException $exception) {
-        if ($request->expectsJson()) {
-            return response()->json(['error' => 'Unauthenticated.'], 401);
-        }
-
-        return redirect()->guest(route('login'));
     }
 }

@@ -31,7 +31,7 @@ export class Form {
                 form.complete();
                 resolve(resp);
             }).catch(error => {
-                form.errors.record(error.response.data);
+                form.errors.record(error.response.data.errors);
                 form.busy = false;
                 reject(error);
             })

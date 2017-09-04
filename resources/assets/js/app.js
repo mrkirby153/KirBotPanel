@@ -6,6 +6,8 @@
 
 require('./bootstrap');
 
+window.Vue = require('vue');
+
 require('./semantic');
 
 require('./form/form2');
