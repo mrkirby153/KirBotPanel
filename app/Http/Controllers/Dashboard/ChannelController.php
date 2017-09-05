@@ -4,9 +4,9 @@
 namespace App\Http\Controllers\Dashboard;
 
 
-use App\Channel;
+use App\Models\Channel;
 use App\Http\Controllers\Controller;
-use App\ServerSettings;
+use App\Models\ServerSettings;
 use App\Utils\AuditLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;

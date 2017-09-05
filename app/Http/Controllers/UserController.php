@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\ServerSettings;
-use App\UserInfo;
+use App\Models\ServerSettings;
+use App\Models\UserInfo;
 use Auth;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ConnectException;
 use Illuminate\Http\Request;
 use Redis;
 

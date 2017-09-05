@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
-use App\ServerSettings;
+use App\Models\ServerSettings;
 use App\Utils\AuditLogger;
 use Illuminate\Http\Request;
 

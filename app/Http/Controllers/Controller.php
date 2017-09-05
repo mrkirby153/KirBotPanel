@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Channel;
-use App\ServerSettings;
+use App\Models\Channel;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;

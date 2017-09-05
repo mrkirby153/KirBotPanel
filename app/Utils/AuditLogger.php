@@ -4,8 +4,7 @@
 namespace App\Utils;
 
 
-use App\Log;
-use App\ServerSettings;
+use App\Models\Log;
 
 class AuditLogger {
 

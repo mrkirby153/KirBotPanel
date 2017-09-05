@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\ServerSettings;
+use App\Models\ServerSettings;
 use App\User;
 use App\Utils\DiscordAPI;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -14,7 +14,7 @@ class ServerPolicy {
      * Determine whether the user can view the serverSettings.
      *
      * @param  \App\User $user
-     * @param  \App\ServerSettings $serverSettings
+     * @param  \App\Models\ServerSettings $serverSettings
      * @return mixed
      */
     public function view(User $user, ServerSettings $serverSettings) {
@@ -39,7 +39,7 @@ class ServerPolicy {
      * Determine whether the user can update the serverSettings.
      *
      * @param  \App\User $user
-     * @param  \App\ServerSettings $serverSettings
+     * @param  \App\Models\ServerSettings $serverSettings
      * @return mixed
      */
     public function update(User $user, ServerSettings $serverSettings) {
@@ -54,7 +54,7 @@ class ServerPolicy {
      * Determine whether the user can delete the serverSettings.
      *
      * @param  \App\User $user
-     * @param  \App\ServerSettings $serverSettings
+     * @param  \App\Models\ServerSettings $serverSettings
      * @return mixed
      */
     public function delete(User $user, ServerSettings $serverSettings) {

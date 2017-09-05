@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Group;
-use App\GroupMember;
+use App\Models\Group;
+use App\Models\GroupMember;
 use App\Http\Controllers\Controller;
-use App\ServerSettings;
+use App\Models\ServerSettings;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Keygen;

@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Channel;
-use App\CustomCommand;
+use App\Models\Channel;
+use App\Models\CustomCommand;
 use App\Http\Controllers\Controller;
-use App\MusicSettings;
-use App\Role;
-use App\ServerMessage;
-use App\ServerSettings;
+use App\Models\MusicSettings;
+use App\Models\Role;
+use App\Models\ServerMessage;
+use App\Models\ServerSettings;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 

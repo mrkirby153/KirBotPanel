@@ -1,14 +1,12 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Role extends Model
+class Quote extends Model
 {
-    protected $table = "roles";
-
-    public $incrementing = false;
+    protected $table = "quotes";
 
 
     public function server(){

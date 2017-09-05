@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Dashboard;
 
 
 use App\Http\Controllers\Controller;
-use App\Log;
-use App\Role;
-use App\ServerSettings;
+use App\Models\Log;
+use App\Models\Role;
+use App\Models\ServerSettings;
 use App\Utils\AuditLogger;
 use App\Utils\DiscordAPI;
 use Illuminate\Http\Request;

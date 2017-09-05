@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\ServerMessage;
+use App\Models\ServerMessage;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 

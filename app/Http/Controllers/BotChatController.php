@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\ServerSettings;
+use App\Models\ServerSettings;
 use Illuminate\Http\Request;
 
 class BotChatController extends Controller

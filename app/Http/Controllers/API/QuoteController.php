@@ -5,8 +5,8 @@ namespace App\Http\Controllers\API;
 
 
 use App\Http\Controllers\Controller;
-use App\Quote;
-use App\ServerSettings;
+use App\Models\Quote;
+use App\Models\ServerSettings;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 

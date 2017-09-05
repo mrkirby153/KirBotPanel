@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\API;
 
-use App\ClearanceOverride;
-use App\ServerSettings;
+use App\Models\ClearanceOverride;
+use App\Models\ServerSettings;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;

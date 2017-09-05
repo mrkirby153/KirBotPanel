@@ -4,7 +4,7 @@
 namespace App\Utils;
 
 
-use App\ServerSettings;
+use App\Models\ServerSettings;
 use App\User;
 
 class DiscordAPI {
