@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\ServerMessage;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class ServerMessageController extends Controller {
 
@@ -24,7 +25,7 @@ class ServerMessageController extends Controller {
         $m = $request->get('message');
         $msg->message = (strlen($m) > 0)? $m : "";
         $msg->save();
-        return response()->json($msg);
+        return response()->json($msg, Response::HTTP_CREATED);
     }
 
     /**

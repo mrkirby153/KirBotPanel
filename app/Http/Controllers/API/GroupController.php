@@ -7,6 +7,7 @@ use App\GroupMember;
 use App\Http\Controllers\Controller;
 use App\ServerSettings;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Keygen;
 
 class GroupController extends Controller {
@@ -21,6 +22,7 @@ class GroupController extends Controller {
         foreach($group->members as $member){
             $member->delete();
         }
+        return response()->json([], Response::HTTP_NO_CONTENT);
     }
 
     public function getServerGroups(ServerSettings $server){
@@ -41,7 +43,7 @@ class GroupController extends Controller {
         $group->server_id = $server->id;
         $group->role_id = $request->get('role');
         $group->save();
-        return $group;
+        return \response()->json($group, Response::HTTP_CREATED);
     }
 
     public function getGroupByName(ServerSettings $server, $name){
@@ -54,10 +56,11 @@ class GroupController extends Controller {
         $member->group_id = $group->id;
         $member->user_id = $request->get('id');
         $member->save();
-        return $member;
+        return \response()->json($member, Response::HTTP_CREATED);
     }
 
     public function removeUserByUID(Group $group, $uid) {
         GroupMember::whereGroupId($group->id)->whereUserId($uid)->delete();
+        return \response()->json([], Response::HTTP_NO_CONTENT);
     }
 }

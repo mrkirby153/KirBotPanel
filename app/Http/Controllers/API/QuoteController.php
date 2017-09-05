@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Quote;
 use App\ServerSettings;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class QuoteController extends Controller {
 
@@ -19,7 +20,7 @@ class QuoteController extends Controller {
         $quote->content = $request->get('content');
         $quote->message_id = $request->get('message_id');
         $quote->save();
-        return response()->json($quote);
+        return response()->json($quote, Response::HTTP_CREATED);
     }
 
     public function get($quoteId){

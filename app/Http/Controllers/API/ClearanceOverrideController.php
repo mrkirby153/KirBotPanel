@@ -6,6 +6,7 @@ use App\ClearanceOverride;
 use App\ServerSettings;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Response;
 
 class ClearanceOverrideController extends Controller {
 
@@ -23,7 +24,7 @@ class ClearanceOverrideController extends Controller {
             $override->command = $request->get('command');
             $override->clearance = $request->get('clearance');
             $override->save();
-            return $override;
+            return response()->json($override, Response::HTTP_CREATED);
         }
     }
 
@@ -35,5 +36,6 @@ class ClearanceOverrideController extends Controller {
 
     public function deleteOverride(ClearanceOverride $override){
         $override->delete();
+        return response()->json([], Response::HTTP_NO_CONTENT);
     }
 }

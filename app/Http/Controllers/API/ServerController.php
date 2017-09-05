@@ -10,6 +10,7 @@ use App\Role;
 use App\ServerMessage;
 use App\ServerSettings;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class ServerController extends Controller {
 
@@ -61,6 +62,7 @@ class ServerController extends Controller {
             'skip_timer' => 30,
         ]);
         $musicSettings->save();
+        return response()->json($settings, Response::HTTP_CREATED);
     }
 
     public function unregister(ServerSettings $server) {
@@ -69,6 +71,7 @@ class ServerController extends Controller {
         ServerMessage::whereServerId($server->id)->delete();
         Channel::whereServer($server->id)->delete();
         $server->delete();
+        return \response()->json([], Response::HTTP_NO_CONTENT);
     }
 
     public function registerChannel($server, Request $request) {
@@ -78,17 +81,20 @@ class ServerController extends Controller {
         $chan->channel_name = $request->get('name');
         $chan->type = $request->get('type');
         $chan->save();
+        return \response()->json($chan, Response::HTTP_CREATED);
     }
 
     public function updateChannel(Channel $channel, Request $request) {
         $channel->channel_name = $request->get('name');
         $channel->hidden = $request->get('hidden') == "true";
         $channel->save();
+        return \response()->json($channel);
     }
 
     public function removeChannel($channel) {
         Channel::destroy($channel);
         ServerMessage::whereChannel($channel)->delete();
+        return \response()->json([], Response::HTTP_NO_CONTENT);
     }
 
     public function getChannels($server) {
