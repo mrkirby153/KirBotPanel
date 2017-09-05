@@ -1,7 +1,4 @@
 <?php
-
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,60 +10,75 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::get('/chat/servers/{server}', 'BotChatController@getChannels');
 Route::post('/chat', 'BotChatController@sendMessage');
 Route::get('/chat/servers', 'BotChatController@getServers');
 
 Route::group(['middleware'=>'internal_api', 'prefix'=>'internal'], function(){
-    Route::get('/user/{user}/name', 'API\UserController@name');
-    Route::post('/user/names', 'API\UserController@names');
 
-    Route::get('/server/{server}/commands', 'API\ServerController@getCommands');
-    Route::get('/server/{server}/settings', 'API\ServerController@getSettings');
-    Route::get('/server/{server}/channels', 'API\ServerController@getChannels');
-    Route::post('/server/{server}/name', 'API\ServerController@setName');
-    Route::get('/server/{server}/music', 'API\ServerController@getMusicSettings');
-    Route::put('/server/{server}/channel', 'API\ServerController@registerChannel');
-    Route::get('/server/{server}/roles', 'API\ServerController@getRoles');
-    Route::put('/server/register', 'API\ServerController@register');
-    Route::delete('/server/{server}', 'API\ServerController@unregister');
+    // -------- /user ------
+    Route::group(['prefix' => 'user'], function(){
+        Route::get('/{user}/name', 'API\UserController@name');
+        Route::post('/names', 'API\UserController@names');
+    });
 
-    Route::get('/server/{server}', 'API\ServerController@serverExists');
+    // -------- /server ------
+    Route::group(['prefix' => 'server'], function(){
+        Route::get('/{server}/commands', 'API\ServerController@getCommands');
+        Route::get('/{server}/settings', 'API\ServerController@getSettings');
+        Route::get('/{server}/channels', 'API\ServerController@getChannels');
+        Route::post('/{server}/name', 'API\ServerController@setName');
+        Route::get('/{server}/music', 'API\ServerController@getMusicSettings');
+        Route::put('/{server}/channel', 'API\ServerController@registerChannel');
+        Route::get('/{server}/roles', 'API\ServerController@getRoles');
+        Route::put('/register', 'API\ServerController@register');
+        Route::delete('/{server}', 'API\ServerController@unregister');
 
-    Route::get('/server/{server}/groups', 'API\GroupController@getServerGroups');
-    Route::put('/server/{server}/groups', 'API\GroupController@createGroup');
-    Route::get('/server/{server}/groups/{name}', 'API\GroupController@getGroupByName');
+        Route::get('/{server}', 'API\ServerController@serverExists');
 
+        Route::get('/{server}/groups', 'API\GroupController@getServerGroups');
+        Route::put('/{server}/groups', 'API\GroupController@createGroup');
+        Route::get('/{server}/groups/{name}', 'API\GroupController@getGroupByName');
 
-    Route::delete('/channel/{chanel}', 'API\ServerController@removeChannel');
-    Route::patch('/channel/{channel}', 'API\ServerController@updateChannel');
+        Route::get('/{server}/quotes', 'API\QuoteController@getServerQuotes');
+        Route::get('/quote/{quoteId}', 'API\QuoteController@get');
+        Route::put('/quote', 'API\QuoteController@save');
 
-    Route::put('/message', 'API\ServerMessageController@store');
-    Route::delete('/message/bulkDelete', 'API\ServerMessageController@bulkDelete');
-    Route::delete('/message/{serverMessage}', 'API\ServerMessageController@destroy');
-    Route::patch('/message/{serverMessage}', 'API\ServerMessageController@update');
-    Route::get('/message/{serverMessage}', 'API\ServerMessageController@show');
+        Route::get('/{server}/overrides', 'API\ClearanceOverrideController@getOverrides');
+        Route::put('/{server}/overrides', 'API\ClearanceOverrideController@createOverride');
+    });
 
+    // -------- /message --------
+    Route::group(['prefix' => 'message'], function(){
+        Route::put('/', 'API\ServerMessageController@store');
+        Route::delete('/bulkDelete', 'API\ServerMessageController@bulkDelete');
+        Route::delete('/{serverMessage}', 'API\ServerMessageController@destroy');
+        Route::patch('/{serverMessage}', 'API\ServerMessageController@update');
+        Route::get('/{serverMessage}', 'API\ServerMessageController@show');
+    });
+
+    // ------- /channel --------
+    Route::group(['prefix' => 'channel'], function(){
+        Route::delete('/{chanel}', 'API\ServerController@removeChannel');
+        Route::patch('/{channel}', 'API\ServerController@updateChannel');
+    });
+
+    // -------- /overrides --------
+    Route::group(['prefix' => 'overrides'], function(){
+        Route::patch('/{override}', 'API\ClearanceOverrideController@updateOverride');
+        Route::delete('/{override}', 'API\ClearanceOverrideController@deleteOverride');
+    });
+
+    // -------- /group -------
+    Route::group(['prefix' => 'group'], function(){
+        Route::get('/{group}', 'API\GroupController@getMembers');
+        Route::delete('/{group}', 'API\GroupController@deleteGroup');
+        Route::put('/{group}/member', 'API\GroupController@addUserToGroup');
+        Route::get('/{group}/members', 'API\GroupController@getMembers');
+        Route::delete('/{group}/member/{id}', 'API\GroupController@removeUserByUID');
+    });
+
+    // -------- RESOURCES --------
     Route::resource('role', 'RoleController');
 
-    Route::get('/server/{server}/quotes', 'API\QuoteController@getServerQuotes');
-    Route::get('/server/quote/{quoteId}', 'API\QuoteController@get');
-    Route::put('/server/quote', 'API\QuoteController@save');
-
-
-    Route::get('/group/{group}', 'API\GroupController@getMembers');
-    Route::delete('/group/{group}', 'API\GroupController@deleteGroup');
-
-    Route::put('/group/{group}/member', 'API\GroupController@addUserToGroup');
-    Route::get('/group/{group}/members', 'API\GroupController@getMembers');
-    Route::delete('/group/{group}/member/{id}', 'API\GroupController@removeUserByUID');
-
-    Route::get('/server/{server}/overrides', 'API\ClearanceOverrideController@getOverrides');
-    Route::put('/server/{server}/overrides', 'API\ClearanceOverrideController@createOverride');
-    Route::patch('/overrides/{override}', 'API\ClearanceOverrideController@updateOverride');
-    Route::delete('/overrides/{override}', 'API\ClearanceOverrideController@deleteOverride');
 });
