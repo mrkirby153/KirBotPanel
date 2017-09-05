@@ -211,7 +211,7 @@ Vue.component('settings-music', {
         this.forms.music.whitelist_mode = Music.mode;
         this.forms.music.blacklisted_urls = Music.blacklist_songs.replace(new RegExp(',', 'g'), "\n");
         if (Music.mode !== 'OFF')
-            this.forms.music.channels = Music.channels.split(",");
+            this.forms.music.channels = Music.channels;
 
         this.forms.music.max_queue_length = Music.max_queue_length;
         this.forms.music.max_song_length = Music.max_song_length;
@@ -278,7 +278,7 @@ Vue.component('settings-channel-whitelist', {
     },
 
     mounted() {
-        this.forms.whitelist.channels = Server.cmd_whitelist.split(",")
+        this.forms.whitelist.channels = (Server.cmd_whitelist == null)? [] : Server.cmd_whitelist;
     },
 
     methods: {
@@ -300,7 +300,7 @@ Vue.component('settings-bot-manager', {
     },
 
     mounted() {
-        this.forms.roles.roles = Server.bot_manager.split(",")
+        this.forms.roles.roles = (Server.bot_manager == null)? [] : Server.bot_manager;
     },
 
     methods: {

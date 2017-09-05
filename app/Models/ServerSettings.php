@@ -13,6 +13,11 @@ class ServerSettings extends Model {
         'id', 'name', 'realname', 'require_realname', 'command_discriminator', 'log_channel', 'cmd_whitelist', 'bot_manager'
     ];
 
+    protected $casts = [
+        'cmd_whitelist' => 'array',
+        'bot_manager' => 'array'
+    ];
+
     public function channels() {
         return $this->hasMany(Channel::class, 'server', 'id');
     }

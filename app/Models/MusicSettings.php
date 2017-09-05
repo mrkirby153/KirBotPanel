@@ -12,6 +12,10 @@ class MusicSettings extends Model
         'id', 'enabled', 'mode', 'channels', 'blacklist_songs', 'max_queue_length', 'max_song_length', 'skip_cooldown', 'skip_timer', 'playlists'
     ];
 
+    protected $casts = [
+        'channels' => 'array'
+    ];
+
     public function server(){
         return $this->hasOne(ServerSettings::class, 'id');
     }

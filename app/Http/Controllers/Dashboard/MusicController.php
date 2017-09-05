@@ -44,7 +44,7 @@ class MusicController extends Controller {
         $musicSettings = $server->musicSettings;
         $musicSettings->fill($request->all());
         $musicSettings->mode = $request->whitelist_mode;
-        $musicSettings->channels = implode(',', $request->channels);
+        $musicSettings->channels = $request->channels;
         $musicSettings->blacklist_songs = implode(',', explode("\n", $request->blacklisted_urls));
         AuditLogger::log($server->id, "music_update", $musicSettings);
         $musicSettings->save();

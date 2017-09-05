@@ -59,7 +59,7 @@ class GeneralController extends Controller {
 
     public function updateChannelWhitelist(ServerSettings $server, Request $request) {
         $this->authorize('update', $server);
-        $whitelist = implode(',', $request->get('channels'));
+        $whitelist = $request->get('channels');
         $server->cmd_whitelist = $whitelist;
         $server->save();
         AuditLogger::log($server->id, "command_whitelist_update", ['channels' => $request->get('channels')]);
@@ -68,8 +68,7 @@ class GeneralController extends Controller {
 
     public function updateBotManagers(ServerSettings $server, Request $request) {
         $this->authorize('update', $server);
-        $roles = implode(',', $request->get('roles'));
-        $server->bot_manager = $roles;
+        $server->bot_manager = $request->get('roles');
         $server->save();
         AuditLogger::log($server->id, "bot_manager_update", ['roles' => $request->get('roles')]);
         return $server;
