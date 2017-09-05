@@ -12,6 +12,6 @@ class Role extends Model
 
 
     public function server(){
-        return $this->belongsTo(ServerSettings::class, 'server_id');
+        return $this->belongsTo(Server::class, 'server_id');
     }
 }

@@ -6,14 +6,14 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Models\CustomCommand;
 use App\Http\Controllers\Controller;
-use App\Models\ServerSettings;
+use App\Models\Server;
 use App\Utils\AuditLogger;
 use Illuminate\Http\Request;
 use Keygen\Keygen;
 
 class CommandController extends Controller {
 
-    public function showCommands(ServerSettings $server, Request $request) {
+    public function showCommands(Server $server, Request $request) {
         if ($request->expectsJson()) {
             return response()->json($server->commands);
         }
@@ -27,7 +27,7 @@ class CommandController extends Controller {
         return view('server.dashboard.commands')->with(['server' => $server, 'tab' => 'commands']);
     }
 
-    public function updateCommand(ServerSettings $server, CustomCommand $command, Request $request) {
+    public function updateCommand(Server $server, CustomCommand $command, Request $request) {
         $this->authorize('update', $server);
         $this->validate($request, [
             'name' => 'required|max:255|without_spaces',
@@ -49,7 +49,7 @@ class CommandController extends Controller {
         return $command;
     }
 
-    public function updateDiscrim(ServerSettings $server, Request $request) {
+    public function updateDiscrim(Server $server, Request $request) {
         $this->authorize('update', $server);
         $this->validate($request, [
             'discriminator' => 'required'

@@ -4,7 +4,7 @@
 namespace App\Utils;
 
 
-use App\Models\ServerSettings;
+use App\Models\Server;
 use App\User;
 
 class DiscordAPI {
@@ -67,7 +67,7 @@ class DiscordAPI {
         foreach (DiscordAPI::getServersFromAPI($user) as $server) {
             if (($server->permissions & 32) > 0) {
                 $server->has_icon = $server->icon != null;
-                $server->on = ServerSettings::whereId($server->id)->count() > 0;
+                $server->on = Server::whereId($server->id)->count() > 0;
                 $servers[] = $server;
             }
         }

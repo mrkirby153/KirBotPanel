@@ -6,7 +6,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Quote;
-use App\Models\ServerSettings;
+use App\Models\Server;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -27,7 +27,7 @@ class QuoteController extends Controller {
         return response()->json(Quote::whereId($quoteId)->first());
     }
 
-    public function getServerQuotes(ServerSettings $server){
+    public function getServerQuotes(Server $server){
         return response()->json(['quotes'=>$server->quotes]);
     }
 

@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
-use App\Models\ServerSettings;
+use App\Models\Server;
 use App\Utils\AuditLogger;
 use Illuminate\Http\Request;
 
 class MusicController extends Controller {
 
-    public function index(ServerSettings $server) {
+    public function index(Server $server) {
         $this->authorize('update', $server);
         \JavaScript::put([
             'Music' => $server->musicSettings,
@@ -23,13 +23,13 @@ class MusicController extends Controller {
         // TODO 8/21/2017 - Pull from redis
         $queue = $this->getQueue($server);
         $playing = $this->getNowPlaying($server);
-        $server = ServerSettings::whereId($server)->first();
+        $server = Server::whereId($server)->first();
         if ($server == null)
-            $server = new ServerSettings(['name' => 'Unknown']);
+            $server = new Server(['name' => 'Unknown']);
         return view('server.queue')->with(['queue' => $queue, 'server' => $server, 'playing'=>$playing]);
     }
 
-    public function update(Request $request, ServerSettings $server) {
+    public function update(Request $request, Server $server) {
         $this->authorize('update', $server);
         $this->validate($request, [
             'enabled' => 'required',

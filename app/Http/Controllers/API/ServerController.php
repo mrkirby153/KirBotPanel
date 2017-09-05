@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\MusicSettings;
 use App\Models\Role;
 use App\Models\ServerMessage;
-use App\Models\ServerSettings;
+use App\Models\Server;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -19,7 +19,7 @@ class ServerController extends Controller {
     }
 
     public function getSettings($server) {
-        $server = ServerSettings::whereId($server)->first(['name', 'realname', 'require_realname', 'command_discriminator', 'log_channel', 'cmd_whitelist', 'bot_manager']);
+        $server = Server::whereId($server)->first(['name', 'realname', 'require_realname', 'command_discriminator', 'log_channel', 'cmd_whitelist', 'bot_manager']);
         $server->bot_manager = explode(',', $server->bot_manager);
         if (!is_array($server->bot_manager)) {
             $server->bot_manager = [$server->bot_manager];
@@ -31,19 +31,19 @@ class ServerController extends Controller {
     }
 
     public function serverExists($server){
-        return response()->json(['exists'=>ServerSettings::whereId($server)->first() != null]);
+        return response()->json(['exists'=>Server::whereId($server)->first() != null]);
     }
 
     public function setName(Request $request, $server) {
         if (!$request->has('name')) {
             return response()->json(['name' => 'Name is required'], 422);
         }
-        ServerSettings::updateOrCreate(['id' => $server], ['name' => $request->get('name')]);
+        Server::updateOrCreate(['id' => $server], ['name' => $request->get('name')]);
         return response()->json(['success' => 'Name updated!']);
     }
 
     public function register(Request $request) {
-        $settings = new ServerSettings();
+        $settings = new Server();
         $settings->name = $request->get('name');
         $settings->id = $request->get('id');
         $settings->cmd_whitelist = '';
@@ -65,7 +65,7 @@ class ServerController extends Controller {
         return response()->json($settings, Response::HTTP_CREATED);
     }
 
-    public function unregister(ServerSettings $server) {
+    public function unregister(Server $server) {
         MusicSettings::destroy($server->id);
         CustomCommand::whereServer($server->id)->delete();
         ServerMessage::whereServerId($server->id)->delete();
@@ -108,7 +108,7 @@ class ServerController extends Controller {
         return MusicSettings::whereId($server)->first();
     }
 
-    public function getRoles(ServerSettings $server) {
+    public function getRoles(Server $server) {
         return response()->json(['roles' => Role::whereServerId($server->id)->get()]);
     }
 }

@@ -11,6 +11,6 @@ class Channel extends Model {
 
 
     public function server() {
-        return $this->belongsTo(ServerSettings::class, 'id', 'server');
+        return $this->belongsTo(Server::class, 'id', 'server');
     }
 }

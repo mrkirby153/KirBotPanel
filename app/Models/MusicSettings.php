@@ -17,6 +17,6 @@ class MusicSettings extends Model
     ];
 
     public function server(){
-        return $this->hasOne(ServerSettings::class, 'id');
+        return $this->hasOne(Server::class, 'id');
     }
 }

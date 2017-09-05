@@ -8,6 +8,6 @@ class ClearanceOverride extends Model {
     protected $table = "permission_overrides";
 
     public function server() {
-        return $this->belongsTo(ServerSettings::class, 'server_id');
+        return $this->belongsTo(Server::class, 'server_id');
     }
 }

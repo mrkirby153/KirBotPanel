@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ServerSettings extends Model {
+class Server extends Model {
     public $table = "server_settings";
 
     public $incrementing = false;

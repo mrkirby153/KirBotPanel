@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ServerSettings;
+use App\Models\Server;
 use App\Models\UserInfo;
 use Auth;
 use Illuminate\Http\Request;
@@ -14,7 +14,7 @@ class UserController extends Controller {
     public function displaySettings(Request $request) {
         $serverName = "";
         if ($request->has('serverId'))
-            $serverName = ServerSettings::whereId($request->serverId)->first()->name;
+            $serverName = Server::whereId($request->serverId)->first()->name;
         \JavaScript::put([
             'Name' => trim($this->getName())
         ]);

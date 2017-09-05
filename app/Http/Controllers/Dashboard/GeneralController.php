@@ -7,7 +7,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Log;
 use App\Models\Role;
-use App\Models\ServerSettings;
+use App\Models\Server;
 use App\Utils\AuditLogger;
 use App\Utils\DiscordAPI;
 use Illuminate\Http\Request;
@@ -26,7 +26,7 @@ class GeneralController extends Controller {
         return view('server.serverlist')->with(['servers' => $servers]);
     }
 
-    public function showDashboard(ServerSettings $server) {
+    public function showDashboard(Server $server) {
         $this->authorize('update', $server);
         $server->load('channels');
         \JavaScript::put([
@@ -37,7 +37,7 @@ class GeneralController extends Controller {
     }
 
 
-    public function setRealnameSettings(ServerSettings $server, Request $request) {
+    public function setRealnameSettings(Server $server, Request $request) {
         $this->authorize('update', $server);
         $server->realname = $request->get('realnameSetting');
         $server->require_realname = ($request->get('realnameSetting') == 'OFF') ? false : $request->get('requireRealname');
@@ -46,7 +46,7 @@ class GeneralController extends Controller {
         Redis::publish('kirbot:update-name', json_encode(['server' => $server->id]));
     }
 
-    public function updateLogging(ServerSettings $server, Request $request) {
+    public function updateLogging(Server $server, Request $request) {
         $this->authorize('update', $server);
         if ($request->channel == null && $request->enabled) {
             return response()->json(['channel' => ['You must specify a channel to log to!']], 422);
@@ -57,7 +57,7 @@ class GeneralController extends Controller {
         return $server;
     }
 
-    public function updateChannelWhitelist(ServerSettings $server, Request $request) {
+    public function updateChannelWhitelist(Server $server, Request $request) {
         $this->authorize('update', $server);
         $whitelist = $request->get('channels');
         $server->cmd_whitelist = $whitelist;
@@ -66,7 +66,7 @@ class GeneralController extends Controller {
         return $server;
     }
 
-    public function updateBotManagers(ServerSettings $server, Request $request) {
+    public function updateBotManagers(Server $server, Request $request) {
         $this->authorize('update', $server);
         $server->bot_manager = $request->get('roles');
         $server->save();
@@ -74,18 +74,18 @@ class GeneralController extends Controller {
         return $server;
     }
 
-    public function showCommandList(ServerSettings $server) {
+    public function showCommandList(Server $server) {
         $this->authorize('update', $server);
         return view('server.commandlist')->with(['commands' => $server->commands, 'server' => $server]);
     }
 
-    public function showLog(ServerSettings $server) {
+    public function showLog(Server $server) {
         $this->authorize('update', $server);
         $logData = Log::whereServerId($server->id)->orderBy('created_at', 'desc')->paginate(10);
         return view('server.dashboard.log')->with(['logData' => $logData, 'tab' => 'log', 'server' => $server]);
     }
 
-    public function showQuotes(ServerSettings $server) {
+    public function showQuotes(Server $server) {
         return view('server.quotes')->with(['quotes' => $server->quotes, 'server' => $server]);
     }
 }

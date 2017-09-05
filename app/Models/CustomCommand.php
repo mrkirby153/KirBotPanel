@@ -9,6 +9,6 @@ class CustomCommand extends Model
     public $incrementing = false;
 
     public function server(){
-        return $this->belongsTo(ServerSettings::class, 'server');
+        return $this->belongsTo(Server::class, 'server');
     }
 }

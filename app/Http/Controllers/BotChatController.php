@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ServerSettings;
+use App\Models\Server;
 use Illuminate\Http\Request;
 
 class BotChatController extends Controller
@@ -14,10 +14,10 @@ class BotChatController extends Controller
     }
 
     public function getServers(){
-        return ServerSettings::get();
+        return Server::get();
     }
 
-    public function getChannels(ServerSettings $server){
+    public function getChannels(Server $server){
         return $this->getTextChannelsFromBot($server->id);
     }
 

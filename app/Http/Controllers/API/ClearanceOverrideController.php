@@ -3,18 +3,18 @@
 namespace App\Http\Controllers\API;
 
 use App\Models\ClearanceOverride;
-use App\Models\ServerSettings;
+use App\Models\Server;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;
 
 class ClearanceOverrideController extends Controller {
 
-    public function getOverrides(ServerSettings $server){
+    public function getOverrides(Server $server){
         return response()->json(['overrides'=>$server->overrides]);
     }
 
-    public function createOverride(ServerSettings $server, Request $request){
+    public function createOverride(Server $server, Request $request){
         $cmd = ClearanceOverride::whereServerId($server->id)->whereCommand($request->get('command'))->first();
         if($cmd != null){
             return $this->updateOverride($cmd, $request);

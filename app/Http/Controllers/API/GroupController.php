@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\Group;
 use App\Models\GroupMember;
 use App\Http\Controllers\Controller;
-use App\Models\ServerSettings;
+use App\Models\Server;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Keygen;
@@ -25,11 +25,11 @@ class GroupController extends Controller {
         return response()->json([], Response::HTTP_NO_CONTENT);
     }
 
-    public function getServerGroups(ServerSettings $server){
+    public function getServerGroups(Server $server){
         return response()->json(['groups'=>$server->groups->load('members')]);
     }
 
-    public function createGroup(ServerSettings $server, Request $request){
+    public function createGroup(Server $server, Request $request){
         $this->validate($request, [
             'name' => 'required',
             'role' => 'required'
@@ -46,7 +46,7 @@ class GroupController extends Controller {
         return \response()->json($group, Response::HTTP_CREATED);
     }
 
-    public function getGroupByName(ServerSettings $server, $name){
+    public function getGroupByName(Server $server, $name){
         return $server->groups->where('group_name', 'like', urldecode($name));
     }
 

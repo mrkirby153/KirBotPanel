@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Models\Channel;
 use App\Http\Controllers\Controller;
-use App\Models\ServerSettings;
+use App\Models\Server;
 use App\Utils\AuditLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Redis;
 class ChannelController extends Controller {
 
 
-    public function index(ServerSettings $server) {
+    public function index(Server $server) {
         $this->authorize('update', $server);
         \JavaScript::put([
             'Channels' => Channel::whereServer($server->id)->get(),
