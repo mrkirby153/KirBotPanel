@@ -88,4 +88,15 @@ class GeneralController extends Controller {
     public function showQuotes(Server $server) {
         return view('server.quotes')->with(['quotes' => $server->quotes, 'server' => $server]);
     }
+
+    public function setUsername(Server $server, Request $request) {
+        if ($request->has('name'))
+            $server->bot_nick = $request->get('name');
+        else
+            $server->bot_nick = "";
+        $server->save();
+        Redis::publish('kirbot:nickname', \GuzzleHttp\json_encode([
+            'nickname' => !$request->has('name') ? null : $request->get('name'),
+            'server' => $server->id]));
+    }
 }

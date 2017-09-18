@@ -103,3 +103,24 @@ Vue.component('settings-bot-manager', {
         }
     }
 });
+
+Vue.component('settings-bot-name', {
+    data(){
+        return {
+            forms: {
+                name: new Form('post', '/dashboard/'+Server.id+'/botName', {
+                    name: ''
+                })
+            }
+        }
+    },
+
+    mounted(){
+        this.forms.name.name = Server.bot_nick;
+    },
+    methods: {
+        save(){
+            this.forms.name.save();
+        }
+    }
+});

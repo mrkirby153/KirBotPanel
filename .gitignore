@@ -23,3 +23,5 @@ public/css/app\.css
 public/js/app\.js
 
 public/mix-manifest\.json
+
+\.DS_Store

@@ -19,7 +19,7 @@ class ServerController extends Controller {
     }
 
     public function getSettings($server) {
-        $server = Server::whereId($server)->first(['name', 'realname', 'require_realname', 'command_discriminator', 'log_channel', 'cmd_whitelist', 'bot_manager']);
+        $server = Server::whereId($server)->first(['name', 'realname', 'bot_nick', 'require_realname', 'command_discriminator', 'log_channel', 'cmd_whitelist', 'bot_manager']);
         if (!is_array($server->bot_manager)) {
             $server->bot_manager = [$server->bot_manager];
         }
