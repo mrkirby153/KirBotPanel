@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Server;
 use App\Utils\AuditLogger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
 
 class MusicController extends Controller {
 
@@ -52,7 +53,7 @@ class MusicController extends Controller {
     }
 
     private function getQueue($server) {
-        $data = \Redis::get("music.queue:$server");
+        $data = Redis::get("music.queue:$server");
         if ($data == null)
             return json_decode("[]");
         else
@@ -60,7 +61,7 @@ class MusicController extends Controller {
     }
 
     private function getNowPlaying($server){
-        $data = \Redis::get("music.playing:$server");
+        $data = Redis::get("music.playing:$server");
         if($data == null)
             return null;
         else

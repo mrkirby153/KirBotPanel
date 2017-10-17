@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Server;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
 
 class BotChatController extends Controller
 {
@@ -22,7 +23,7 @@ class BotChatController extends Controller
     }
 
     public function sendMessage(Request $request){
-        \Redis::publish("kirbot:botchat", json_encode(['server'=>$request->get('server'),
+        Redis::publish("kirbot:botchat", json_encode(['server'=>$request->get('server'),
             'channel' => $request->get('channel'), 'message' => $request->get('message')]));
     }
 }

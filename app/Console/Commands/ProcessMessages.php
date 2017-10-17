@@ -24,7 +24,6 @@ class ProcessMessages extends Command {
     /**
      * Create a new command instance.
      *
-     * @param Redis $redis
      */
     public function __construct() {
         parent::__construct();
@@ -36,12 +35,12 @@ class ProcessMessages extends Command {
      * @return mixed
      */
     public function handle() {
-        $messages = \Redis::llen('messages');
+        $messages = Redis::llen('messages');
         $this->info('Processing ' . $messages . ' queued messages....');
         if ($messages < 1)
             return;
         $bar = $this->output->createProgressBar($messages);
-        $messages = \Redis::lrange('messages', 0, $messages);
+        $messages = Redis::lrange('messages', 0, $messages);
         foreach ($messages as $msg) {
             $message = \GuzzleHttp\json_decode($msg);
             $m = ServerMessage::whereId($message->id)->first();
@@ -55,7 +54,7 @@ class ProcessMessages extends Command {
             $m->server_id = $message->server;
             $m->save();
             $bar->advance();
-            \Redis::lrem('messages', 0, $msg);
+            Redis::lrem('messages', 0, $msg);
         }
         $bar->finish();
     }
