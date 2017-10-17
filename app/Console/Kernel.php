@@ -27,9 +27,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
-        $schedule->call(function(){
-            ProcessMessages::dispatch();
-        })->hourly();
+        $schedule->command('panel:process')->hourly();
     }
 
     /**
