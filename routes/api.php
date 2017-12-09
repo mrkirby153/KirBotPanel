@@ -13,6 +13,7 @@
 Route::get('/chat/servers/{server}', 'BotChatController@getChannels');
 Route::post('/chat', 'BotChatController@sendMessage');
 Route::get('/chat/servers', 'BotChatController@getServers');
+Route::get('/{server}/queue', 'Dashboard\MusicController@getQueueJson');
 
 Route::group(['middleware'=>'internal_api', 'prefix'=>'internal'], function(){
 

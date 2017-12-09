@@ -26,6 +26,7 @@ Vue.component('field', require('./components/Field.vue'));
 require('./components/UserInfo');
 require('./components/ServerDashboard');
 require('./components/BotChat');
+require('./components/MusicQueue');
 
 const app = new Vue({
     el: '#app'

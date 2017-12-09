@@ -30,6 +30,13 @@ class MusicController extends Controller {
         return view('server.queue')->with(['queue' => $queue, 'server' => $server, 'playing'=>$playing]);
     }
 
+    public function getQueueJson($server){
+        return response()->json([
+            'nowPlaying' => $this->getNowPlaying($server),
+            'queue' => $this->getQueue($server)
+        ]);
+    }
+
     public function update(Request $request, Server $server) {
         $this->authorize('update', $server);
         $this->validate($request, [

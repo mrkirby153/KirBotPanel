@@ -5,9 +5,63 @@
 
 
 @section('content')
-
     <div class="ui center aligned segment">
-        @if($playing != null)
+        <music-queue inline-template discrim="{{$server->command_discriminator}}" server="{{$server->id}}">
+            <div>
+                <h1>Now Playing</h1>
+                <table class="ui celled table" v-if="nowPlaying">
+                    <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Duration</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><b>@{{ nowPlaying.title }}</b></td>
+                        <td>@{{ formatTime(nowPlaying.duration) }}</td>
+                        <td>
+                            <a class="ui button" :href="nowPlaying.url" target="_blank">Link</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <h3 v-if="!nowPlaying">Nothing is playing</h3>
+                <hr/>
+                <h1>Up Next</h1>
+                <table class="ui celled table">
+                    <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Duration</th>
+                        <th>Requested By</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tfoot v-if="queue.length < 1">
+                    <tr>
+                        <th colspan="4">
+                            Nothing is up next! Queue songs by typing <code>@{{ discrim }}play [Song Title/URL]</code>
+                        </th>
+                    </tr>
+                    </tfoot>
+                    </tbody>
+                    <transition name="fade">
+                        <tr v-for="song in queue">
+                            <td><b>@{{ song.title }}</b></td>
+                            <td>@{{ formatTime(song.duration) }}</td>
+                            <td>@{{ song.queued_by }}</td>
+                            <td>
+                                <a class="ui button" :href="song.url" target="_blank">Link</a>
+                            </td>
+                        </tr>
+                    </transition>
+                </table>
+            </div>
+        </music-queue>
+        {{--@if($playing != null)
             <h1>Now Playing</h1>
             <table class="ui celled table">
                 <thead>
@@ -61,6 +115,6 @@
                     @endforeach
                     </tbody>
                     @endif
-        </table>
+        </table>--}}
     </div>
 @endsection
