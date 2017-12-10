@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Models\ServerMessage;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Redis;
 
 class ProcessMessages extends Command {
     /**
@@ -35,26 +34,24 @@ class ProcessMessages extends Command {
      * @return mixed
      */
     public function handle() {
-        $messages = Redis::llen('messages');
+        $messages = \Redis::lLen("messages");
         $this->info('Processing ' . $messages . ' queued messages....');
         if ($messages < 1)
             return;
         $bar = $this->output->createProgressBar($messages);
-        $messages = Redis::lrange('messages', 0, $messages);
-        foreach ($messages as $msg) {
-            $message = \GuzzleHttp\json_decode($msg);
-            $m = ServerMessage::whereId($message->id)->first();
-            if ($m == null) {
-                $m = new ServerMessage();
-            }
-            $m->id = $message->id;
-            $m->channel = $message->channel;
-            $m->message = $message->message;
-            $m->author = $message->author;
-            $m->server_id = $message->server;
-            $m->save();
+        $messages = \Redis::lRange('messages', 0, $messages);
+        foreach($messages as $msg){
+            $message = \GuzzleHttp\json_decode(\Redis::get($msg));
+            ServerMessage::updateOrCreate(['id' => $message->id], [
+                'id' => $message->id,
+                'channel' => $message->channel,
+                'message' => $message->message,
+                'author' => $message->author,
+                'server_id' => $message->server
+            ]);
             $bar->advance();
-            Redis::lrem('messages', 0, $msg);
+            \Redis::lrem('messages', 0, $msg);
+            \Redis::del($msg);
         }
         $bar->finish();
     }
