@@ -45,9 +45,9 @@ class ServerController extends Controller {
         $settings = new Server();
         $settings->name = $request->get('name');
         $settings->id = $request->get('id');
-        $settings->cmd_whitelist = '';
+        $settings->cmd_whitelist = "[]";
         $settings->command_discriminator = '!';
-        $settings->bot_manager = '';
+        $settings->bot_manager = "[]";
         $settings->save();
         $musicSettings = new MusicSettings([
             'id' => $settings->id,
