@@ -2,10 +2,10 @@
 
 namespace App\Exceptions;
 
-use Dotenv\Exception\ValidationException;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
 
 class Handler extends ExceptionHandler
 {
@@ -69,6 +69,8 @@ class Handler extends ExceptionHandler
                         $status = $exception->getCode();
 
                 }
+                if($status == 0)
+                    $status = 400;
                 return response()->json([
                     'success' => false,
                     'code' => $status,

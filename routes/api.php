@@ -15,16 +15,16 @@ Route::post('/chat', 'BotChatController@sendMessage');
 Route::get('/chat/servers', 'BotChatController@getServers');
 Route::get('/{server}/queue', 'Dashboard\MusicController@getQueueJson');
 
-Route::group(['middleware'=>'internal_api', 'prefix'=>'internal'], function(){
+Route::group(['middleware' => 'internal_api', 'prefix' => 'internal'], function () {
 
     // -------- /user ------
-    Route::group(['prefix' => 'user'], function(){
+    Route::group(['prefix' => 'user'], function () {
         Route::get('/{user}/name', 'API\UserController@name');
         Route::post('/names', 'API\UserController@names');
     });
 
     // -------- /server ------
-    Route::group(['prefix' => 'server'], function(){
+    Route::group(['prefix' => 'server'], function () {
         Route::get('/{server}/commands', 'API\ServerController@getCommands');
         Route::get('/{server}/settings', 'API\ServerController@getSettings');
         Route::get('/{server}/channels', 'API\ServerController@getChannels');
@@ -36,6 +36,7 @@ Route::group(['middleware'=>'internal_api', 'prefix'=>'internal'], function(){
         Route::delete('/{server}', 'API\ServerController@unregister');
 
         Route::get('/{server}', 'API\ServerController@serverExists');
+        Route::get('/{server}/members', 'API\GuildMemberController@getForServer');
 
         Route::get('/{server}/groups', 'API\GroupController@getServerGroups');
         Route::put('/{server}/groups', 'API\GroupController@createGroup');
@@ -50,7 +51,7 @@ Route::group(['middleware'=>'internal_api', 'prefix'=>'internal'], function(){
     });
 
     // -------- /message --------
-    Route::group(['prefix' => 'message'], function(){
+    Route::group(['prefix' => 'message'], function () {
         Route::put('/', 'API\ServerMessageController@store');
         Route::delete('/bulkDelete', 'API\ServerMessageController@bulkDelete');
         Route::delete('/{serverMessage}', 'API\ServerMessageController@destroy');
@@ -59,24 +60,32 @@ Route::group(['middleware'=>'internal_api', 'prefix'=>'internal'], function(){
     });
 
     // ------- /channel --------
-    Route::group(['prefix' => 'channel'], function(){
+    Route::group(['prefix' => 'channel'], function () {
         Route::delete('/{chanel}', 'API\ServerController@removeChannel');
         Route::patch('/{channel}', 'API\ServerController@updateChannel');
     });
 
     // -------- /overrides --------
-    Route::group(['prefix' => 'overrides'], function(){
+    Route::group(['prefix' => 'overrides'], function () {
         Route::patch('/{override}', 'API\ClearanceOverrideController@updateOverride');
         Route::delete('/{override}', 'API\ClearanceOverrideController@deleteOverride');
     });
 
     // -------- /group -------
-    Route::group(['prefix' => 'group'], function(){
+    Route::group(['prefix' => 'group'], function () {
         Route::get('/{group}', 'API\GroupController@getMembers');
         Route::delete('/{group}', 'API\GroupController@deleteGroup');
         Route::put('/{group}/member', 'API\GroupController@addUserToGroup');
         Route::get('/{group}/members', 'API\GroupController@getMembers');
         Route::delete('/{group}/member/{id}', 'API\GroupController@removeUserByUID');
+    });
+
+    // -------- /member --------
+    Route::group(['prefix' => 'member'], function () {
+        Route::put('/', 'API\GuildMemberController@create');
+        Route::get('/{server}/{id}', 'API\GuildMemberController@get');
+        Route::patch('/{server}/{id}', 'API\GuildMemberController@update');
+        Route::delete('/{server}/{id}', 'API\GuildMemberController@delete');
     });
 
     // -------- RESOURCES --------
