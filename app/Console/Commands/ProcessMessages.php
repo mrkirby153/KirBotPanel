@@ -22,11 +22,17 @@ class ProcessMessages extends Command {
     protected $description = 'Command description';
 
     /**
+     * @var Redis
+     */
+    private $redis;
+
+    /**
      * Create a new command instance.
      *
      */
-    public function __construct() {
+    public function __construct(Redis $redis) {
         parent::__construct();
+        $this->redis = $redis;
     }
 
     /**
@@ -42,7 +48,7 @@ class ProcessMessages extends Command {
         $bar = $this->output->createProgressBar($messages);
         $messages = Redis::lRange('messages', 0, $messages);
         foreach($messages as $msg){
-            $message = \GuzzleHttp\json_decode(\Redis::get($msg));
+            $message = \GuzzleHttp\json_decode(Redis::get($msg));
             ServerMessage::updateOrCreate(['id' => $message->id], [
                 'id' => $message->id,
                 'channel' => $message->channel,
