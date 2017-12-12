@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\ServerMessage;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Redis;
 
 class ProcessMessages extends Command {
     /**
@@ -34,12 +35,12 @@ class ProcessMessages extends Command {
      * @return mixed
      */
     public function handle() {
-        $messages = \Redis::lLen("messages");
+        $messages = Redis::lLen("messages");
         $this->info('Processing ' . $messages . ' queued messages....');
         if ($messages < 1)
             return;
         $bar = $this->output->createProgressBar($messages);
-        $messages = \Redis::lRange('messages', 0, $messages);
+        $messages = Redis::lRange('messages', 0, $messages);
         foreach($messages as $msg){
             $message = \GuzzleHttp\json_decode(\Redis::get($msg));
             ServerMessage::updateOrCreate(['id' => $message->id], [
@@ -50,8 +51,8 @@ class ProcessMessages extends Command {
                 'server_id' => $message->server
             ]);
             $bar->advance();
-            \Redis::lrem('messages', 0, $msg);
-            \Redis::del($msg);
+            Redis::lrem('messages', 0, $msg);
+            Redis::del($msg);
         }
         $bar->finish();
     }
