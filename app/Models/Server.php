@@ -45,4 +45,8 @@ class Server extends Model {
     public function overrides(){
         return $this->hasMany(ClearanceOverride::class, 'server_id');
     }
+
+    public function feeds(){
+        return $this->hasMany(RssFeed::class, 'server_id');
+    }
 }
