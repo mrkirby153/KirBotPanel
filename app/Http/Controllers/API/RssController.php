@@ -28,16 +28,20 @@ class RssController extends Controller {
     }
 
 
-    public function getForServer(Server $server){
-        return $server->feeds()->with('items')->get();
+    public function getForServer(Server $server) {
+        return ["feeds" => $server->feeds()->with('items')->get()];
     }
 
-    public function deleteFeed(RssFeed $feed){
+    public function getFeed(RssFeed $feed) {
+        return ["feed" => $feed->with('items')->first()];
+    }
+
+    public function deleteFeed(RssFeed $feed) {
         $this->items->whereRssFeedId($feed->id)->delete();
         $feed->delete();
     }
 
-    public function registerFeed(Request $request, Server $server){
+    public function registerFeed(Request $request, Server $server) {
         $request->validate([
             'channel_id' => 'required',
             'feed_url' => 'required|url'
@@ -45,23 +49,23 @@ class RssController extends Controller {
         return $server->feeds()->create($request->all());
     }
 
-    public function checkFeed(Request $request){
+    public function checkFeed(Request $request) {
         $request->validate([
             'feed' => 'required|exists:rss_feeds,id',
-            'success' => 'required|boolean'
+            'success' => 'required'
         ]);
 
-        $feed = $this->feed->firstOrFail(['id' => $request->get('feed')]);
+        $feed = $this->feed->whereId($request->get('feed'))->firstOrFail();
         $feed->lastCheck = Carbon::now();
-        $feed->failed = !$request->get('success');
+        $feed->failed = !($request->get('success') == "true"? true : false);
         $feed->save();
         return $feed;
     }
 
-    public function registerItem(Request $request, RssFeed $feed){
+    public function registerItem(Request $request, RssFeed $feed) {
         $request->validate([
             'guid' => 'required'
         ]);
-       return $feed->items()->create($request->all());
+        return $feed->items()->create($request->all());
     }
 }

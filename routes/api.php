@@ -91,6 +91,7 @@ Route::group(['middleware' => 'internal_api', 'prefix' => 'internal'], function 
     // -------- /feed --------
     Route::group(['prefix' => 'feed'], function(){
         Route::get('/server/{server}', 'API\RssController@getForServer');
+        Route::get('/{feed}', 'API\RssController@getFeed');
         Route::delete('/{feed}', 'API\RssController@deleteFeed');
         Route::put('/server/{server}', 'API\RssController@registerFeed');
         Route::patch('/server/{server}/check', 'API\RssController@checkFeed');
