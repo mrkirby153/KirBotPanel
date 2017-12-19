@@ -2,9 +2,6 @@
 
 namespace App\Models;
 
-
-use App\RssFeedItem;
-
 class RssFeed extends RandomIdModel {
     protected $table = "rss_feeds";
 

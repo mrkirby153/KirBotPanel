@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\RssFeed;
 use App\Models\Server;
-use App\RssFeedItem;
+use App\Models\RssFeedItem;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
