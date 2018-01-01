@@ -7,14 +7,16 @@
     <div class="ui cards">
         @foreach($servers as $server)
             <?php
-                $url = $server->on? url('/dashboard/'.$server->id) : 'https://discordapp.com/oauth2/authorize?client_id='.env('DISCORD_KEY').'&scope=bot&permissions=8&guild_id='.$server->id;
-                ?>
+            $url = $server->on ? url('/dashboard/' . $server->id) : 'https://discordapp.com/oauth2/authorize?client_id=' . env('DISCORD_KEY') . '&scope=bot&permissions=8&guild_id=' . $server->id;
+            ?>
             <div class="ui card">
-                @if($server->has_icon)
-                    <a class="image" href="{{$url}}">
+                <a class="image" href="{{$url}}">
+                    @if($server->has_icon)
                         <img src="https://cdn.discordapp.com/icons/{{$server->id}}/{{$server->icon}}.webp"/>
-                    </a>
-                @endif
+                    @else
+                        <img src="{{route('serverIcon')}}?server_name={{urlencode($server->name)}}"/>
+                    @endif
+                </a>
                 <div class="content">
                     <a class="header" href="{{$url}}">{{$server->name}}</a>
                 </div>

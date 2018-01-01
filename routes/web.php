@@ -17,7 +17,7 @@ Route::get('/', function () {
 
 Route::get('/name', 'UserController@displaySettings');
 Route::post('/name', 'UserController@updateName')->middleware('auth');
-
+Route::get('/serverIcon', 'Dashboard\GeneralController@makeIcon')->name('serverIcon');
 
 Route::get('/servers', 'Dashboard\GeneralController@displayOverview')->name('dashboard.all');
 Route::group(['middleware' => ['has_discord_token']], function () {

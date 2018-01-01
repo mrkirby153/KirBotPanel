@@ -12,6 +12,7 @@ use App\Utils\AuditLogger;
 use App\Utils\DiscordAPI;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
+use Intervention\Image\AbstractFont;
 
 class GeneralController extends Controller {
 
@@ -98,5 +99,24 @@ class GeneralController extends Controller {
         Redis::publish('kirbot:nickname', \GuzzleHttp\json_encode([
             'nickname' => !$request->has('name') ? null : $request->get('name'),
             'server' => $server->id]));
+    }
+
+    public function makeIcon(Request $request) {
+        $serverName = $request->get('server_name');
+        $words = explode(" ", $serverName);
+        $acronym = "";
+        foreach ($words as $word) {
+            $acronym .= $word[0];
+        }
+
+        $img = \Image::canvas(290, 290, '#7289DA');
+        $img->text($acronym, 290 / 2, 290 / 2, function (AbstractFont $font) {
+            $font->file(public_path('Whitney-Book.ttf'));
+            $font->color("#FFFFFF");
+            $font->size(130);
+            $font->align('center');
+            $font->valign('middle');
+        });
+        return $img->response();
     }
 }
