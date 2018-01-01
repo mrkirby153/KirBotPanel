@@ -33,7 +33,8 @@ class RssController extends Controller {
     }
 
     public function getFeed(RssFeed $feed) {
-        return ["feed" => $feed->with('items')->first()];
+        $feed->load('items');
+        return ["feed" => $feed];
     }
 
     public function deleteFeed(RssFeed $feed) {

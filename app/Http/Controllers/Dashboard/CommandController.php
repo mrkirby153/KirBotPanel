@@ -87,6 +87,7 @@ class CommandController extends Controller {
     public function deleteCommand($server, $command) {
         AuditLogger::log($server, "command_destroy", ['name'=>CustomCommand::whereId($command)->first()->name]);
         CustomCommand::destroy($command);
+        $this->syncServer($server);
     }
 
 }

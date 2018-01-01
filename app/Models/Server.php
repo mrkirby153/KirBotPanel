@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Redis;
 
 class Server extends Model {
     public $table = "server_settings";
@@ -48,5 +49,11 @@ class Server extends Model {
 
     public function feeds(){
         return $this->hasMany(RssFeed::class, 'server_id');
+    }
+
+    public function save(array $options = []) {
+        $save = parent::save($options);
+        Redis::publish("kirbot:sync", \GuzzleHttp\json_encode(['guild' => $this->getAttribute('id')]));
+        return $save;
     }
 }

@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Channel;
+use App\Models\Server;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Redis;
 
 class Controller extends BaseController {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
@@ -21,7 +23,7 @@ class Controller extends BaseController {
         return null;
     }
 
-    public static  function getServersFromAPI() {
+    public static function getServersFromAPI() {
         $token = \Auth::user()->token;
         $cacheId = "SERVERS-$token";
         $body = "[]";
@@ -91,5 +93,12 @@ class Controller extends BaseController {
 
         return Channel::whereServer($server)->whereType('VOICE')->get();
 
+    }
+
+    protected function syncServer($server) {
+        if($server instanceof Server){
+            $server = $server->id;
+        }
+        Redis::publish("kirbot:sync", \GuzzleHttp\json_encode(['guild' => $server]));
     }
 }
