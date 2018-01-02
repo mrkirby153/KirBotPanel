@@ -53,7 +53,7 @@ class Server extends Model {
 
     public function save(array $options = []) {
         $save = parent::save($options);
-        Redis::publish("kirbot:sync", \GuzzleHttp\json_encode(['guild' => $this->getAttribute('id')]));
+        syncServer($this->getAttribute('id'));
         return $save;
     }
 }

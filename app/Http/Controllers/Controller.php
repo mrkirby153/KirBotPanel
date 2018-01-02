@@ -94,11 +94,4 @@ class Controller extends BaseController {
         return Channel::whereServer($server)->whereType('VOICE')->get();
 
     }
-
-    protected function syncServer($server) {
-        if($server instanceof Server){
-            $server = $server->id;
-        }
-        Redis::publish("kirbot:sync", \GuzzleHttp\json_encode(['guild' => $server]));
-    }
 }
