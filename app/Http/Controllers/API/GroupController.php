@@ -14,7 +14,7 @@ class GroupController extends Controller {
 
 
     public function getMembers(Group $group){
-        return response()->json(['members'=>$group->members]);
+        return response()->json($group->members);
     }
 
     public function deleteGroup(Group $group){
@@ -26,7 +26,7 @@ class GroupController extends Controller {
     }
 
     public function getServerGroups(Server $server){
-        return response()->json(['groups'=>$server->groups->load('members')]);
+        return response()->json($server->groups->load('members'));
     }
 
     public function createGroup(Server $server, Request $request){
@@ -51,6 +51,9 @@ class GroupController extends Controller {
     }
 
     public function addUserToGroup(Group $group, Request $request){
+        $this->validate($request, [
+            'id' => 'required'
+        ]);
         $member = new GroupMember();
         $member->id = Keygen::alphanum(10)->generate();
         $member->group_id = $group->id;

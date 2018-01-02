@@ -15,7 +15,7 @@ use Illuminate\Http\Response;
 class ServerController extends Controller {
 
     public function getCommands($server) {
-        return response()->json(['cmds' => CustomCommand::whereServer($server)->get(['name', 'data', 'clearance', 'type', 'respect_whitelist'])]);
+        return CustomCommand::whereServer($server)->get(['name', 'data', 'clearance', 'type', 'respect_whitelist']);
     }
 
     public function getSettings($server) {
@@ -108,6 +108,6 @@ class ServerController extends Controller {
     }
 
     public function getRoles(Server $server) {
-        return response()->json(['roles' => Role::whereServerId($server->id)->get()]);
+        return Role::whereServerId($server->id)->get();
     }
 }

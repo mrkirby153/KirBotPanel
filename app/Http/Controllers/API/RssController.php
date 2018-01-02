@@ -4,8 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\RssFeed;
-use App\Models\Server;
 use App\Models\RssFeedItem;
+use App\Models\Server;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -29,12 +29,12 @@ class RssController extends Controller {
 
 
     public function getForServer(Server $server) {
-        return ["feeds" => $server->feeds()->with('items')->get()];
+        return $server->feeds()->with('items')->get();
     }
 
     public function getFeed(RssFeed $feed) {
         $feed->load('items');
-        return ["feed" => $feed];
+        return $feed;
     }
 
     public function deleteFeed(RssFeed $feed) {
@@ -58,7 +58,7 @@ class RssController extends Controller {
 
         $feed = $this->feed->whereId($request->get('feed'))->firstOrFail();
         $feed->lastCheck = Carbon::now();
-        $feed->failed = !($request->get('success') == "true"? true : false);
+        $feed->failed = !($request->get('success') == "true" ? true : false);
         $feed->save();
         return $feed;
     }

@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\JsonResponse;
 
 class InternalAPI {
     /**
@@ -19,7 +18,11 @@ class InternalAPI {
             return \Response::json(['error' => 'Invalid API key'], 401);
         }
         $response = $next($request);
-//        $response->headers->set('cache-control', 'max-age=45');
+        $success = $response->exception == null;
+        $response = [
+            'success' => $success,
+            'data' => empty($response->getContent()) ? (object)[] : $response->getData()
+        ];
         return $response;
     }
 }

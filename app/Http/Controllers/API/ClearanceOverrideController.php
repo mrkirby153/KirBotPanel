@@ -15,6 +15,10 @@ class ClearanceOverrideController extends Controller {
     }
 
     public function createOverride(Server $server, Request $request){
+        $request->validate([
+            'command' => 'required',
+            'clearance' => 'required'
+        ]);
         $cmd = ClearanceOverride::whereServerId($server->id)->whereCommand($request->get('command'))->first();
         if($cmd != null){
             return $this->updateOverride($cmd, $request);
@@ -29,6 +33,9 @@ class ClearanceOverrideController extends Controller {
     }
 
     public function updateOverride(ClearanceOverride $override, Request $request){
+        $request->validate([
+            'clearance' => 'required'
+        ]);
         $override->clearance = $request->get('clearance');
         $override->save();
         return $override;

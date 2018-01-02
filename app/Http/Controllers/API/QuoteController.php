@@ -28,7 +28,7 @@ class QuoteController extends Controller {
     }
 
     public function getServerQuotes(Server $server){
-        return response()->json(['quotes'=>$server->quotes]);
+        return response()->json($server->quotes);
     }
 
 }

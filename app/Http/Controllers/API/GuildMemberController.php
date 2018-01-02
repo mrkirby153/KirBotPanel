@@ -35,9 +35,7 @@ class GuildMemberController extends Controller {
     }
 
     public function getForServer($server) {
-        return [
-            'members' => $this->guildMember->whereServerId($server)->get()
-        ];
+        return $this->guildMember->whereServerId($server)->get();
     }
 
     public function update(Request $request, $server, $id) {
