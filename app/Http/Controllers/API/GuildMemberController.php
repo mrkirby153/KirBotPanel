@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\API;
 
-use App\GuildMember;
 use App\Http\Controllers\Controller;
-use App\Models\Log;
+use App\Models\GuildMember;
+use App\Models\GuildMemberRole;
+use App\Models\Role;
 use Illuminate\Http\Request;
 
 class GuildMemberController extends Controller {
@@ -31,11 +32,11 @@ class GuildMemberController extends Controller {
     }
 
     public function get($server, $id) {
-        return $this->guildMember->whereUserId($id)->whereServerId($server)->firstOrFail();
+        return $this->guildMember->whereUserId($id)->whereServerId($server)->with('roles')->firstOrFail();
     }
 
     public function getForServer($server) {
-        return $this->guildMember->whereServerId($server)->get();
+        return $this->guildMember->whereServerId($server)->with('roles')->get();
     }
 
     public function update(Request $request, $server, $id) {
@@ -47,5 +48,17 @@ class GuildMemberController extends Controller {
 
     public function delete($server, $id) {
         return response()->json(['success' => $this->guildMember->whereUserId($id)->whereServerId($server)->delete()]);
+    }
+
+    public function addRole($member, Role $role) {
+        return GuildMemberRole::updateOrCreate(['user_id' => $member, 'server_id' => $role->server_id, 'role_id' => $role->id], [
+            'server_id' => $role->server_id,
+            'user_id' => $member,
+            'role_id' => $role->id
+        ]);
+    }
+
+    public function removeRole($member, Role $role) {
+        return json_encode(['success' => (bool)GuildMemberRole::whereRoleId($role->id)->whereUserId($member)->delete()]);
     }
 }

@@ -86,6 +86,9 @@ Route::group(['middleware' => 'internal_api', 'prefix' => 'internal'], function 
         Route::get('/{server}/{id}', 'API\GuildMemberController@get');
         Route::patch('/{server}/{id}', 'API\GuildMemberController@update');
         Route::delete('/{server}/{id}', 'API\GuildMemberController@delete');
+
+        Route::put('/role/{member}/{role}', 'API\GuildMemberController@addRole');
+        Route::delete('/role/{member}/{role}', 'API\GuildMemberController@removeRole');
     });
 
     // -------- /feed --------

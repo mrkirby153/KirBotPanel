@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,4 +12,8 @@ class GuildMember extends Model {
     protected $fillable = [
         'id', 'server_id', 'user_id', 'user_name', 'user_discrim', 'user_nick'
     ];
+
+    public function roles() {
+        return $this->hasMany(GuildMemberRole::class, 'user_id', 'user_id');
+    }
 }
