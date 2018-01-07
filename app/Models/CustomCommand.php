@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class CustomCommand extends Model {
     public $incrementing = false;
 
-    public function server() {
+    public function guild() {
         return $this->belongsTo(Server::class, 'server');
     }
 
