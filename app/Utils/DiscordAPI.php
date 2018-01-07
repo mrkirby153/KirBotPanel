@@ -6,15 +6,28 @@ namespace App\Utils;
 
 use App\Models\Server;
 use App\User;
+use Carbon\Carbon;
+use GuzzleHttp\Client;
 
 class DiscordAPI {
 
     /**
      * Gets the servers the user has access to from the discord API
      * @param User $user The user
+     * @param bool $refreshAttempted If a refresh was attempted
      * @return mixed
      */
-    public static function getServersFromAPI(User $user) {
+    public static function getServersFromAPI(User $user, $refreshAttempted = false) {
+        if($user->token_type != "NAME_SERVERS"){
+            self::redirectToLogin(); // This token doesn't have access to servers
+        }
+        if (!self::isApiTokenValid($user)) {
+            \Log::debug("API token is out of date. Refreshing");
+            if (!self::attemptRefresh($user)) {
+                \Log::debug("API refresh failed. Redirecting to login");
+                self::redirectToLogin();
+            }
+        }
         $token = $user->token;
         $cacheId = "SERVERS-$token";
         $body = "[]";
@@ -30,11 +43,18 @@ class DiscordAPI {
                 ]
             ]);
             if ($response->getStatusCode() == 401) {
-                // User's token is not valid
-                \App::abort(302, '', ['Location' => '/login?returnUrl=' . \Request::getRequestUri() . '&requireGuilds=true']);
+                // User's token is not valid, attempt to refresh it
+                if (!self::attemptRefresh($user)) {
+                    self::redirectToLogin(); // Refresh failed, redirecting to login
+                } else {
+                    if ($refreshAttempted)
+                        self::redirectToLogin();
+                    else
+                        return self::getServersFromAPI($user, true);
+                }
             }
-            if($response->getStatusCode() == 429){
-                \Log::info("Hit Discord Ratelimit. Aborting...");
+            if ($response->getStatusCode() == 429) {
+                \Log::warning("Hit Discord Ratelimit. Aborting...");
                 \App::abort(503);
             }
             $body = $response->getBody();
@@ -72,5 +92,48 @@ class DiscordAPI {
             }
         }
         return $servers;
+    }
+
+    /**
+     * Attempts a refresh of the user's access token
+     * @param User $user
+     * @return bool True if successful
+     */
+    public static function attemptRefresh(User $user) {
+        $client = new Client();
+        $response = $client->post('https://discordapp.com/api/v6/oauth2/token', [
+            'form_params' => [
+                'client_id' => env('DISCORD_KEY'),
+                'client_secret' => env('DISCORD_SECRET'),
+                'grant_type' => 'refresh_token',
+                'refresh_token' => $user->refresh_token,
+                'redirect_uri' => env('DISCORD_REDIRECT_URI')
+            ],
+            'headers' => [
+                'Content-Type' => 'application/x-www-form-urlencoded'
+            ]
+        ]);
+        if ($response->getStatusCode() != 200) {
+            return false;
+        }
+        $body = (array)\GuzzleHttp\json_decode((string)$response->getBody());
+        $user->token = $body['access_token'];
+        $carbon = Carbon::now();
+        $carbon->addSeconds($body['expires_in']);
+        $user->expires_in = $carbon->toDateTimeString();
+        return $user->save();
+    }
+
+    /**
+     * Checks if the API token is valid
+     * @param User $user
+     * @return bool True if the api token is valid
+     */
+    private static function isApiTokenValid(User $user) {
+        return Carbon::now()->timestamp < Carbon::parse($user->expires_in)->timestamp;
+    }
+
+    private static function redirectToLogin() {
+        \App::abort(302, '', ['Location' => '/login?returnUrl=' . \Request::getRequestUri() . '&requireGuilds=true']);
     }
 }
