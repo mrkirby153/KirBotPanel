@@ -31,6 +31,7 @@ Route::group(['middleware' => ['has_discord_token']], function () {
             Route::post('/{server}/whitelist', 'Dashboard\GeneralController@updateChannelWhitelist');
             Route::post('/{server}/managers', 'Dashboard\GeneralController@updateBotManagers');
             Route::post('/{server}/botName', 'Dashboard\GeneralController@setUsername');
+            Route::patch('/{server}/persistence', 'Dashboard\GeneralController@setPersistence');
         });
 
         // Commands

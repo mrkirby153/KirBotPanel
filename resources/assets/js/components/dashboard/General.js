@@ -5,7 +5,7 @@ Vue.component('settings-realname', {
     data() {
         return {
             forms: {
-                realName: new Form('POST', '/dashboard/'+Server.id+'/realname', {
+                realName: new Form('POST', '/dashboard/' + Server.id + '/realname', {
                     requireRealname: false,
                     realnameSetting: 'OFF'
                 })
@@ -36,7 +36,7 @@ Vue.component('settings-logging', {
     data() {
         return {
             forms: {
-                logging: new Form('patch', '/dashboard/'+Server.id+'/logging', {
+                logging: new Form('patch', '/dashboard/' + Server.id + '/logging', {
                     enabled: false,
                     channel: ''
                 })
@@ -64,7 +64,7 @@ Vue.component('settings-channel-whitelist', {
     data() {
         return {
             forms: {
-                whitelist: new Form('post', '/dashboard/'+Server.id+'/whitelist', {
+                whitelist: new Form('post', '/dashboard/' + Server.id + '/whitelist', {
                     channels: []
                 })
             }
@@ -72,7 +72,7 @@ Vue.component('settings-channel-whitelist', {
     },
 
     mounted() {
-        this.forms.whitelist.channels = (Server.cmd_whitelist == null)? [] : Server.cmd_whitelist;
+        this.forms.whitelist.channels = (Server.cmd_whitelist == null) ? [] : Server.cmd_whitelist;
     },
 
     methods: {
@@ -86,15 +86,15 @@ Vue.component('settings-bot-manager', {
     data() {
         return {
             forms: {
-                roles: new Form('post', '/dashboard/'+Server.id+'/managers',{
-                    roles:[]
+                roles: new Form('post', '/dashboard/' + Server.id + '/managers', {
+                    roles: []
                 })
             }
         }
     },
 
     mounted() {
-        this.forms.roles.roles = (Server.bot_manager == null)? [] : Server.bot_manager;
+        this.forms.roles.roles = (Server.bot_manager == null) ? [] : Server.bot_manager;
     },
 
     methods: {
@@ -105,22 +105,44 @@ Vue.component('settings-bot-manager', {
 });
 
 Vue.component('settings-bot-name', {
-    data(){
+    data() {
         return {
             forms: {
-                name: new Form('post', '/dashboard/'+Server.id+'/botName', {
+                name: new Form('post', '/dashboard/' + Server.id + '/botName', {
                     name: ''
                 })
             }
         }
     },
 
-    mounted(){
+    mounted() {
         this.forms.name.name = Server.bot_nick;
     },
     methods: {
-        save(){
+        save() {
             this.forms.name.save();
+        }
+    }
+});
+
+Vue.component('settings-user-persistence', {
+    data() {
+        return {
+            forms: {
+                persist: new Form('patch', '/dashboard/' + Server.id + '/persistence', {
+                    persistence: false
+                })
+            }
+        }
+    },
+
+    mounted() {
+        this.forms.persist.persistence = Server.user_persistence;
+    },
+
+    methods: {
+        save() {
+            this.forms.persist.save();
         }
     }
 });

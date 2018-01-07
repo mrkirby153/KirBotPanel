@@ -132,4 +132,23 @@
         </div>
     </div>
 
+    <div class="ui {{$color}} segment">
+        <h2>User Persistence</h2>
+        <p>When enabled, users' roles and nicknames will be restored when they rejoin. This does
+            <b>NOT</b> affect per channel permissions</p>
+        <settings-user-persistence inline-template>
+            <panel-form :form="forms.persist">
+                <div slot="inputs">
+                    <field name="persistence" :form="forms.persist">
+                        <div class="ui slider checkbox">
+                            <input type="checkbox" name="enabled" v-model="forms.persist.persistence" @change="save"/>
+                            <label>Enable</label>
+                        </div>
+                    </field>
+                </div>
+            </panel-form>
+        </settings-user-persistence>
+
+    </div>
+
 @endsection

@@ -90,6 +90,11 @@ class GeneralController extends Controller {
         return view('server.quotes')->with(['quotes' => $server->quotes, 'server' => $server]);
     }
 
+    public function setPersistence(Server $server, Request $request){
+        $server->user_persistence = $request->get('persistence') == true;
+        $server->save();
+    }
+
     public function setUsername(Server $server, Request $request) {
         if ($request->has('name'))
             $server->bot_nick = $request->get('name');
