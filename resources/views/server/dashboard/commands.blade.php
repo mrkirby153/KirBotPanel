@@ -9,15 +9,14 @@
             <div class="ui {{$color}} segment">
                 <h2>Command Discriminator</h2>
                 <p>The prefix which all commands on the server use</p>
-                <panel-form :form="forms.cmdDiscriminator">
+                <panel-form :form="forms.cmdDiscriminator" @submit="saveDiscrim">
                     <div slot="inputs">
                         <div class="one field">
                             <field name="discriminator" :form="forms.cmdDiscriminator">
                                 <label>Discriminator</label>
-                                <input name="discriminator" v-model="forms.cmdDiscriminator.discriminator"/>
+                                <input name="discriminator" v-model="forms.cmdDiscriminator.discriminator" @change="saveDiscrim"/>
                             </field>
                         </div>
-                        <button class="ui button fluid green" @click.prevent="saveDiscrim">Save</button>
                     </div>
                 </panel-form>
             </div>
