@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\GuildMember;
 use App\Models\Channel;
 use App\Models\CustomCommand;
 use App\Http\Controllers\Controller;
@@ -69,6 +70,7 @@ class ServerController extends Controller {
         CustomCommand::whereServer($server->id)->delete();
         ServerMessage::whereServerId($server->id)->delete();
         Channel::whereServer($server->id)->delete();
+        GuildMember::whereServerId($server->id)->delete();
         $server->delete();
         return \response()->json([], Response::HTTP_NO_CONTENT);
     }
