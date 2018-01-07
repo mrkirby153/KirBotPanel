@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\JsonResponse;
 
 class InternalAPI {
     /**
@@ -18,11 +19,15 @@ class InternalAPI {
             return \Response::json(['error' => 'Invalid API key'], 401);
         }
         $response = $next($request);
-        $success = $response->exception == null;
-        $response = [
-            'success' => $success,
-            'data' => empty($response->getContent()) ? (object)[] : $response->getData()
-        ];
-        return $response;
+        if($response instanceof JsonResponse) {
+            $success = $response->exception == null;
+            $response = [
+                'success' => $success,
+                'data' => empty($response->getContent()) ? (object)[] : $response->getData()
+            ];
+            return $response;
+        } else {
+            return $response;
+        }
     }
 }
