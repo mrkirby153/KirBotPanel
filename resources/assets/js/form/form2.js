@@ -10,9 +10,11 @@ export class Form {
         this.successful = false;
         this.method = method.toLowerCase();
         this.uri = uri;
+        this.timer = 0;
     }
 
     start() {
+        clearTimeout(this.timer);
         this.errors.clearAll();
         this.busy = true;
         this.successful = false;
@@ -21,6 +23,10 @@ export class Form {
     complete() {
         this.busy = false;
         this.successful = true;
+        let vm = this;
+        this.timer = setTimeout(() => {
+            vm.successful = false;
+        }, 2500)
     }
 
     submit(method, uri) {
@@ -81,7 +87,7 @@ class FormErrors {
         return !_.isEmpty(this.errors);
     }
 
-    all(){
+    all() {
         return this.errors
     }
 
