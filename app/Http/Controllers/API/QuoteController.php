@@ -14,6 +14,12 @@ class QuoteController extends Controller {
 
 
     public function save(Request $request) {
+        $request->validate([
+            'server_id' => 'required|exists:server_settings,id',
+            'user' =>  'required',
+            'content' => 'required',
+            'message_id' => 'required'
+        ]);
         $quote = new Quote();
         $quote->server_id = $request->get('server_id');
         $quote->user = $request->get('user');

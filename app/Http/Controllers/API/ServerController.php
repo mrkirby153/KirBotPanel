@@ -76,6 +76,11 @@ class ServerController extends Controller {
     }
 
     public function registerChannel($server, Request $request) {
+        $request->validate([
+            'id' => 'required|numeric',
+            'channel_name' => 'required',
+            'type' => 'required'
+        ]);
         $chan = new Channel();
         $chan->server = $server;
         $chan->id = $request->get('id');
@@ -86,6 +91,10 @@ class ServerController extends Controller {
     }
 
     public function updateChannel(Channel $channel, Request $request) {
+        $request->validate([
+            'name' => 'required',
+            'hidden' => 'required|boolean'
+        ]);
         $channel->channel_name = $request->get('name');
         $channel->hidden = $request->get('hidden') == "true";
         $channel->save();

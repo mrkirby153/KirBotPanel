@@ -40,6 +40,10 @@ class GeneralController extends Controller {
 
     public function setRealnameSettings(Server $server, Request $request) {
         $this->authorize('update', $server);
+        $request->validate([
+            'realnameSetting' => 'required',
+            'requireRealname' => 'required|boolean'
+        ]);
         $server->realname = $request->get('realnameSetting');
         $server->require_realname = ($request->get('realnameSetting') == 'OFF') ? false : $request->get('requireRealname');
         $server->save();
@@ -49,8 +53,13 @@ class GeneralController extends Controller {
 
     public function updateLogging(Server $server, Request $request) {
         $this->authorize('update', $server);
+        $request->validate([
+            'enabled' => 'required|boolean'
+        ]);
         if ($request->channel == null && $request->enabled) {
-            return response()->json(['channel' => ['You must specify a channel to log to!']], 422);
+            $request->validate([
+                'channel' => 'required'
+            ]);
         }
         $server->log_channel = $request->get('enabled') ? $request->get('channel') : null;
         $server->save();
