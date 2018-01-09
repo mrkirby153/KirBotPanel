@@ -2,9 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 
-class GuildMember extends Model {
+class GuildMember extends RandomIdModel {
+
+    use DeletesRelations;
+
+    protected $deletableRelations = ['roles'];
+
     protected $table = "guild_members";
 
     public $incrementing = false;

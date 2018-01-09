@@ -31,7 +31,7 @@ class ServerMessageController extends Controller {
     /**
      * Display the specified resource.
      *
-     * @param  \App\ServerMessage $serverMessage
+     * @param ServerMessage $serverMessage
      * @return \Illuminate\Http\Response
      */
     public function show(ServerMessage $serverMessage) {
@@ -42,7 +42,7 @@ class ServerMessageController extends Controller {
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \App\ServerMessage $serverMessage
+     * @param ServerMessage $serverMessage
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, ServerMessage $serverMessage) {
@@ -55,7 +55,7 @@ class ServerMessageController extends Controller {
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\ServerMessage $serverMessage
+     * @param  ServerMessage $serverMessage
      * @return \Illuminate\Http\Response
      */
     public function destroy($serverMessage) {

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Channel;
 use App\Models\CustomCommand;
 use App\Models\GuildMember;
+use App\Models\GuildMemberRole;
 use App\Models\MusicSettings;
 use App\Models\Role;
 use App\Models\Server;
@@ -15,12 +16,28 @@ use Illuminate\Http\Response;
 
 class ServerController extends Controller {
 
+    /**
+     * @var Server
+     */
+    private $server;
+
+    /**
+     * @var CustomCommand
+     */
+    private $customCommand;
+
+    public function __construct(Server $server, CustomCommand $customCommand) {
+        $this->server = $server;
+        $this->customCommand = $customCommand;
+    }
+
+
     public function getCommands($server) {
-        return CustomCommand::whereServer($server)->get(['name', 'data', 'clearance', 'type', 'respect_whitelist']);
+        return $this->customCommand->whereServer($server)->get();
     }
 
     public function getSettings($server) {
-        $server = Server::whereId($server)->first(['name', 'realname', 'bot_nick', 'require_realname', 'command_discriminator', 'log_channel', 'cmd_whitelist', 'bot_manager','user_persistence']);
+        $server = $this->server->whereId($server)->first();
         if (!is_array($server->bot_manager)) {
             $server->bot_manager = [$server->bot_manager];
         }
@@ -30,15 +47,15 @@ class ServerController extends Controller {
         return $server;
     }
 
-    public function serverExists($server){
-        return response()->json(['exists'=>Server::whereId($server)->first() != null]);
+    public function serverExists($server) {
+        return response()->json(['exists' => Server::whereId($server)->first() != null]);
     }
 
     public function setName(Request $request, $server) {
         if (!$request->has('name')) {
             return response()->json(['name' => 'Name is required'], 422);
         }
-        Server::updateOrCreate(['id' => $server], ['name' => $request->get('name')]);
+        $this->server->updateOrCreate(['id' => $server], ['name' => $request->get('name')]);
         return response()->json(['success' => 'Name updated!']);
     }
 
@@ -54,7 +71,7 @@ class ServerController extends Controller {
             'id' => $settings->id,
             'enabled' => true,
             'mode' => 'OFF',
-            'channels' => '',
+            'channels' => [],
             'blacklist_songs' => '',
             'max_queue_length' => -1,
             'max_song_length' => -1,
@@ -66,12 +83,9 @@ class ServerController extends Controller {
     }
 
     public function unregister(Server $server) {
-        MusicSettings::destroy($server->id);
-        CustomCommand::whereServer($server->id)->delete();
-        ServerMessage::whereServerId($server->id)->delete();
-        Channel::whereServer($server->id)->delete();
-        GuildMember::whereServerId($server->id)->delete();
+        // TODO: move to deletes relations
         $server->delete();
+        GuildMemberRole::whereServerId($server->id)->delete();
         return \response()->json([], Response::HTTP_NO_CONTENT);
     }
 
@@ -102,8 +116,8 @@ class ServerController extends Controller {
     }
 
     public function removeChannel($channel) {
-        Channel::destroy($channel);
-        ServerMessage::whereChannel($channel)->delete();
+        $channel = Channel::whereId($channel)->firstOrFail();
+        $channel->delete();
         return \response()->json([], Response::HTTP_NO_CONTENT);
     }
 
@@ -114,11 +128,11 @@ class ServerController extends Controller {
         ]);
     }
 
-    public function getMusicSettings($server) {
-        return MusicSettings::whereId($server)->first();
+    public function getMusicSettings(Server $server) {
+        return $server->musicSettings;
     }
 
     public function getRoles(Server $server) {
-        return Role::whereServerId($server->id)->get();
+        return $server->roles;
     }
 }

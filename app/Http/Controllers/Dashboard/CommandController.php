@@ -75,7 +75,6 @@ class CommandController extends Controller {
             return response()->json(['name' => 'A command already exists with that name on this server!'], 422);
         }
         $cmd = new CustomCommand();
-        $cmd->id = Keygen::alphanum(10)->generate();
         $cmd->name = strtolower($request->name);
         $cmd->server = $server;
         $cmd->clearance = $request->clearance;

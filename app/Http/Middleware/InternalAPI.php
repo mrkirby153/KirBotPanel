@@ -20,7 +20,7 @@ class InternalAPI {
         }
         $response = $next($request);
         if($response instanceof JsonResponse) {
-            $success = $response->exception == null;
+            $success = $response->exception == null && ($response->getStatusCode() >= 200 && $response->getStatusCode() <= 299);
             $response = [
                 'success' => $success,
                 'data' => empty($response->getContent()) ? (object)[] : $response->getData()

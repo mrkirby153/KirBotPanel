@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CustomCommand extends Model {
+class CustomCommand extends RandomIdModel {
     public $incrementing = false;
 
     public function guild() {

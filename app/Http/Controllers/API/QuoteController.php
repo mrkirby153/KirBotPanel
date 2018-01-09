@@ -12,28 +12,31 @@ use Illuminate\Http\Response;
 
 class QuoteController extends Controller {
 
+    /**
+     * @var Quote
+     */
+    private $quote;
+
+    public function __construct(Quote $quote) {
+        $this->quote = $quote;
+    }
+
 
     public function save(Request $request) {
         $request->validate([
             'server_id' => 'required|exists:server_settings,id',
-            'user' =>  'required',
+            'user' => 'required',
             'content' => 'required',
             'message_id' => 'required'
         ]);
-        $quote = new Quote();
-        $quote->server_id = $request->get('server_id');
-        $quote->user = $request->get('user');
-        $quote->content = $request->get('content');
-        $quote->message_id = $request->get('message_id');
-        $quote->save();
-        return response()->json($quote, Response::HTTP_CREATED);
+        return response()->json($this->quote->create($request->all()), Response::HTTP_CREATED);
     }
 
-    public function get($quoteId){
-        return response()->json(Quote::whereId($quoteId)->first());
+    public function get($quoteId) {
+        return response()->json($this->quote->whereId($quoteId)->first());
     }
 
-    public function getServerQuotes(Server $server){
+    public function getServerQuotes(Server $server) {
         return response()->json($server->quotes);
     }
 

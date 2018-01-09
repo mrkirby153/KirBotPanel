@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Group extends Model {
+class Group extends RandomIdModel {
     use SoftDeletes;
+    use DeletesRelations;
 
     protected $table = "groups";
+
+    protected $deletableRelations = ['members'];
 
     public $incrementing = false;
 

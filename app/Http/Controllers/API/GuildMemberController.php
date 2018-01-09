@@ -15,8 +15,14 @@ class GuildMemberController extends Controller {
      */
     private $guildMember;
 
-    public function __construct(GuildMember $member) {
+    /**
+     * @var GuildMemberRole
+     */
+    private $guildMemberRole;
+
+    public function __construct(GuildMember $member, GuildMemberRole $role) {
         $this->guildMember = $member;
+        $this->guildMemberRole = $role;
     }
 
 
@@ -27,8 +33,7 @@ class GuildMemberController extends Controller {
             'user_name' => 'required',
             'user_discrim' => 'required'
         ]);
-        return $this->guildMember->create(array_merge($request->all(), [
-            'id' => \Keygen::alphanum(10)->generate()]));
+        return $this->guildMember->create($request->all());
     }
 
     public function get($server, $id) {
@@ -47,11 +52,11 @@ class GuildMemberController extends Controller {
     }
 
     public function delete($server, $id) {
-        return response()->json(['success' => $this->guildMember->whereUserId($id)->whereServerId($server)->delete()]);
+        return response()->json(['success' => $this->guildMember->whereUserId($id)->whereServerId($server)->first()->delete()]);
     }
 
     public function addRole($member, Role $role) {
-        return GuildMemberRole::updateOrCreate(['user_id' => $member, 'server_id' => $role->server_id, 'role_id' => $role->id], [
+        return $this->guildMemberRole->updateOrCreate(['user_id' => $member, 'server_id' => $role->server_id, 'role_id' => $role->id], [
             'server_id' => $role->server_id,
             'user_id' => $member,
             'role_id' => $role->id
@@ -59,6 +64,6 @@ class GuildMemberController extends Controller {
     }
 
     public function removeRole($member, Role $role) {
-        return json_encode(['success' => (bool)GuildMemberRole::whereRoleId($role->id)->whereUserId($member)->delete()]);
+        return json_encode(['success' => (bool)$this->guildMemberRole->whereRoleId($role->id)->whereUserId($member)->first()->delete()]);
     }
 }

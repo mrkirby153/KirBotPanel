@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Redis;
 
 class Server extends Model {
+
+    use DeletesRelations;
+
     public $table = "server_settings";
 
     public $incrementing = false;
@@ -20,23 +22,27 @@ class Server extends Model {
         'user_persistence', 'boolean'
     ];
 
+    protected $deletableRelations = [
+        'channels', 'roles', 'quotes', 'commands', 'musicSettings', 'groups', 'overrides', 'feeds', 'auditLog', 'members'
+    ];
+
     public function channels() {
         return $this->hasMany(Channel::class, 'server', 'id');
     }
 
-    public function roles(){
+    public function roles() {
         return $this->hasMany(Role::class, 'server_id');
     }
 
-    public function quotes(){
+    public function quotes() {
         return $this->hasMany(Quote::class, 'server_id');
     }
 
-    public function commands(){
+    public function commands() {
         return $this->hasMany(CustomCommand::class, 'server');
     }
 
-    public function musicSettings(){
+    public function musicSettings() {
         return $this->hasOne(MusicSettings::class, 'id');
     }
 
@@ -44,12 +50,20 @@ class Server extends Model {
         return $this->hasMany(Group::class, 'server_id');
     }
 
-    public function overrides(){
+    public function overrides() {
         return $this->hasMany(ClearanceOverride::class, 'server_id');
     }
 
-    public function feeds(){
+    public function feeds() {
         return $this->hasMany(RssFeed::class, 'server_id');
+    }
+
+    public function auditLog(){
+        return $this->hasMany(Log::class, 'server_id');
+    }
+
+    public function members(){
+        return $this->hasMany(GuildMember::class, 'server_id');
     }
 
     public function save(array $options = []) {
