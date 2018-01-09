@@ -78,7 +78,7 @@ class ServerController extends Controller {
     public function registerChannel($server, Request $request) {
         $request->validate([
             'id' => 'required|numeric',
-            'channel_name' => 'required',
+            'name' => 'required',
             'type' => 'required'
         ]);
         $chan = new Channel();
