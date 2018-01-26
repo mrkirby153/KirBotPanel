@@ -59,10 +59,6 @@ class AddForeignKeys extends Migration {
      * @return void
      */
     public function down() {
-        Schema::table('groups', function (Blueprint $table){
-            $table->dropUnique(['id']);
-        });
-
         foreach ($this->relations as $table => $relations) {
             foreach ($relations as $relation) {
                 $key = explode(':', $relation)[0];
