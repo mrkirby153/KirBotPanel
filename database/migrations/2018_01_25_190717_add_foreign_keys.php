@@ -29,9 +29,13 @@ class AddForeignKeys extends Migration {
      * @return void
      */
     public function up() {
-        // Make the groups id column unique so we can add a foreign key to it
+        // Make the groups id column unique (if it isn't already) so we can add a foreign key to it
         Schema::table('groups', function (Blueprint $table){
-            $table->unique('id');
+            $sm = Schema::getConnection()->getDoctrineSchemaManager();
+            $indexes = $sm->listTableIndexes('groups');
+            if(!array_key_exists('groups_id_unique', $indexes)) {
+                $table->unique('id');
+            }
         });
         foreach ($this->relations as $table => $relations) {
             foreach ($relations as $relation) {
