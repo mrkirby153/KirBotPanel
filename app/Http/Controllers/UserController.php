@@ -43,7 +43,7 @@ class UserController extends Controller {
         $info->last_name = $request->lastname;
         $info->id = Auth::user()->id;
         $info->save();
-        Redis::publish('kirbot:update-names', json_encode([]));
+        Redis::publish('kirbot:update-names', json_encode((object)[]));
         return response()->json(['changed'=>$info->changed]);
     }
 
