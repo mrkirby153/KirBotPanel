@@ -12,9 +12,9 @@
     <!-- Styles -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/semantic.min.css"
-            integrity="sha256-5+W3JHnvGYIJkVxUBsw+jBi9+pOlu9enPX3vZapXj5M=" crossorigin="anonymous"/>
+          integrity="sha256-5+W3JHnvGYIJkVxUBsw+jBi9+pOlu9enPX3vZapXj5M=" crossorigin="anonymous"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css"
-            integrity="sha256-NuCn4IvuZXdBaFKJOAcsU2Q3ZpwbdFisd5dux4jkQ5w=" crossorigin="anonymous"/>
+          integrity="sha256-NuCn4IvuZXdBaFKJOAcsU2Q3ZpwbdFisd5dux4jkQ5w=" crossorigin="anonymous"/>
 
     <!-- Scripts -->
     <script>
@@ -22,7 +22,7 @@
             'csrfToken' => csrf_token(),
         ]) !!};
         window.User = {!! json_encode(Auth::user()) !!}
-         @if(!Auth::guest())
+                @if(!Auth::guest())
             window.User.info = {!! json_encode(Auth::guest()? null : Auth::user()->info) !!}
         @endif
     </script>
@@ -31,24 +31,27 @@
 <body>
 <div id="app">
     <!-- Begin Navigation -->
-        <div class="ui menu">
-            <a class="item" href="{{url('/')}}"><b>KirBot Control Panel</b></a>
-            <a class="item" href="{{url('/name')}}">Real Name</a>
-            <div class="right menu">
-                @if(Auth::guest())
-                    <a href="{{url('/login')}}" class="item">Sign in</a>
-                @else
-                    <div class="ui dropdown item">
-                        {{Auth::user()->username}}
-                        <i class="dropdown icon"></i>
-                        <div class="menu">
-                            <a href="{{url('/logout')}}" class="item">Log Out</a>
-                        </div>
+    <div class="ui menu">
+        <a class="item" href="{{url('/')}}"><b>KirBot Control Panel</b></a>
+        <a class="item" href="{{url('/name')}}">Real Name</a>
+        <div class="right menu">
+            @if(Auth::guest())
+                <a href="{{url('/login')}}" class="item">Sign in</a>
+            @else
+                <div class="ui dropdown item">
+                    {{Auth::user()->username}}
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        @if(Auth::user()->admin)
+                            <a href="{{route('admin.main')}}" class="item">Admin</a>
+                        @endif
+                        <a href="{{url('/logout')}}" class="item">Log Out</a>
                     </div>
-                @endif
-            </div>
+                </div>
+            @endif
         </div>
-<!-- End Navigation -->
+    </div>
+    <!-- End Navigation -->
 
     @yield('body')
 </div>

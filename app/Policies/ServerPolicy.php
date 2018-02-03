@@ -10,6 +10,19 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 class ServerPolicy {
     use HandlesAuthorization;
 
+
+    /**
+     *
+     * @param $user User
+     * @param $ability
+     * @return bool
+     */
+    public function before($user, $ability){
+        if($user->admin){
+            return true;
+        }
+    }
+
     /**
      * Determine whether the user can view the serverSettings.
      *
@@ -22,7 +35,7 @@ class ServerPolicy {
         if ($server == null)
             return false;
         else
-            return $server->permissions & 32 > 0;
+            return ($server->permissions & 32) > 0;
     }
 
     /**
@@ -47,7 +60,7 @@ class ServerPolicy {
         if ($server == null)
             return false;
         else
-            return $server->permissions & 32 > 0;
+            return ($server->permissions & 32) > 0;
     }
 
     /**

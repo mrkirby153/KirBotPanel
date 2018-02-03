@@ -57,6 +57,7 @@ class Kernel extends HttpKernel
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'has_discord_token' => \App\Http\Middleware\ValidDiscordToken::class,
-        'internal_api' => \App\Http\Middleware\InternalAPI::class
+        'internal_api' => \App\Http\Middleware\InternalAPI::class,
+        'global_admin' => \App\Http\Middleware\GlobalAdmin::class
     ];
 }

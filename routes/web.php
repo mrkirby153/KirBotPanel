@@ -20,7 +20,7 @@ Route::post('/name', 'UserController@updateName')->middleware('auth');
 Route::get('/serverIcon', 'Dashboard\GeneralController@makeIcon')->name('serverIcon');
 
 Route::get('/servers', 'Dashboard\GeneralController@displayOverview')->name('dashboard.all');
-Route::group(['middleware' => ['has_discord_token']], function () {
+Route::group(['middleware' => ['has_discord_token', 'can:view,server']], function () {
 
     Route::group(['prefix' => 'dashboard'], function(){
         // General
@@ -59,7 +59,11 @@ Route::group(['middleware' => ['has_discord_token']], function () {
         Route::get('/{server}/log', 'Dashboard\GeneralController@showLog')->name('dashboard.log');
     });
 
-    Route::get('/chat', 'BotChatController@index');
+    Route::get('/chat', 'BotChatController@index')->middleware('global_admin');
+});
+
+Route::group(['prefix'=>'admin'], function(){
+    Route::get('/','AdminController@show')->name('admin.main');
 });
 
 Route::get('/{server}/commands', 'Dashboard\GeneralController@showCommandList');
