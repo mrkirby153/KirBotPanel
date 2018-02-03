@@ -16,8 +16,4 @@ class Channel extends Model {
     public function server() {
         return $this->belongsTo(Server::class, 'id', 'server');
     }
-
-    public function messages(){
-        return $this->hasMany(ServerMessage::class, 'channel');
-    }
 }

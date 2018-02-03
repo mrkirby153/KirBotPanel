@@ -45,25 +45,8 @@ class Server extends Model {
     public function musicSettings() {
         return $this->hasOne(MusicSettings::class, 'id');
     }
-
-    public function groups() {
-        return $this->hasMany(Group::class, 'server_id');
-    }
-
-    public function overrides() {
-        return $this->hasMany(ClearanceOverride::class, 'server_id');
-    }
-
-    public function feeds() {
-        return $this->hasMany(RssFeed::class, 'server_id');
-    }
-
     public function auditLog(){
         return $this->hasMany(Log::class, 'server_id');
-    }
-
-    public function members(){
-        return $this->hasMany(GuildMember::class, 'server_id');
     }
 
     public function save(array $options = []) {
