@@ -22,9 +22,9 @@ Route::get('/serverIcon', 'Dashboard\GeneralController@makeIcon')->name('serverI
 Route::get('/servers', 'Dashboard\GeneralController@displayOverview')->name('dashboard.all');
 Route::group(['middleware' => ['has_discord_token', 'can:view,server']], function () {
 
-    Route::group(['prefix' => 'dashboard'], function(){
+    Route::group(['prefix' => 'dashboard'], function () {
         // General
-        Route::group(['middleware' => 'auth'], function(){
+        Route::group(['middleware' => 'auth'], function () {
             Route::get('/{server}', 'Dashboard\GeneralController@showDashboard')->name('dashboard.general');
             Route::patch('/{server}/logging', 'Dashboard\GeneralController@updateLogging');
             Route::post('/{server}/realname', 'Dashboard\GeneralController@setRealnameSettings');
@@ -35,7 +35,7 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
         });
 
         // Commands
-        Route::group(['middleware' => 'auth'], function(){
+        Route::group(['middleware' => 'auth'], function () {
             Route::get('/{server}/commands', 'Dashboard\CommandController@showCommands')->name('dashboard.commands');
             Route::patch('/{server}/command/{command}', 'Dashboard\CommandController@updateCommand');
             Route::delete('/{server}/command/{command}', 'Dashboard\CommandController@deleteCommand');
@@ -44,26 +44,30 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
         });
 
         // Music
-        Route::group(['middleware' => 'auth'], function(){
+        Route::group(['middleware' => 'auth'], function () {
             Route::get('/{server}/music', 'Dashboard\MusicController@index')->name('dashboard.music');
             Route::post('/{server}/music', 'Dashboard\MusicController@update');
 
         });
 
         // Channels
-        Route::group([], function(){
+        Route::group([], function () {
             Route::get('/{server}/channels', 'Dashboard\ChannelController@index')->middleware('auth')->name('dashboard.channels');
             Route::post('/{server}/channels/{channel}/visibility', 'Dashboard\ChannelController@visibility')->middleware('auth');
         });
 
         Route::get('/{server}/log', 'Dashboard\GeneralController@showLog')->name('dashboard.log');
+        Route::get('/{server}/permissions', 'Dashboard\PermissionController@showPane')->name('dashboard.permissions');
+        Route::post('/{server}/permissions/{permission}', 'Dashboard\PermissionController@update');
+        Route::put('/{server}/permissions', 'Dashboard\PermissionController@create');
+        Route::delete('/{server}/permissions/{permission}', 'Dashboard\PermissionController@delete');
     });
 
     Route::get('/chat', 'BotChatController@index')->middleware('global_admin');
 });
 
-Route::group(['prefix'=>'admin'], function(){
-    Route::get('/','AdminController@show')->name('admin.main');
+Route::group(['prefix' => 'admin'], function () {
+    Route::get('/', 'AdminController@show')->name('admin.main');
 });
 
 Route::get('/{server}/commands', 'Dashboard\GeneralController@showCommandList');

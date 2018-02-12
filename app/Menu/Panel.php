@@ -9,11 +9,12 @@ class Panel {
     public static function getServerSettingsTabs() {
         $tabs = [
             new Tab('back', 'dashboard.all', 'left arrow', 'Back'),
+            new ServerDashboardSettingsTab('permissions', 'dashboard.permissions', 'protect', 'Permissions', 'blue'),
             new ServerDashboardSettingsTab('general', 'dashboard.general', 'setting', 'General', 'teal'),
             new ServerDashboardSettingsTab('commands', 'dashboard.commands', 'sticky note', 'Commands', 'red'),
             new ServerDashboardSettingsTab('music', 'dashboard.music', 'music', 'Music Settings', 'violet'),
             new ServerDashboardSettingsTab('channels', 'dashboard.channels', 'hashtag', 'Channels', 'orange'),
-            new ServerDashboardSettingsTab('log', 'dashboard.log', 'history', 'Log', 'orange'),
+            new ServerDashboardSettingsTab('log', 'dashboard.log', 'history', 'Log', 'orange')
         ];
         return $tabs;
     }
