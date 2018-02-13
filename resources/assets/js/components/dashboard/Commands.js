@@ -17,7 +17,8 @@ Vue.component('settings-commands', {
             },
             commands: [],
             addingCommand: false,
-            toDelete: ''
+            toDelete: '',
+            readonly: ReadOnly
         }
     },
 

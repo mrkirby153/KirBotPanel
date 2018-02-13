@@ -15,7 +15,7 @@ class ChannelController extends Controller {
 
 
     public function index(Server $server) {
-        $this->authorize('update', $server);
+        $this->authorize('view', $server);
         \JavaScript::put([
             'Channels' => Channel::whereServer($server->id)->get(),
             'ServerId' => $server->id,

@@ -15,14 +15,14 @@ Vue.component('settings-music', {
                     skip_timer: 30,
                     playlists: false
                 })
-            }
+            },
+            readonly: ReadOnly
         }
     },
 
     mounted() {
         this.forms.music.enabled = Music.enabled;
         this.forms.music.whitelist_mode = Music.mode;
-        this.forms.music.blacklisted_urls = Music.blacklist_songs.replace(new RegExp(',', 'g'), "\n");
         if (Music.mode !== 'OFF')
             this.forms.music.channels = Music.channels;
 
@@ -35,6 +35,8 @@ Vue.component('settings-music', {
 
     methods: {
         sendForm() {
+            if(this.readonly)
+                return;
             this.forms.music.save();
         },
         capitalizeFirstLetter(string) {

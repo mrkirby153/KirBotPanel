@@ -14,11 +14,9 @@ use Keygen\Keygen;
 class CommandController extends Controller {
 
     public function showCommands(Server $server, Request $request) {
+        $this->authorize('view', $server);
         if ($request->expectsJson()) {
             return response()->json($server->commands);
-        }
-        if (!\Auth::user()->can('update', $server)) {
-            return redirect('/servers');
         }
         \JavaScript::put([
             'Server' => $server,
@@ -60,7 +58,8 @@ class CommandController extends Controller {
     }
 
 
-    public function createCommand($server, Request $request) {
+    public function createCommand(Server $server, Request $request) {
+        $this->authorize('update', $server);
         $this->validate($request, [
             'name' => 'required|max:255|without_spaces',
             'description' => 'required',
@@ -68,25 +67,24 @@ class CommandController extends Controller {
         ], [
             'validation.without_spaces' => 'Spaces are not allowed in command names'
         ]);
-        if ($this->getServerById($server) == null || ($this->getServerById($server)->permissions & 32) <= 0) {
-            return response()->json(['server' => 'You do not have access to this server!'], 422);
-        }
-        if (CustomCommand::whereName($request->name)->whereServer($server)->count() > 0) {
+        if (CustomCommand::whereName($request->name)->whereServer($server->id)->count() > 0) {
             return response()->json(['name' => 'A command already exists with that name on this server!'], 422);
         }
         $cmd = new CustomCommand();
         $cmd->name = strtolower($request->name);
-        $cmd->server = $server;
+        $cmd->server = $server->id;
         $cmd->clearance = $request->clearance;
         $cmd->data = $request->description;
-        AuditLogger::log($server, "command_create", ['name'=>$cmd->name, 'clearance'=>$cmd->clearance, 'data'=>$cmd->data]);
+        AuditLogger::log($server->id, "command_create", ['name'=>$cmd->name, 'clearance'=>$cmd->clearance, 'data'=>$cmd->data]);
         $cmd->save();
+        return $cmd;
     }
 
-    public function deleteCommand($server, $command) {
-        AuditLogger::log($server, "command_destroy", ['name'=>CustomCommand::whereId($command)->first()->name]);
+    public function deleteCommand(Server $server, $command) {
+        $this->authorize('update', $server);
+        AuditLogger::log($server->id, "command_destroy", ['name'=>CustomCommand::whereId($command)->first()->name]);
         CustomCommand::destroy($command);
-        syncServer($server);
+        syncServer($server->id);
     }
 
 }

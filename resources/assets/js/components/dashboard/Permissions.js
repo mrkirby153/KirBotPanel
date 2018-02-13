@@ -9,7 +9,8 @@ Vue.component('settings-permissions', {
             addingUser: new Form('PUT', '/dashboard/'+Server.id+'/permissions', {
                 userId: '',
                 permission: 'VIEW'
-            })
+            }),
+            readonly: ReadOnly
         }
     },
 

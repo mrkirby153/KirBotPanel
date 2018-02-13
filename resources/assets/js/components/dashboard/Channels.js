@@ -1,7 +1,8 @@
 Vue.component('settings-channels', {
     data() {
         return {
-            channels: []
+            channels: [],
+            readonly: ReadOnly
         }
     },
 

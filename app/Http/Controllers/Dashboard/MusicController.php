@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Redis;
 class MusicController extends Controller {
 
     public function index(Server $server) {
-        $this->authorize('update', $server);
+        $this->authorize('view', $server);
         \JavaScript::put([
             'Music' => $server->musicSettings,
             'Server' => $server
@@ -21,7 +21,6 @@ class MusicController extends Controller {
     }
 
     public function displayQueue($server) {
-        // TODO 8/21/2017 - Pull from redis
         $queue = $this->getQueue($server);
         $playing = $this->getNowPlaying($server);
         $server = Server::whereId($server)->first();

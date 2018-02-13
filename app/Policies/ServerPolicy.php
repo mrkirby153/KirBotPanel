@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\Server;
 use App\User;
 use App\Utils\DiscordAPI;
+use App\Utils\PermissionHandler;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ServerPolicy {
@@ -31,11 +32,7 @@ class ServerPolicy {
      * @return mixed
      */
     public function view(User $user, Server $serverSettings) {
-        $server = DiscordAPI::getServerById($user, $serverSettings->id);
-        if ($server == null)
-            return false;
-        else
-            return ($server->permissions & 32) > 0;
+        return PermissionHandler::canView($user, $serverSettings->id);
     }
 
     /**
@@ -56,11 +53,7 @@ class ServerPolicy {
      * @return mixed
      */
     public function update(User $user, Server $serverSettings) {
-        $server = DiscordAPI::getServerById($user, $serverSettings->id);
-        if ($server == null)
-            return false;
-        else
-            return ($server->permissions & 32) > 0;
+        return PermissionHandler::canEdit($user, $serverSettings->id);
     }
 
     /**

@@ -24,6 +24,9 @@
         window.User = {!! json_encode(Auth::user()) !!}
                 @if(!Auth::guest())
             window.User.info = {!! json_encode(Auth::guest()? null : Auth::user()->info) !!}
+                @if(isset($server))
+            window.ReadOnly = {{ Auth::user()->can('update', $server)? "false" : "true"}}
+        @endif
         @endif
     </script>
 </head>

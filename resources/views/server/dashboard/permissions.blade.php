@@ -28,12 +28,12 @@
                         </td>
                         <td v-else>Unknown! User is not in server</td>
                         <td><select class="ui fluid dropdown" @change="updatePermission($event, permission.id)"
-                                    :disabled="permission.user_id === user">
+                                    :disabled="permission.user_id === user || readonly">
                                 <option value="VIEW" :selected="permission.permission == 'VEW'">View Only</option>
                                 <option value="EDIT" :selected="permission.permission == 'EDIT'">Edit</option>
                             </select></td>
                         <td>
-                            <button class="ui red icon button" :disabled="permission.user_id == user" @click="deletePermission(permission.id)"><i
+                            <button class="ui red icon button" :disabled="permission.user_id == user || readonly" @click="deletePermission(permission.id)"><i
                                         class="x icon"></i></button>
                         </td>
                     </tr>
@@ -41,7 +41,7 @@
                     <tfoot>
                     <tr v-if="!adding">
                         <th colspan="4">
-                            <button class="ui green button" @click="adding = true">Add</button>
+                            <button class="ui green button" @click="adding = true" :disabled="readonly">Add</button>
                         </th>
                     </tr>
                     </tfoot>

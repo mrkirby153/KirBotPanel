@@ -9,7 +9,8 @@ Vue.component('settings-realname', {
                     requireRealname: false,
                     realnameSetting: 'OFF'
                 })
-            }
+            },
+            readonly: ReadOnly
         }
     },
 
@@ -41,7 +42,8 @@ Vue.component('settings-logging', {
                     channel: ''
                 })
             },
-            loaded: false
+            loaded: false,
+            readonly: ReadOnly
         }
     },
 
@@ -67,7 +69,8 @@ Vue.component('settings-channel-whitelist', {
                 whitelist: new Form('post', '/dashboard/' + Server.id + '/whitelist', {
                     channels: []
                 })
-            }
+            },
+            readonly: ReadOnly
         }
     },
 
@@ -89,7 +92,8 @@ Vue.component('settings-bot-manager', {
                 roles: new Form('post', '/dashboard/' + Server.id + '/managers', {
                     roles: []
                 })
-            }
+            },
+            readonly: ReadOnly
         }
     },
 
@@ -111,7 +115,8 @@ Vue.component('settings-bot-name', {
                 name: new Form('post', '/dashboard/' + Server.id + '/botName', {
                     name: ''
                 })
-            }
+            },
+            readonly: ReadOnly
         }
     },
 
@@ -132,7 +137,8 @@ Vue.component('settings-user-persistence', {
                 persist: new Form('patch', '/dashboard/' + Server.id + '/persistence', {
                     persistence: false
                 })
-            }
+            },
+            readonly: ReadOnly
         }
     },
 

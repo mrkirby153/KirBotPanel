@@ -18,7 +18,7 @@ class DiscordAPI {
      * @return mixed
      */
     public static function getServersFromAPI(User $user, $refreshAttempted = false) {
-        if($user->token_type != "NAME_SERVERS"){
+        if ($user->token_type != "NAME_SERVERS") {
             self::redirectToLogin(); // This token doesn't have access to servers
         }
         if (!self::isApiTokenValid($user)) {
@@ -85,11 +85,9 @@ class DiscordAPI {
     public static function getServers(User $user) {
         $servers = array();
         foreach (DiscordAPI::getServersFromAPI($user) as $server) {
-            if (($server->permissions & 32) > 0) {
-                $server->has_icon = $server->icon != null;
-                $server->on = Server::whereId($server->id)->count() > 0;
-                $servers[] = $server;
-            }
+            $server->has_icon = $server->icon != null;
+            $server->on = Server::whereId($server->id)->count() > 0;
+            $servers[] = $server;
         }
         return $servers;
     }

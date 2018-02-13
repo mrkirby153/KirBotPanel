@@ -28,7 +28,7 @@ class GeneralController extends Controller {
     }
 
     public function showDashboard(Server $server) {
-        $this->authorize('update', $server);
+        $this->authorize('view', $server);
         $server->load('channels');
         \JavaScript::put([
             'Server' => $server
@@ -85,12 +85,11 @@ class GeneralController extends Controller {
     }
 
     public function showCommandList(Server $server) {
-        $this->authorize('update', $server);
         return view('server.commandlist')->with(['commands' => $server->commands, 'server' => $server]);
     }
 
     public function showLog(Server $server) {
-        $this->authorize('update', $server);
+        $this->authorize('view', $server);
         $logData = Log::whereServerId($server->id)->orderBy('created_at', 'desc')->paginate(10);
         return view('server.dashboard.log')->with(['logData' => $logData, 'tab' => 'log', 'server' => $server]);
     }
@@ -100,11 +99,13 @@ class GeneralController extends Controller {
     }
 
     public function setPersistence(Server $server, Request $request){
+        $this->authorize('update', $server);
         $server->user_persistence = $request->get('persistence') == true;
         $server->save();
     }
 
     public function setUsername(Server $server, Request $request) {
+        $this->authorize('update', $server);
         if ($request->has('name'))
             $server->bot_nick = $request->get('name');
         else

@@ -14,7 +14,7 @@
                         <div class="one field">
                             <field name="discriminator" :form="forms.cmdDiscriminator">
                                 <label>Discriminator</label>
-                                <input name="discriminator" v-model="forms.cmdDiscriminator.discriminator" @change="saveDiscrim"/>
+                                <input name="discriminator" v-model="forms.cmdDiscriminator.discriminator" @change="saveDiscrim" :disabled="readonly"/>
                             </field>
                         </div>
                     </div>
@@ -39,12 +39,14 @@
                         <td>@{{ command.id }}</td>
                         <td>@{{ command.created_at }}</td>
                         <td>@{{ command.name }}</td>
-                        <td style="-ms-word-wrap: break-word;word-wrap: break-word; max-width: 500px">@{{ command.data }}</td>
+                        <td style="-ms-word-wrap: break-word;word-wrap: break-word; max-width: 500px">@{{ command.data
+                            }}
+                        </td>
                         <td>@{{ localizeClearance(command.clearance) }}</td>
                         <td>
                             <div class="ui buttons">
-                                <button class="ui button blue" @click="editCommand(command.id, false)">Edit</button>
-                                <button class="ui button red" @click="confirmDelete(command.id)">Delete</button>
+                                <button class="ui button blue" @click="editCommand(command.id, false)" :disabled="readonly">Edit</button>
+                                <button class="ui button red" @click="confirmDelete(command.id)" :disabled="readonly">Delete</button>
                             </div>
                         </td>
                     </tr>
@@ -52,7 +54,8 @@
                     <tfoot>
                     <tr>
                         <th colspan="6">
-                            <button class="ui right floated button" @click="editCommand(null, true)">Add Command</button>
+                            <button class="ui right floated button" @click="editCommand(null, true)" :disabled="readonly">Add Command
+                            </button>
                         </th>
                     </tr>
                     </tfoot>
@@ -89,7 +92,8 @@
                             </field>
                             <field :form="forms.editCommand" name="respect_whitelist">
                                 <div class="ui checkbox">
-                                    <input type="checkbox" v-model="forms.editCommand.respect_whitelist" name="respect_whitelist"/>
+                                    <input type="checkbox" v-model="forms.editCommand.respect_whitelist"
+                                           name="respect_whitelist"/>
                                     <label><b>Respect Whitelist</b></label>
                                 </div>
                             </field>
@@ -103,17 +107,21 @@
                                 <textarea v-model="forms.editCommand.description" name="description"></textarea>
                             </field>
                             <h3>Clearance Hierarchy</h3>
-                            <p>Below is the clearance hierarchy according to the robot, with the highest memebrs listed first.</p>
+                            <p>Below is the clearance hierarchy according to the robot, with the highest memebrs listed
+                                first.</p>
                             <ol>
                                 <li><b>Server Owner: </b>The user who owns the server on Discord</li>
-                                <li><b>Server Administrator:  </b>Anyone with the <code>Server Administrator</code> permission</li>
+                                <li><b>Server Administrator: </b>Anyone with the <code>Server Administrator</code>
+                                    permission
+                                </li>
                                 <li><b>Bot Manager: </b>Anyone with a bot manager role</li>
                                 <li><b>Users: </b>Any user that doesn't meet the above criteria</li>
                                 <li><b>Other Bots: </b>Other robots on the server</li>
                             </ol>
                             <field name="clearance" :form="forms.editCommand" required="true">
                                 <label>Clearance</label>
-                                <select v-model="forms.editCommand.clearance" class="ui fluid dropdown" name="clearance">
+                                <select v-model="forms.editCommand.clearance" class="ui fluid dropdown"
+                                        name="clearance">
                                     <option value="SERVER_OWNER">Server Owner</option>
                                     <option value="SERVER_ADMINISTRATOR">Server Administrator</option>
                                     <option value="BOT_MANAGER">Bot Manager</option>
