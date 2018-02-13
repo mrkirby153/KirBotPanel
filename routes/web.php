@@ -61,6 +61,8 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
         Route::post('/{server}/permissions/{permission}', 'Dashboard\PermissionController@update');
         Route::put('/{server}/permissions', 'Dashboard\PermissionController@create');
         Route::delete('/{server}/permissions/{permission}', 'Dashboard\PermissionController@delete');
+
+        Route::get('/{server}/infractions', 'Dashboard\GeneralController@showInfractions')->name('dashboard.infractions');
     });
 
     Route::get('/chat', 'BotChatController@index')->middleware('global_admin');

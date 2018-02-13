@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 
 
 use App\Http\Controllers\Controller;
+use App\Models\Infraction;
 use App\Models\Log;
 use App\Models\Role;
 use App\Models\Server;
@@ -98,7 +99,7 @@ class GeneralController extends Controller {
         return view('server.quotes')->with(['quotes' => $server->quotes, 'server' => $server]);
     }
 
-    public function setPersistence(Server $server, Request $request){
+    public function setPersistence(Server $server, Request $request) {
         $this->authorize('update', $server);
         $server->user_persistence = $request->get('persistence') == true;
         $server->save();
@@ -114,6 +115,16 @@ class GeneralController extends Controller {
         Redis::publish('kirbot:nickname', \GuzzleHttp\json_encode([
             'nickname' => !$request->has('name') ? null : $request->get('name'),
             'server' => $server->id]));
+    }
+
+    public function showInfractions(Server $server) {
+        $this->authorize('view', $server);
+        $infractions = Infraction::with(['issuedBy' => function ($q) use ($server) {
+            $q->where('server_id', '=', $server->id);
+        }, 'user' => function ($q) use ($server) {
+            $q->where('server_id', '=', $server->id);
+        }])->where('guild', $server->id)->get();
+        return view('server.dashboard.infractions')->with(['infractions' => $infractions, 'server' => $server, 'tab' => 'infractions']);
     }
 
     public function makeIcon(Request $request) {
