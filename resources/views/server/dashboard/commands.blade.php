@@ -120,14 +120,13 @@
                             </ol>
                             <field name="clearance" :form="forms.editCommand" required="true">
                                 <label>Clearance</label>
-                                <select v-model="forms.editCommand.clearance" class="ui fluid dropdown"
-                                        name="clearance">
+                                <dropdown v-model="forms.editCommand.clearance" name="clearance">
                                     <option value="SERVER_OWNER">Server Owner</option>
                                     <option value="SERVER_ADMINISTRATOR">Server Administrator</option>
                                     <option value="BOT_MANAGER">Bot Manager</option>
                                     <option value="USER">Users</option>
                                     <option value="BOT">Other Bots</option>
-                                </select>
+                                </dropdown>
                             </field>
                         </div>
                     </panel-form>

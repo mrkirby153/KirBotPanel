@@ -20,9 +20,7 @@ Vue.component('settings-permissions', {
             this.user = UserId;
         },
 
-        updatePermission(event, id) {
-            let target = event.target;
-            let selected = target.options[target.selectedIndex].value;
+        updatePermission(selected, id) {
             // Perform a post request to update
             console.log("Updating permissions for " + id + " to " + selected);
 

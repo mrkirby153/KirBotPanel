@@ -22,6 +22,7 @@ Vue.component('example', require('./components/Example.vue'));
 Vue.component('form-messages', require('./components/Messages.vue'));
 Vue.component('panel-form', require('./components/Form.vue'));
 Vue.component('field', require('./components/Field.vue'));
+Vue.component('dropdown', require('./components/Dropdown'));
 
 require('./components/UserInfo');
 require('./components/ServerDashboard');

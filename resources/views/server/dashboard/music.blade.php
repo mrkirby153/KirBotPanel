@@ -23,28 +23,28 @@
                             <div class="ui {{$color}} segment">
                                 <h2 v-if="forms.music.whitelist_mode == 'OFF'">Channel Whitelist/Blacklist</h2>
                                 <h2 v-else>Channel @{{ capitalizeFirstLetter(forms.music.whitelist_mode) }}</h2>
-                                <p><span v-if="forms.music.whitelist_mode == 'OFF'">Blacklist/Whitelist</span>
+                                <p><span v-if="forms.music.whitelist_mode === 'OFF'">Blacklist/Whitelist</span>
                                     <span v-else> @{{ capitalizeFirstLetter(forms.music.whitelist_mode) }}</span> channels that KirBot can play music in
                                 </p>
                                 <div class="two fields">
                                     <field name="whitelist_mode" :form="forms.music">
                                         <label><b>Mode</b></label>
-                                        <select class="ui fluid dropdown" v-model="forms.music.whitelist_mode" name="whitelist_mode" @change="sendForm" :disabled="readonly">
+                                        <dropdown v-model="forms.music.whitelist_mode" name="whitelist_mode" @change="sendForm" :disabled="readonly">
                                             <option value="OFF">Off</option>
                                             <option value="WHITELIST">Whitelist</option>
                                             <option value="BLACKLIST">Blacklist</option>
-                                        </select>
+                                        </dropdown>
                                     </field>
                                     <field name="channels" :form="forms.music"
-                                            :class="{'disabled': forms.music.whitelist_mode == 'OFF'}" v-show="forms.music.whitelist_mode != 'OFF'">
+                                            :class="{'disabled': forms.music.whitelist_mode == 'OFF'}" v-show="forms.music.whitelist_mode !== 'OFF'">
                                         <label><b>Channels</b></label>
-                                        <select class="ui fluid search dropdown" multiple="" name="channels[]" v-model="forms.music.channels" name="channels" @change="sendForm" :disabled="readonly">
+                                        <dropdown class="search" multiple="" name="channels[]" v-model="forms.music.channels" name="channels" @change="sendForm" :disabled="readonly">
                                             @foreach($channels as $channel)
                                                 @if($channel->type == 'VOICE')
                                                     <option value="{{$channel->id}}">{{$channel->channel_name}}</option>
                                                 @endif
                                             @endforeach
-                                        </select>
+                                        </dropdown>
                                     </field>
                                 </div>
                             </div>
@@ -65,10 +65,10 @@
                                         <field name="playlists" :form="forms.music">
                                             <label>Playlists</label>
                                             <p>If users are allowed to queue playlists<br/>&nbsp;</p>
-                                            <select class="ui fluid dropdown" v-model="forms.music.playlists" name="playlists" @change="sendForm" :disabled="readonly">
+                                            <dropdown v-model="forms.music.playlists" name="playlists" @change="sendForm" :disabled="readonly">
                                                 <option value="0">No</option>
                                                 <option value="1">Yes</option>
-                                            </select>
+                                            </dropdown>
                                         </field>
                                     </div>
                                 </div>

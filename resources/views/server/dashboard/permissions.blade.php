@@ -21,19 +21,21 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="permission in permissions">
+                    <tr v-for="permission in permissions" :key="permission.id">
                         <td>@{{ permission.user_id }}</td>
-                        <td v-if="permission.user_name && permission.user_discrim">@{{ permission.user_name }}#@{{
-                            permission.user_discrim }}
+                        <td v-if="permission.user_name && permission.user_discrim">@{{ permission.user_name }}#@{{permission.user_discrim}}
                         </td>
                         <td v-else>Unknown! User is not in server</td>
-                        <td><select class="ui fluid dropdown" @change="updatePermission($event, permission.id)"
-                                    :disabled="permission.user_id === user || readonly">
-                                <option value="VIEW" :selected="permission.permission == 'VEW'">View Only</option>
-                                <option value="EDIT" :selected="permission.permission == 'EDIT'">Edit</option>
-                            </select></td>
                         <td>
-                            <button class="ui red icon button" :disabled="permission.user_id == user || readonly" @click="deletePermission(permission.id)"><i
+                            <dropdown @change="updatePermission($event, permission.id)" :value="permission.permission"
+                                      :disabled="permission.user_id === user || readonly" v-once>
+                                <option value="VIEW">View Only</option>
+                                <option value="EDIT">Edit</option>
+                            </dropdown>
+                        </td>
+                        <td>
+                            <button class="ui red icon button" :disabled="permission.user_id == user || readonly"
+                                    @click="deletePermission(permission.id)"><i
                                         class="x icon"></i></button>
                         </td>
                     </tr>
@@ -55,15 +57,17 @@
                             </field>
                             <field name="permission" :form="addingUser">
                                 <label>Permission</label>
-                                <select class="ui fluid dropdown" name="permission" v-model="addingUser.permission">
-                                    <option value="VIEW">View Only</option>
+                                <dropdown v-model="addingUser.permission">
+                                    <option value="VIEW" selected>View Only</option>
                                     <option value="EDIT">Edit</option>
-                                </select>
+                                </dropdown>
                             </field>
                         </div>
                         <div class="two buttons">
                             <button class="ui green icon button"><i class="check icon"></i> Save</button>
-                            <button class="ui yellow icon button" @click.prevent="adding = false"><i class="x icon"></i> Cancel</button>
+                            <button class="ui yellow icon button" @click.prevent="adding = false"><i class="x icon"></i>
+                                Cancel
+                            </button>
                         </div>
                     </div>
                 </panel-form>
