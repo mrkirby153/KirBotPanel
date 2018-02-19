@@ -9,9 +9,7 @@
         name: "dropdown",
         props: {
             value: {
-                type: String,
-                required: false,
-                default: ""
+                required: false
             }
         },
         mounted() {

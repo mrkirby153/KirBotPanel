@@ -57,12 +57,14 @@ class GeneralController extends Controller {
         $request->validate([
             'enabled' => 'required|boolean'
         ]);
-        if ($request->channel == null && $request->enabled) {
+        if ($request->enabled) {
             $request->validate([
-                'channel' => 'required'
+                'channel' => 'required',
+                'timezone' => 'required|timezone'
             ]);
         }
         $server->log_channel = $request->get('enabled') ? $request->get('channel') : null;
+        $server->log_timezone = $request->get('timezone');
         $server->save();
         AuditLogger::log($server->id, "log_channel", ['enabled' => $request->get('enabled'), 'channel' => $request->get('enabled') ? $request->get('channel') : null]);
         return $server;

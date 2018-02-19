@@ -62,6 +62,13 @@
                                     </dropdown>
                                 </field>
                             </div>
+                            <field name="timezone" :form="forms.logging" :class="{'disabled': !forms.logging.enabled}" v-show="forms.logging.enabled">
+                                <label>Log Timezone</label>
+                                <p>The timezone for timestamped log messages to be shown in. Supports most timezones (i.e
+                                    <code>America/Los Angeles</code>, <code>UTC</code>).</p>
+                                <input type="text" name="timezone" v-model="forms.logging.timezone" :disabled="readonly"
+                                       @change="save"/>
+                            </field>
                         </div>
                     </panel-form>
                 </settings-logging>

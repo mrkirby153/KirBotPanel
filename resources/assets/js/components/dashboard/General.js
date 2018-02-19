@@ -38,18 +38,14 @@ Vue.component('settings-logging', {
         return {
             forms: {
                 logging: new Form('patch', '/dashboard/' + Server.id + '/logging', {
-                    enabled: false,
-                    channel: ''
+                    enabled: Server.log_channel !== null,
+                    channel: Server.log_channel,
+                    timezone: Server.log_timezone
                 })
             },
             loaded: false,
             readonly: ReadOnly
         }
-    },
-
-    beforeMount() {
-        this.forms.logging.enabled = Server.log_channel !== null;
-        this.forms.logging.channel = Server.log_channel !== null ? Server.log_channel : null;
     },
 
     methods: {
