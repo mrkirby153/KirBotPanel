@@ -49,7 +49,7 @@
                     </tfoot>
                     </tbody>
                     <transition name="fade">
-                        <tr v-for="song in queue">
+                        <tr v-for="song in queue" :key="song.title">
                             <td><b>@{{ song.title }}</b></td>
                             <td>@{{ formatTime(song.duration) }}</td>
                             <td>@{{ song.queued_by }}</td>

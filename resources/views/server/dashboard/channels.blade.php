@@ -16,7 +16,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="channel in voiceChannels">
+                    <tr v-for="channel in voiceChannels" :key="channel.id">
                         <td>@{{ channel.id }}</td>
                         <td>@{{ channel.channel_name }}</td>
                     </tr>
@@ -35,7 +35,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="(channel, index) in textChannels">
+                    <tr v-for="(channel, index) in textChannels" :key="channel.id">
                         <td>@{{ channel.id }}</td>
                         <td>@{{ channel.channel_name }}</td>
                         <td>@{{ channel.hidden? "Yes" : "No" }}</td>

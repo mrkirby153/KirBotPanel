@@ -11,13 +11,13 @@
                     <div class="field">
                         <label>Select a Server</label>
                         <select class="ui search selection fluid dropdown" name="server_select" v-model="selected_server" @change="getChannels">
-                            <option v-for="server in servers" :value="server.id">@{{ server.name }}</option>
+                            <option v-for="server in servers" :key="server.id" :value="server.id">@{{ server.name }}</option>
                         </select>
                     </div>
                     <div class="field">
                         <label>Select a Channel</label>
                         <select class="ui search selection fluid dropdown" name="channel_select" v-model="selected_channel">
-                            <option v-for="channel in channels" :value="channel.id">#@{{ channel.channel_name }}</option>
+                            <option v-for="channel in channels" :key="server.id" :value="channel.id">#@{{ channel.channel_name }}</option>
                         </select>
                     </div>
                     <div class="field">

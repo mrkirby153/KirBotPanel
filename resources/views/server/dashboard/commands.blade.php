@@ -35,7 +35,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="command in commands">
+                    <tr v-for="command in commands" :key="command.id">
                         <td>@{{ command.id }}</td>
                         <td>@{{ command.created_at }}</td>
                         <td>@{{ command.name }}</td>
