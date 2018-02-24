@@ -41,7 +41,7 @@
             @if(Auth::guest())
                 <a href="{{url('/login')}}" class="item">Sign in</a>
             @else
-                <div class="ui dropdown item">
+                <dropdown-menu class="item">
                     {{Auth::user()->username}}
                     <i class="dropdown icon"></i>
                     <div class="menu">
@@ -50,7 +50,7 @@
                         @endif
                         <a href="{{url('/logout')}}" class="item">Log Out</a>
                     </div>
-                </div>
+                </dropdown-menu>
             @endif
         </div>
     </div>
