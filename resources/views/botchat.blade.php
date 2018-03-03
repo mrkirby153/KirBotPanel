@@ -10,15 +10,15 @@
                 <form class="ui form" @submit.prevent="sendMessage" :class="{'loading':loading}">
                     <div class="field">
                         <label>Select a Server</label>
-                        <select class="ui search selection fluid dropdown" name="server_select" v-model="selected_server" @change="getChannels">
+                        <dropdown class="search selection" name="server_select" v-model="selected_server" @change="getChannels">
                             <option v-for="server in servers" :key="server.id" :value="server.id">@{{ server.name }}</option>
-                        </select>
+                        </dropdown>
                     </div>
                     <div class="field">
                         <label>Select a Channel</label>
-                        <select class="ui search selection fluid dropdown" name="channel_select" v-model="selected_channel">
-                            <option v-for="channel in channels" :key="server.id" :value="channel.id">#@{{ channel.channel_name }}</option>
-                        </select>
+                        <dropdown class="search selection" name="channel_select" v-model="selected_channel">
+                            <option v-for="channel in channels" :key="channel.id" :value="channel.id">#@{{ channel.channel_name }}</option>
+                        </dropdown>
                     </div>
                     <div class="field">
                         <label>Message</label>
