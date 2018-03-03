@@ -65,10 +65,11 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
         Route::get('/{server}/infractions', 'Dashboard\GeneralController@showInfractions')->name('dashboard.infractions');
     });
 
-    Route::get('/chat', 'BotChatController@index')->middleware('global_admin');
+
 });
 
 Route::group(['prefix' => 'admin'], function () {
+    Route::get('/chat', 'BotChatController@index')->middleware('global_admin');
     Route::get('/', 'AdminController@show')->name('admin.main');
 });
 
