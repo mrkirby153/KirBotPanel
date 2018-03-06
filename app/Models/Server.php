@@ -31,7 +31,7 @@ class Server extends Model {
     }
 
     public function roles() {
-        return $this->hasMany(Role::class, 'server_id');
+        return $this->hasMany(Role::class, 'server_id')->orderBy('order', 'DESC');
     }
 
     public function quotes() {
