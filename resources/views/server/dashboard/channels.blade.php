@@ -41,8 +41,8 @@
                         <td>@{{ channel.hidden? "Yes" : "No" }}</td>
                         <td>
                             <div class="ui buttons">
-                                <button class="ui green button" @click="channelVisibility(index, true)" :disabled="readonly">Show</button>
-                                <button class="ui red button" @click="channelVisibility(index, false)" :disabled="readonly">Hide</button>
+                                <button class="ui green button" @click="channelVisibility(index, true)" :disabled="readonly" v-if="channel.hidden">Show</button>
+                                <button class="ui red button" @click="channelVisibility(index, false)" :disabled="readonly" v-if="!channel.hidden">Hide</button>
                             </div>
                         </td>
                     </tr>

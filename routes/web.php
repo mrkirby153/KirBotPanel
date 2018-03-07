@@ -53,7 +53,6 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
         // Channels
         Route::group([], function () {
             Route::get('/{server}/channels', 'Dashboard\ChannelController@index')->middleware('auth')->name('dashboard.channels');
-            Route::post('/{server}/channels/{channel}/visibility', 'Dashboard\ChannelController@visibility')->middleware('auth');
         });
 
         Route::get('/{server}/log', 'Dashboard\GeneralController@showLog')->name('dashboard.log');
@@ -65,8 +64,8 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
         Route::get('/{server}/infractions', 'Dashboard\GeneralController@showInfractions')->name('dashboard.infractions');
     });
 
-
 });
+Route::post('/dashboard/{server}/channels/{channel}/visibility', 'Dashboard\ChannelController@visibility')->middleware('auth');
 
 Route::group(['prefix' => 'admin'], function () {
     Route::get('/chat', 'BotChatController@index')->middleware('global_admin');
