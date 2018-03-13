@@ -13,6 +13,7 @@ use App\Utils\AuditLogger;
 use App\Utils\DiscordAPI;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Response;
 use Intervention\Image\AbstractFont;
 
 class GeneralController extends Controller {
@@ -146,5 +147,16 @@ class GeneralController extends Controller {
             $font->valign('middle');
         });
         return $img->response();
+    }
+
+    public function showArchived($key) {
+        $data = Redis::get("archive:$key");
+        if ($data == null) {
+            return response('Archive not found or expired', 404);
+        }
+        $response = Response::make($data, 200);
+        $response->header('Content-Type', 'text/plain');
+        $response->header('TTL', Redis::ttl("archive:$key"));
+        return $response;
     }
 }

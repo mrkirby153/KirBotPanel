@@ -66,6 +66,7 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
 
 });
 Route::post('/dashboard/{server}/channels/{channel}/visibility', 'Dashboard\ChannelController@visibility')->middleware('auth');
+Route::get('/archive/{key}', 'Dashboard\GeneralController@showArchived');
 
 Route::group(['prefix' => 'admin'], function () {
     Route::get('/chat', 'BotChatController@index')->middleware('global_admin');
