@@ -55,7 +55,6 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
             Route::get('/{server}/channels', 'Dashboard\ChannelController@index')->middleware('auth')->name('dashboard.channels');
         });
 
-        Route::get('/{server}/log', 'Dashboard\GeneralController@showLog')->name('dashboard.log');
         Route::get('/{server}/permissions', 'Dashboard\PermissionController@showPane')->name('dashboard.permissions');
         Route::post('/{server}/permissions/{permission}', 'Dashboard\PermissionController@update');
         Route::put('/{server}/permissions', 'Dashboard\PermissionController@create');

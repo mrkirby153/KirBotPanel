@@ -162,5 +162,4 @@
         </settings-user-persistence>
 
     </div>
-
 @endsection

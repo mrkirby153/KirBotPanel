@@ -46,10 +46,6 @@ class Server extends Model {
         return $this->hasOne(MusicSettings::class, 'id');
     }
 
-    public function auditLog() {
-        return $this->hasMany(Log::class, 'server_id');
-    }
-
     public function infractions() {
         return $this->hasMany(Infraction::class, 'guild');
     }

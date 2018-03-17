@@ -11,10 +11,8 @@
 
     <!-- Styles -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/semantic.min.css"
-          integrity="sha256-5+W3JHnvGYIJkVxUBsw+jBi9+pOlu9enPX3vZapXj5M=" crossorigin="anonymous"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css"
-          integrity="sha256-NuCn4IvuZXdBaFKJOAcsU2Q3ZpwbdFisd5dux4jkQ5w=" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.0/semantic.min.css"
+            integrity="sha256-/mC8AIsSmTcTtaf8vgnfbZXZLYhJCd0b9If/M0Y5nDw=" crossorigin="anonymous"/>
 
     <!-- Scripts -->
     <script>
@@ -37,6 +35,7 @@
     <div class="ui menu">
         <a class="item" href="{{url('/')}}"><b>KirBot Control Panel</b></a>
         <a class="item" href="{{url('/name')}}">Real Name</a>
+        <a class="item" href="{{url('/servers')}}">Manage Servers</a>
         <div class="right menu">
             @if(Auth::guest())
                 <a href="{{url('/login')}}" class="item">Sign in</a>
@@ -62,8 +61,8 @@
 @include('footer')
 <!-- Scripts -->
 <script src="{{mix('js/app.js')}}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/semantic.min.js"
-        integrity="sha256-97Q90i72uoJfYtVnO2lQcLjbjBySZjLHx50DYhCBuJo=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.0/semantic.min.js"
+        integrity="sha256-FMQoXFhCWeNb139Wa9Z2I0UjqDeKKDYY+6PLkWv4qco=" crossorigin="anonymous"></script>
 @stack('js')
 <!-- End Scripts -->
 </body>

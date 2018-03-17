@@ -56,7 +56,6 @@ class GeneralController extends Controller {
         $server->realname = $request->get('realnameSetting');
         $server->require_realname = ($request->get('realnameSetting') == 'OFF') ? false : $request->get('requireRealname');
         $server->save();
-        AuditLogger::log($server->id, "realname_update", ['enabled' => $request->realnameSetting, 'required' => $request->requireRealname]);
         Redis::publish('kirbot:update-name', json_encode(['server' => $server->id]));
     }
 
@@ -74,7 +73,6 @@ class GeneralController extends Controller {
         $server->log_channel = $request->get('enabled') ? $request->get('channel') : null;
         $server->log_timezone = $request->get('timezone');
         $server->save();
-        AuditLogger::log($server->id, "log_channel", ['enabled' => $request->get('enabled'), 'channel' => $request->get('enabled') ? $request->get('channel') : null]);
         return $server;
     }
 
@@ -83,7 +81,6 @@ class GeneralController extends Controller {
         $whitelist = $request->get('channels');
         $server->cmd_whitelist = $whitelist;
         $server->save();
-        AuditLogger::log($server->id, "command_whitelist_update", ['channels' => $request->get('channels')]);
         return $server;
     }
 
@@ -91,7 +88,6 @@ class GeneralController extends Controller {
         $this->authorize('update', $server);
         $server->bot_manager = $request->get('roles');
         $server->save();
-        AuditLogger::log($server->id, "bot_manager_update", ['roles' => $request->get('roles')]);
         return $server;
     }
 

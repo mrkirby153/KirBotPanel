@@ -42,7 +42,6 @@ class CommandController extends Controller {
         $command->data = $request->description;
         $command->clearance = $request->clearance;
         $command->respect_whitelist = $request->respect_whitelist;
-        AuditLogger::log($server->id, "command_update", ['name'=>$command->name, 'clearance'=>$command->clearance, 'description'=>$request->description]);
         $command->save();
         return $command;
     }
@@ -54,7 +53,6 @@ class CommandController extends Controller {
         ]);
         $server->command_discriminator = $request->discriminator;
         $server->save();
-        AuditLogger::log($server->id, "discrim_update", ['discriminator'=>$request->discriminator]);
     }
 
 
@@ -75,14 +73,12 @@ class CommandController extends Controller {
         $cmd->server = $server->id;
         $cmd->clearance = $request->clearance;
         $cmd->data = $request->description;
-        AuditLogger::log($server->id, "command_create", ['name'=>$cmd->name, 'clearance'=>$cmd->clearance, 'data'=>$cmd->data]);
         $cmd->save();
         return $cmd;
     }
 
     public function deleteCommand(Server $server, $command) {
         $this->authorize('update', $server);
-        AuditLogger::log($server->id, "command_destroy", ['name'=>CustomCommand::whereId($command)->first()->name]);
         CustomCommand::destroy($command);
         syncServer($server->id);
     }

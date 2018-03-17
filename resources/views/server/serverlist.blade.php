@@ -4,7 +4,7 @@
 
 @section('content')
     @if(sizeof($onServers) > 0)
-        <h1>Please select a server to manage</h1>
+        <h1 class="ui center aligned header">Select a server to manage</h1>
         <div class="server-select">
             <div class="ui cards">
                 @foreach($onServers as $server)
@@ -26,7 +26,7 @@
         </div>
     @endif
     @if(sizeof($notOnServers) > 0)
-        <h2>Add KirBot to your server</h2>
+        <h2 class="ui center aligned header">Add KirBot to your server</h2>
         <div class="ui relaxed list">
             @foreach($notOnServers as $server)
                 @if($server->manager)
