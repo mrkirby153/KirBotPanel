@@ -87,8 +87,16 @@ class DiscordAPI {
         foreach (DiscordAPI::getServersFromAPI($user) as $server) {
             $server->has_icon = $server->icon != null;
             $server->on = Server::whereId($server->id)->count() > 0;
+            $server->manager = self::hasPermission($server->permissions, 0x00000020);
             $servers[] = $server;
         }
+        usort($servers, function ($a, $b) {
+            if ($a->on && !$b->on)
+                return -1;
+            if ($b->on && !$a->on)
+                return 1;
+            return strtolower($a->name) <=> strtolower($b->name);
+        });
         return $servers;
     }
 
@@ -133,5 +141,9 @@ class DiscordAPI {
 
     private static function redirectToLogin() {
         \App::abort(302, '', ['Location' => '/login?returnUrl=' . \Request::getRequestUri() . '&requireGuilds=true']);
+    }
+
+    public static function hasPermission($permissionRaw, $permission) {
+        return ($permissionRaw & $permission) > 0;
     }
 }

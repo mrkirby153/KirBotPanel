@@ -1,7 +1,5 @@
-
 // Fonts
 @import url(https://fonts.googleapis.com/css?family=Raleway:300,400,600);
-
 // Variables
 @import "variables";
 
@@ -14,12 +12,13 @@ code {
   color: #bd4147;
   background-color: #f7f7f9;
   border-radius: .25rem;
-  font-family: Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+  font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 .fade-enter-active, .fade-leave-active {
   transition: opacity .5s
 }
+
 .fade-enter, .fade-leave-to {
   opacity: 0
 }
@@ -27,4 +26,69 @@ code {
 .form-error {
   color: #9F3A38;
   font-weight: bold;
+}
+
+.server-select {
+  .ui {
+    .card {
+      .image-background {
+        border-radius: .28571429rem;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        background-color: #101010;
+        opacity: 0;
+        -webkit-transition: opacity 0.25s ease-in-out;
+        -moz-transition: opacity 0.25s ease-in-out;
+        -o-transition: opacity 0.25s ease-in-out;
+        transition: opacity 0.25s ease-in-out;
+      }
+      .server-name {
+        opacity: 0;
+        text-align: center;
+
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        font-size: 2em;
+        width: 290px;
+        z-index: 1 !important;
+        color: #ffff;
+        line-height: 1.2;
+        -webkit-transition: opacity 0.25s ease-in-out;
+        -moz-transition: opacity 0.25s ease-in-out;
+        -o-transition: opacity 0.25s ease-in-out;
+        transition: opacity 0.25s ease-in-out;
+        -ms-word-wrap: break-word;
+        word-wrap: break-word;
+        padding: 10px;
+        &:hover {
+          opacity: 1;
+          -webkit-transition: opacity 0.25s ease-in-out;
+          -moz-transition: opacity 0.25s ease-in-out;
+          -o-transition: opacity 0.25s ease-in-out;
+          transition: opacity 0.25s ease-in-out;
+        }
+      }
+      // Display the server name when hovering over it
+      &:hover {
+        .server-name {
+          opacity: 1;
+          -webkit-transition: opacity 0.25s ease-in-out;
+          -moz-transition: opacity 0.25s ease-in-out;
+          -o-transition: opacity 0.25s ease-in-out;
+          transition: opacity 0.25s ease-in-out;
+        }
+        .image-background {
+          opacity: 0.7;
+          -webkit-transition: opacity 0.25s ease-in-out;
+          -moz-transition: opacity 0.25s ease-in-out;
+          -o-transition: opacity 0.25s ease-in-out;
+          transition: opacity 0.25s ease-in-out;
+        }
+      }
+    }
+  }
 }

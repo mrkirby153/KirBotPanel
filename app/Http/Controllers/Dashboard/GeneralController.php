@@ -7,7 +7,6 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Infraction;
 use App\Models\Log;
-use App\Models\Role;
 use App\Models\Server;
 use App\Utils\AuditLogger;
 use App\Utils\DiscordAPI;
@@ -26,7 +25,15 @@ class GeneralController extends Controller {
             return redirect('/login?returnUrl=/servers&requireGuilds=true');
         }
         $servers = DiscordAPI::getServers(\Auth::user());
-        return view('server.serverlist')->with(['servers' => $servers]);
+        $onServers = array();
+        $notOnServers = array();
+        foreach ($servers as $server) {
+            if ($server->on)
+                $onServers[] = $server;
+            else
+                $notOnServers[] = $server;
+        }
+        return view('server.serverlist')->with(['onServers' => $onServers, 'notOnServers' => $notOnServers]);
     }
 
     public function showDashboard(Server $server) {
