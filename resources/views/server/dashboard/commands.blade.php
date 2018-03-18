@@ -42,10 +42,10 @@
                         <td style="-ms-word-wrap: break-word;word-wrap: break-word; max-width: 500px">@{{ command.data
                             }}
                         </td>
-                        <td>@{{ localizeClearance(command.clearance) }}</td>
+                        <td>@{{ command.clearance_level }}</td>
                         <td>
                             <div class="ui buttons">
-                                <button class="ui button blue" @click="editCommand(command.id, false)" :disabled="readonly">Edit</button>
+                                <button class="ui button blue" @click="editCommand(command.id)" :disabled="readonly">Edit</button>
                                 <button class="ui button red" @click="confirmDelete(command.id)" :disabled="readonly">Delete</button>
                             </div>
                         </td>
@@ -54,7 +54,7 @@
                     <tfoot>
                     <tr>
                         <th colspan="6">
-                            <button class="ui right floated button" @click="editCommand(null, true)" :disabled="readonly">Add Command
+                            <button class="ui right floated button" @click="newCommand()" :disabled="readonly">Add Command
                             </button>
                         </th>
                     </tr>
@@ -106,27 +106,9 @@
                                 <p>For example, the first argument can be accessed with <code>%1</code></p>
                                 <textarea v-model="forms.editCommand.description" name="description"></textarea>
                             </field>
-                            <h3>Clearance Hierarchy</h3>
-                            <p>Below is the clearance hierarchy according to the robot, with the highest memebrs listed
-                                first.</p>
-                            <ol>
-                                <li><b>Server Owner: </b>The user who owns the server on Discord</li>
-                                <li><b>Server Administrator: </b>Anyone with the <code>Server Administrator</code>
-                                    permission
-                                </li>
-                                <li><b>Bot Manager: </b>Anyone with a bot manager role</li>
-                                <li><b>Users: </b>Any user that doesn't meet the above criteria</li>
-                                <li><b>Other Bots: </b>Other robots on the server</li>
-                            </ol>
                             <field name="clearance" :form="forms.editCommand" required="true">
                                 <label>Clearance</label>
-                                <dropdown v-model="forms.editCommand.clearance" name="clearance">
-                                    <option value="SERVER_OWNER">Server Owner</option>
-                                    <option value="SERVER_ADMINISTRATOR">Server Administrator</option>
-                                    <option value="BOT_MANAGER">Bot Manager</option>
-                                    <option value="USER">Users</option>
-                                    <option value="BOT">Other Bots</option>
-                                </dropdown>
+                                <input type="number" v-model="forms.editCommand.clearance"/>
                             </field>
                         </div>
                     </panel-form>

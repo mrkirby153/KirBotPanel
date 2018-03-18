@@ -55,12 +55,19 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
             Route::get('/{server}/channels', 'Dashboard\ChannelController@index')->middleware('auth')->name('dashboard.channels');
         });
 
-        Route::get('/{server}/permissions', 'Dashboard\PermissionController@showPane')->name('dashboard.permissions');
-        Route::post('/{server}/permissions/{permission}', 'Dashboard\PermissionController@update');
-        Route::put('/{server}/permissions', 'Dashboard\PermissionController@create');
-        Route::delete('/{server}/permissions/{permission}', 'Dashboard\PermissionController@delete');
+        Route::group(['middleware' => 'auth'], function () {
+            Route::get('/{server}/permissions', 'Dashboard\PermissionController@showPane')->name('dashboard.permissions');
+            Route::post('/{server}/permissions/{permission}', 'Dashboard\PermissionController@update');
+            Route::put('/{server}/permissions', 'Dashboard\PermissionController@create');
+            Route::delete('/{server}/permissions/{permission}', 'Dashboard\PermissionController@delete');
 
-        Route::get('/{server}/infractions', 'Dashboard\GeneralController@showInfractions')->name('dashboard.infractions');
+            Route::get('/{server}/infractions', 'Dashboard\GeneralController@showInfractions')->name('dashboard.infractions');
+
+            Route::get('/{server}/rolePermissions', 'Dashboard\PermissionController@getRolePermissions');
+            Route::put('/{server}/rolePermissions', 'Dashboard\PermissionController@createRolePermission');
+            Route::delete('/{server}/rolePermissions/{permission}', 'Dashboard\PermissionController@deleteRolePermission');
+            Route::patch('/{server}/rolePermissions/{permission}', 'Dashboard\PermissionController@updateRolePermission');
+        });
     });
 
 });

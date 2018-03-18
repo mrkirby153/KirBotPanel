@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
+use App\Models\RolePermission;
 use App\Models\Server;
 use App\Models\ServerPermission;
 use Illuminate\Http\Request;
@@ -14,8 +16,11 @@ class PermissionController extends Controller {
      */
     private $permissions;
 
-    public function __construct(ServerPermission $permission) {
+    private $rolePerms;
+
+    public function __construct(ServerPermission $permission, RolePermission $rolePermission) {
         $this->permissions = $permission;
+        $this->rolePerms = $rolePermission;
     }
 
     public function showPane(Server $server) {
@@ -24,7 +29,8 @@ class PermissionController extends Controller {
         \JavaScript::put([
             'Permissions' => $results,
             'Server' => $server,
-            'UserId' => \Auth::id()
+            'UserId' => \Auth::id(),
+            'Roles' => Role::whereServerId($server->id)->orderBy('order', 'DESC')->get(),
         ]);
         return view('server.dashboard.permissions')->with(['server' => $server, 'tab' => 'permissions']);
     }
@@ -50,7 +56,7 @@ class PermissionController extends Controller {
         return $this->getPermissions($server);
     }
 
-    public function create(Request $request, Server $server){
+    public function create(Request $request, Server $server) {
         $this->authorize('update', $server);
         $request->validate([
             'userId' => 'required|numeric',
@@ -63,5 +69,46 @@ class PermissionController extends Controller {
         $permission->permission = $request->get('permission');
         $permission->save();
         return $this->getPermissions($server);
+    }
+
+    public function createRolePermission(Request $request, Server $server) {
+        $this->authorize('update', $server);
+        $request->validate([
+            'roleId' => 'required|numeric|exists:roles,id',
+            'permissionLevel' => 'required|between:0,100|numeric'
+        ]);
+        $model = $this->rolePerms->create([
+            'role_id' => $request->get('roleId'),
+            'permission_level' => $request->get('permissionLevel'),
+            'server_id' => $server->id]);
+       $model['name'] = Role::whereId($request->get('roleId'))->first()->name;
+        syncServer($server->id);
+        return $model;
+    }
+
+    public function deleteRolePermission(Server $server, RolePermission $permission) {
+        $this->authorize('update', $server);
+        $permission->delete();
+        syncServer($server->id);
+    }
+
+    public function updateRolePermission(Request $request, Server $server, RolePermission $permission) {
+        $this->authorize('update', $server);
+        $request->validate([
+            'permissionLevel' => 'required|between:0,100|numeric'
+        ]);
+
+        $permission->permission_level = $request->get('permissionLevel');
+        $permission->save();
+        syncServer($server->id);
+        return $permission;
+    }
+
+    public function getRolePermissions(Server $server) {
+        $permissions = \DB::table($this->rolePerms->getTable())->select(['role_permissions.*', 'roles.name'])
+            ->leftJoin('roles', 'role_permissions.role_id', '=', 'roles.id')
+            ->where('role_permissions.server_id', $server->id)->get();
+
+        return $permissions;
     }
 }

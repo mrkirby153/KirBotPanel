@@ -6,7 +6,7 @@ Vue.component('settings-permissions', {
             permissions: [],
             user: '',
             adding: false,
-            addingUser: new Form('PUT', '/dashboard/'+Server.id+'/permissions', {
+            addingUser: new Form('PUT', '/dashboard/' + Server.id + '/permissions', {
                 userId: '',
                 permission: 'VIEW'
             }),
@@ -31,12 +31,12 @@ Vue.component('settings-permissions', {
             });
         },
 
-        deletePermission(id){
-            axios.delete('/dashboard/'+Server.id+'/permissions/'+id).then(resp => {
+        deletePermission(id) {
+            axios.delete('/dashboard/' + Server.id + '/permissions/' + id).then(resp => {
                 this.permissions = resp.data;
             })
         },
-        sendForm(){
+        sendForm() {
             this.addingUser.save().then(resp => {
                 this.permissions = resp.data;
                 this.adding = false;
@@ -51,4 +51,52 @@ Vue.component('settings-permissions', {
         this.onMount();
     }
 
+});
+
+Vue.component('settings-role-permissions', {
+    data() {
+        return {
+            permissions: [],
+            permissionForm: new Form('PUT', '/dashboard/' + Server.id + '/rolePermissions', {
+                roleId: '',
+                permissionLevel: ''
+            }),
+            adding: false,
+            readonly: ReadOnly,
+            roles: Roles
+        }
+    },
+    mounted() {
+        this.onMount();
+    },
+    methods: {
+        onMount() {
+            axios.get('/dashboard/' + Server.id + '/rolePermissions').then(resp => {
+                this.permissions = resp.data;
+            })
+        },
+        updatePermissionLevel(id) {
+            let p = _.find(this.permissions, {
+                id: id
+            });
+            axios.patch('/dashboard/' + Server.id + '/rolePermissions/' + id, {
+                permissionLevel: p.permission_level
+            })
+        },
+        deletePermission(id) {
+            axios.delete('/dashboard/' + Server.id + '/rolePermissions/' + id).then(resp => {
+                this.permissions = _.without(this.permissions, _.find(this.permissions, {
+                    id: id
+                }))
+            })
+        },
+        addPermission() {
+            this.permissionForm.save().then(resp => {
+                this.permissions.push(resp.data);
+                this.permissionForm.roleId = "";
+                this.permissionForm.permissionLevel = "";
+                this.adding = false;
+            })
+        }
+    }
 });

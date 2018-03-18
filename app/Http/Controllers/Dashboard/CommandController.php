@@ -30,7 +30,7 @@ class CommandController extends Controller {
         $this->validate($request, [
             'name' => 'required|max:255|without_spaces',
             'description' => 'required',
-            'clearance' => 'required',
+            'clearance' => 'required|numeric|between:0,100',
         ], [
             'validation.without_spaces' => 'Spaces are not allowed in command names'
         ]);
@@ -40,7 +40,7 @@ class CommandController extends Controller {
         }
         $command->name = $request->name;
         $command->data = $request->description;
-        $command->clearance = $request->clearance;
+        $command->clearance_level = $request->clearance;
         $command->respect_whitelist = $request->respect_whitelist;
         $command->save();
         return $command;
@@ -61,7 +61,7 @@ class CommandController extends Controller {
         $this->validate($request, [
             'name' => 'required|max:255|without_spaces',
             'description' => 'required',
-            'clearance' => 'required',
+            'clearance' => 'required|numeric|between:0,100',
         ], [
             'validation.without_spaces' => 'Spaces are not allowed in command names'
         ]);
@@ -71,7 +71,7 @@ class CommandController extends Controller {
         $cmd = new CustomCommand();
         $cmd->name = strtolower($request->name);
         $cmd->server = $server->id;
-        $cmd->clearance = $request->clearance;
+        $cmd->clearance_level = $request->clearance;
         $cmd->data = $request->description;
         $cmd->save();
         return $cmd;

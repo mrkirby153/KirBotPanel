@@ -4,7 +4,7 @@ Vue.component('settings-commands', {
     data() {
         return {
             forms: {
-                cmdDiscriminator: new Form('patch', '/dashboard/'+Server.id+'/discriminator', {
+                cmdDiscriminator: new Form('patch', '/dashboard/' + Server.id + '/discriminator', {
                     discriminator: '!'
                 }),
                 editCommand: new Form("", "", {
@@ -49,48 +49,68 @@ Vue.component('settings-commands', {
             }
         },
 
-        editCommand(id, newCommand) {
+        getCommand(id) {
+            return _.find(this.commands, {
+                id: id
+            })
+        },
+
+        newCommand() {
+            let vm = this;
+            $("#edit-command-modal").modal({
+                closable: false,
+                transition: 'scale',
+                opApprove() {
+                    vm.forms.editCommand.put('/dashboard/' + Server.id + '/commands').then(resp => {
+                        this.commands.push(resp.data);
+                        setTimeout(() => {
+                            $("#edit-command-modal").modal('hide')
+                        }, 1000)
+                    });
+                    return false;
+                },
+                onHide() {
+                    vm.forms.editCommand.name = "";
+                    vm.forms.editCommand.clearance = "";
+                    vm.forms.editCommand.description = "";
+                    vm.forms.editCommand.id = "";
+                }
+            })
+        },
+
+        editCommand(id) {
+            let c = this.getCommand(id);
+            if (c === undefined) {
+                console.log("Command " + id + " not found. Ignoring edit request");
+                return;
+            } else {
+                console.log(c);
+            }
+
             this.forms.editCommand.successful = false;
             this.forms.editCommand.busy = false;
             this.forms.editCommand.errors.clearAll();
-            this.addingCommand = newCommand;
-            if (!newCommand) {
-                this.commands.forEach(c => {
-                    if (c.id === id) {
-                        this.forms.editCommand.name = c.name;
-                        this.forms.editCommand.clearance = c.clearance;
-                        this.forms.editCommand.description = c.data;
-                        this.forms.editCommand.id = c.id;
-                        this.forms.editCommand.respect_whitelist = c.respect_whitelist === 1;
-                    }
-                });
-            }
+            this.addingCommand = true;
+
+            this.forms.editCommand.name = c.name;
+            this.forms.editCommand.clearance = c.clearance_level;
+            this.forms.editCommand.description = c.data;
+            this.forms.editCommand.id = c.id;
+            this.forms.editCommand.respect_whitelist = c.respect_whitelist;
             let vm = this;
             $("#edit-command-modal").modal({
                 closable: false,
                 transition: 'scale',
                 onApprove() {
-                    if (newCommand) {
-                        vm.forms.editCommand.put('/dashboard/'+Server.id+'/commands').then(()=>{
-                            vm.refreshCommands();
-                            setTimeout(()=>{
-                                $("#edit-command-modal").modal('hide');
-                            }, 1000)
-                        }, ()=>{
-                            // Rejected
-                        });
-                        return false;
-                    } else {
-                        vm.forms.editCommand.patch('/dashboard/'+Server.id+'/command/'+vm.forms.editCommand.id).then(()=>{
-                            vm.refreshCommands();
-                            setTimeout(()=>{
-                                $("#edit-command-modal").modal('hide')
-                            }, 1000)
-                        }, ()=>{
-                            // Rejected
-                        });
-                        return false
-                    }
+                    vm.forms.editCommand.patch('/dashboard/' + Server.id + '/command/' + vm.forms.editCommand.id).then(() => {
+                        vm.refreshCommands();
+                        setTimeout(() => {
+                            $("#edit-command-modal").modal('hide')
+                        }, 1000)
+                    }, () => {
+                        // Rejected
+                    });
+                    return false
                 },
                 onHide() {
                     vm.forms.editCommand.name = "";
