@@ -8,6 +8,7 @@ use App\Models\Server;
 use App\User;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 
 class DiscordAPI {
 
@@ -107,18 +108,23 @@ class DiscordAPI {
      */
     public static function attemptRefresh(User $user) {
         $client = new Client();
-        $response = $client->post('https://discordapp.com/api/v6/oauth2/token', [
-            'form_params' => [
-                'client_id' => env('DISCORD_KEY'),
-                'client_secret' => env('DISCORD_SECRET'),
-                'grant_type' => 'refresh_token',
-                'refresh_token' => $user->refresh_token,
-                'redirect_uri' => env('DISCORD_REDIRECT_URI')
-            ],
-            'headers' => [
-                'Content-Type' => 'application/x-www-form-urlencoded'
-            ]
-        ]);
+        try {
+            $response = $client->post('https://discordapp.com/api/v6/oauth2/token', [
+                'form_params' => [
+                    'client_id' => env('DISCORD_KEY'),
+                    'client_secret' => env('DISCORD_SECRET'),
+                    'grant_type' => 'refresh_token',
+                    'refresh_token' => $user->refresh_token,
+                    'redirect_uri' => env('DISCORD_REDIRECT_URI')
+                ],
+                'headers' => [
+                    'Content-Type' => 'application/x-www-form-urlencoded'
+                ]
+            ]);
+        } catch (ClientException $e) {
+            // Refresh failed
+            return false;
+        }
         if ($response->getStatusCode() != 200) {
             return false;
         }
