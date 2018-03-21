@@ -75,7 +75,7 @@ Vue.component('settings-commands', {
                     vm.forms.editCommand.description = "";
                     vm.forms.editCommand.id = "";
                 }
-            })
+            }).modal('show');
         },
 
         editCommand(id) {
