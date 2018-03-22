@@ -84,13 +84,6 @@ class GeneralController extends Controller {
         return $server;
     }
 
-    public function updateBotManagers(Server $server, Request $request) {
-        $this->authorize('update', $server);
-        $server->bot_manager = $request->get('roles');
-        $server->save();
-        return $server;
-    }
-
     public function showCommandList(Server $server) {
         return view('server.commandlist')->with(['commands' => $server->commands, 'server' => $server]);
     }

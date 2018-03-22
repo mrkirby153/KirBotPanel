@@ -93,7 +93,7 @@
     </div>
 
     <div class="ui grid">
-        <div class="eight wide column">
+        <div class="sixteen wide column">
             <div class="ui {{$color}} segment">
                 <h2>Channel Whitelist</h2>
                 <settings-channel-whitelist inline-template>
@@ -117,28 +117,6 @@
                         </div>
                     </panel-form>
                 </settings-channel-whitelist>
-            </div>
-        </div>
-
-        <div class="eight wide column">
-            <div class="ui {{$color}} segment">
-                <h2>Bot Manager Roles</h2>
-                <p>Users with the following roles can access commands that are restricted to the "Bot Manager" role</p>
-                <settings-bot-manager inline-template>
-                    <panel-form :form="forms.roles">
-                        <div slot="inputs">
-                            <field name="roles" :form="forms.roles">
-                                <label><b>Roles</b></label>
-                                <dropdown class="search" multiple="" name="roles[]" v-model="forms.roles.roles"
-                                          @change="save" :disabled="readonly">
-                                    @foreach($roles as $role)
-                                        <option value="{{$role->id}}">{{$role->name}}</option>
-                                    @endforeach
-                                </dropdown>
-                            </field>
-                        </div>
-                    </panel-form>
-                </settings-bot-manager>
             </div>
         </div>
     </div>

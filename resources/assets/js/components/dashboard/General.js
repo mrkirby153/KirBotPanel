@@ -81,29 +81,6 @@ Vue.component('settings-channel-whitelist', {
     }
 });
 
-Vue.component('settings-bot-manager', {
-    data() {
-        return {
-            forms: {
-                roles: new Form('post', '/dashboard/' + Server.id + '/managers', {
-                    roles: []
-                })
-            },
-            readonly: ReadOnly
-        }
-    },
-
-    mounted() {
-        this.forms.roles.roles = (Server.bot_manager == null) ? [] : Server.bot_manager;
-    },
-
-    methods: {
-        save() {
-            this.forms.roles.save();
-        }
-    }
-});
-
 Vue.component('settings-bot-name', {
     data() {
         return {
