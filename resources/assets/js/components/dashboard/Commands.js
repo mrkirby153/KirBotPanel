@@ -5,7 +5,7 @@ Vue.component('settings-commands', {
         return {
             forms: {
                 cmdDiscriminator: new Form('patch', '/dashboard/' + Server.id + '/discriminator', {
-                    discriminator: '!'
+                    discriminator: Server.command_discriminator
                 }),
                 editCommand: new Form("", "", {
                     name: '',
@@ -15,19 +15,10 @@ Vue.component('settings-commands', {
                     respect_whitelist: true
                 })
             },
-            commands: [],
+            commands: Commands,
             addingCommand: false,
             toDelete: '',
             readonly: ReadOnly
-        }
-    },
-
-    mounted() {
-        if (Server != null) {
-            this.forms.cmdDiscriminator.discriminator = Server.command_discriminator
-        }
-        if (Commands != null) {
-            this.commands = Commands;
         }
     },
 
@@ -57,17 +48,20 @@ Vue.component('settings-commands', {
 
         newCommand() {
             let vm = this;
+            this.addingCommand = true;
             $("#edit-command-modal").modal({
                 closable: false,
                 transition: 'scale',
-                opApprove() {
+                onApprove() {
                     vm.forms.editCommand.put('/dashboard/' + Server.id + '/commands').then(resp => {
-                        this.commands.push(resp.data);
+                        vm.commands.push(resp.data);
                         setTimeout(() => {
                             $("#edit-command-modal").modal('hide')
                         }, 1000)
+                    }, () => {
+                        // Rejected
                     });
-                    return false;
+                    return false
                 },
                 onHide() {
                     vm.forms.editCommand.name = "";
@@ -102,8 +96,16 @@ Vue.component('settings-commands', {
                 closable: false,
                 transition: 'scale',
                 onApprove() {
-                    vm.forms.editCommand.patch('/dashboard/' + Server.id + '/command/' + vm.forms.editCommand.id).then(() => {
-                        vm.refreshCommands();
+                    vm.forms.editCommand.patch('/dashboard/' + Server.id + '/command/' + vm.forms.editCommand.id).then(resp => {
+                        let index = _.findIndex(vm.commands, {
+                            id: id
+                        });
+                        if (index === -1) {
+                            console.log("Command not found, refreshing all of them");
+                            vm.refreshCommands();
+                        } else {
+                            vm.commands[index] = resp.data;
+                        }
                         setTimeout(() => {
                             $("#edit-command-modal").modal('hide')
                         }, 1000)
@@ -130,7 +132,9 @@ Vue.component('settings-commands', {
                 transition: 'scale',
                 onApprove() {
                     axios.delete('/dashboard/' + Server.id + '/command/' + id).then(resp => {
-                        vm.refreshCommands();
+                        vm.commands = _.without(vm.commands, _.find(vm.commands, {
+                            id: id
+                        }))
                     })
                 }
             }).modal('show');
