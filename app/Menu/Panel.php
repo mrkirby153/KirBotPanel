@@ -14,7 +14,8 @@ class Panel {
             new ServerDashboardSettingsTab('commands', 'dashboard.commands', 'sticky note', 'Commands', 'red'),
             new ServerDashboardSettingsTab('music', 'dashboard.music', 'music', 'Music Settings', 'violet'),
             new ServerDashboardSettingsTab('channels', 'dashboard.channels', 'hashtag', 'Channels', 'orange'),
-            new ServerDashboardSettingsTab('infractions', 'dashboard.infractions', 'warning', 'Infractions', 'green')
+            new ServerDashboardSettingsTab('infractions', 'dashboard.infractions', 'warning', 'Infractions', 'green'),
+            new ServerDashboardSettingsTab('spam', 'dashboard.spam', 'fire extinguisher', 'Spam', 'Red')
         ];
         return $tabs;
     }

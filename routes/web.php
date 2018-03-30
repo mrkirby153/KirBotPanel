@@ -67,6 +67,9 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
             Route::delete('/{server}/rolePermissions/{permission}', 'Dashboard\PermissionController@deleteRolePermission');
             Route::patch('/{server}/rolePermissions/{permission}', 'Dashboard\PermissionController@updateRolePermission');
         });
+
+        Route::get('/{server}/spam', 'Dashboard\SpamController@index')->name('dashboard.spam');
+        Route::patch('/{server}/spam', 'Dashboard\SpamController@updateSettings')->name('dashboard.spamUpdate');
     });
 
 });
