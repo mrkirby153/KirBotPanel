@@ -70,6 +70,7 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
 
         Route::get('/{server}/spam', 'Dashboard\SpamController@index')->name('dashboard.spam');
         Route::patch('/{server}/spam', 'Dashboard\SpamController@updateSettings')->name('dashboard.spamUpdate');
+        Route::patch('/{server}/censor', 'Dashboard\SpamController@updateCensor')->name('dashboard.censorUpdate');
     });
 
 });

@@ -16,12 +16,10 @@
                 triggering <br/>
                 <code>count</code> - The amount of actions
             </p>
-            <transition name="fade">
-                <div class="ui success message" v-if="success"><b>Success</b>
-                    <p>Settings have been saved!</p></div>
-                <div class="ui error message" v-if="fail"><b>Error</b>
-                    <p> An error occurred when saving. Please try again.</p></div>
-            </transition>
+            <div class="ui success message" v-if="success"><b>Success</b>
+                <p>Settings have been saved!</p></div>
+            <div class="ui error message" v-if="fail"><b>Error</b>
+                <p> An error occurred when saving. Please try again.</p></div>
             <div class="two buttons" v-if="changed">
                 <button class="ui yellow button" :disabled="readonly || loading" style="margin-bottom: 10px"
                         @click="discard">Discard
@@ -33,6 +31,24 @@
             <div id="jsoneditor" style="height: 500px"></div>
         </div>
     </settings-spam>
+    <settings-censor inline-template>
+        <div>
+            <h2>Censor Settings</h2>
+            <div class="ui success message" v-if="success"><b>Success</b>
+                <p>Settings have been saved!</p></div>
+            <div class="ui error message" v-if="error"><b>Error</b>
+                <p> An error occurred when saving. Please try again.</p></div>
+            <div class="two buttons" v-if="changed">
+                <button class="ui yellow button" :disabled="readonly || loading" style="margin-bottom: 10px"
+                        @click="discard">Discard
+                </button>
+                <button class="ui green button" :disabled="loading || readonly" style="margin-bottom: 10px"
+                        @click="save">Save
+                </button>
+            </div>
+            <div id="censor-editor" style="height: 500px"></div>
+        </div>
+    </settings-censor>
     <div class="ui basic modal" id="confirm-revert">
         <div class="ui icon header">
             <i class="warning icon"></i>
