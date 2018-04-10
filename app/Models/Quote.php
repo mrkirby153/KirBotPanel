@@ -13,7 +13,8 @@ class Quote extends Model
     ];
 
 
-    public function server(){
+    public function server()
+    {
         return $this->belongsTo(Server::class, 'server_id');
     }
 }

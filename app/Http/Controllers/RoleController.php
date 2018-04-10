@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Role;
 use Illuminate\Http\Request;
 
-class RoleController extends Controller {
+class RoleController extends Controller
+{
 
     /**
      * Store a newly created resource in storage.
@@ -13,7 +14,8 @@ class RoleController extends Controller {
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $role = new Role();
         $role->id = $request->get('id');
         $role->server_id = $request->get('server_id');
@@ -30,7 +32,8 @@ class RoleController extends Controller {
      * @return \Illuminate\Http\Response
      * @internal param int $id
      */
-    public function show($role) {
+    public function show($role)
+    {
         return response()->json(Role::whereId($role)->first());
     }
 
@@ -41,13 +44,16 @@ class RoleController extends Controller {
      * @param int $role
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $role) {
+    public function update(Request $request, $role)
+    {
         $role = Role::whereId($role)->first();
-        if ($role == null)
+        if ($role == null) {
             return response()->json(['error' => 'Not found'], 404);
+        }
         $role->name = $request->get('name');
-        if($request->has('permissions'))
+        if ($request->has('permissions')) {
             $role->permissions = $request->get('permissions');
+        }
         $role->save();
         return response()->json($role);
     }
@@ -58,7 +64,8 @@ class RoleController extends Controller {
      * @param  int $role
      * @return \Illuminate\Http\Response
      */
-    public function destroy($role) {
+    public function destroy($role)
+    {
         Role::destroy($role);
     }
 }

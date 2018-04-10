@@ -3,22 +3,23 @@
 
 namespace App\Models;
 
-
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class RandomIdModel extends Model {
-
+class RandomIdModel extends Model
+{
     public $incrementing = false;
 
     protected $keySize = 15;
 
-    protected function performInsert(Builder $query) {
+    protected function performInsert(Builder $query)
+    {
         $this->setId();
         return parent::performInsert($query);
     }
 
-    private function setId(){
+    private function setId()
+    {
         $this->setAttribute($this->getKeyName(), \Keygen::alphaNum($this->keySize)->generate());
     }
 }

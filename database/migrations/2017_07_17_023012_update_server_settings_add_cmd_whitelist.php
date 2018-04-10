@@ -13,7 +13,7 @@ class UpdateServerSettingsAddCmdWhitelist extends Migration
      */
     public function up()
     {
-        Schema::table('server_settings', function (Blueprint $table){
+        Schema::table('server_settings', function (Blueprint $table) {
             $table->text("cmd_whitelist")->after('log_channel');
         });
     }
@@ -25,7 +25,7 @@ class UpdateServerSettingsAddCmdWhitelist extends Migration
      */
     public function down()
     {
-        Schema::table('server_settings', function(Blueprint $table){
+        Schema::table('server_settings', function (Blueprint $table) {
             $table->dropColumn('cmd_whitelist');
         });
     }

@@ -3,9 +3,8 @@
 
 namespace App\Menu;
 
-
-class Tab {
-
+class Tab
+{
     public $name;
 
     public $route;
@@ -22,12 +21,11 @@ class Tab {
      * @param $icon
      * @param $label
      */
-    public function __construct($name, $route, $icon, $label) {
+    public function __construct($name, $route, $icon, $label)
+    {
         $this->name = $name;
         $this->route = $route;
         $this->icon = $icon;
         $this->label = $label;
     }
-
-
 }

@@ -3,13 +3,13 @@
 
 namespace App;
 
-
 use Carbon\Carbon;
 use Keygen;
 
-class UserRepository {
-
-    public function getUser($request) {
+class UserRepository
+{
+    public function getUser($request)
+    {
         $user = $request->user;
         $expiresIn = Carbon::now();
         $expiresIn->addSecond($request->expiresIn);

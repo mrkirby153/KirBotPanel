@@ -14,7 +14,7 @@ class AddForeignKeyToMessages extends Migration
     public function up()
     {
         Schema::disableForeignKeyConstraints();
-        Schema::table('server_messages', function(Blueprint $table){
+        Schema::table('server_messages', function (Blueprint $table) {
             $table->foreign('channel')->references('id')->on('channels')->onDelete("cascade");
         });
         Schema::enableForeignKeyConstraints();
@@ -28,7 +28,7 @@ class AddForeignKeyToMessages extends Migration
     public function down()
     {
         Schema::disableForeignKeyConstraints();
-        Schema::table('server_messages', function(Blueprint $table){
+        Schema::table('server_messages', function (Blueprint $table) {
             $table->dropForeign(['channel']);
         });
         Schema::enableForeignKeyConstraints();

@@ -21,7 +21,6 @@ Route::get('/serverIcon', 'Dashboard\GeneralController@makeIcon')->name('serverI
 
 Route::get('/servers', 'Dashboard\GeneralController@displayOverview')->name('dashboard.all');
 Route::group(['middleware' => ['has_discord_token', 'can:view,server']], function () {
-
     Route::group(['prefix' => 'dashboard'], function () {
         // General
         Route::group(['middleware' => 'auth'], function () {
@@ -46,7 +45,6 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
         Route::group(['middleware' => 'auth'], function () {
             Route::get('/{server}/music', 'Dashboard\MusicController@index')->name('dashboard.music');
             Route::post('/{server}/music', 'Dashboard\MusicController@update');
-
         });
 
         // Channels
@@ -72,7 +70,6 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
         Route::patch('/{server}/spam', 'Dashboard\SpamController@updateSettings')->name('dashboard.spamUpdate');
         Route::patch('/{server}/censor', 'Dashboard\SpamController@updateCensor')->name('dashboard.censorUpdate');
     });
-
 });
 Route::post('/dashboard/{server}/channels/{channel}/visibility', 'Dashboard\ChannelController@visibility')->middleware('auth');
 Route::get('/archive/{key}', 'Dashboard\GeneralController@showArchived');

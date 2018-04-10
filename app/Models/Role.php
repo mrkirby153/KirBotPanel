@@ -11,7 +11,8 @@ class Role extends Model
     public $incrementing = false;
 
 
-    public function server(){
+    public function server()
+    {
         return $this->belongsTo(Server::class, 'server_id');
     }
 }

@@ -16,7 +16,8 @@ class MusicSettings extends Model
         'channels' => 'array'
     ];
 
-    public function server(){
+    public function server()
+    {
         return $this->hasOne(Server::class, 'id');
     }
 }

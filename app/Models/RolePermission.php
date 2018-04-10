@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-class RolePermission extends RandomIdModel {
-
+class RolePermission extends RandomIdModel
+{
     public $incrementing = false;
     protected $table = "role_permissions";
 

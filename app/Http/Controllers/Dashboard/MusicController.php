@@ -8,35 +8,39 @@ use App\Utils\AuditLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 
-class MusicController extends Controller {
-
-    public function index(Server $server) {
+class MusicController extends Controller
+{
+    public function index(Server $server)
+    {
         $this->authorize('view', $server);
         \JavaScript::put([
             'Music' => $server->musicSettings,
             'Server' => $server
         ]);
         return view('server.dashboard.music')->with(['server' => $server, 'tab' => 'music', 'channels' => $this->getVoiceChannelsFromBot($server->id)]);
-
     }
 
-    public function displayQueue($server) {
+    public function displayQueue($server)
+    {
         $queue = $this->getQueue($server);
         $playing = $this->getNowPlaying($server);
         $server = Server::whereId($server)->first();
-        if ($server == null)
+        if ($server == null) {
             $server = new Server(['name' => 'Unknown']);
+        }
         return view('server.queue')->with(['queue' => $queue, 'server' => $server, 'playing'=>$playing]);
     }
 
-    public function getQueueJson($server){
+    public function getQueueJson($server)
+    {
         return response()->json([
             'nowPlaying' => $this->getNowPlaying($server),
             'queue' => $this->getQueue($server)
         ]);
     }
 
-    public function update(Request $request, Server $server) {
+    public function update(Request $request, Server $server)
+    {
         $this->authorize('update', $server);
         $this->validate($request, [
             'enabled' => 'required',
@@ -54,22 +58,25 @@ class MusicController extends Controller {
         $musicSettings->channels = $request->channels;
         $musicSettings->blacklist_songs = implode(',', explode("\n", $request->blacklisted_urls));
         $musicSettings->save();
-
     }
 
-    private function getQueue($server) {
+    private function getQueue($server)
+    {
         $data = Redis::get("music.queue:$server");
-        if ($data == null)
+        if ($data == null) {
             return json_decode("[]");
-        else
+        } else {
             return json_decode($data);
+        }
     }
 
-    private function getNowPlaying($server){
+    private function getNowPlaying($server)
+    {
         $data = Redis::get("music.playing:$server");
-        if($data == null)
+        if ($data == null) {
             return null;
-        else
+        } else {
             return json_decode($data);
+        }
     }
 }

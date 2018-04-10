@@ -4,8 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Channel extends Model {
-
+class Channel extends Model
+{
     use DeletesRelations;
 
     protected $table = "channels";
@@ -13,7 +13,8 @@ class Channel extends Model {
 
     public $deletableRelations = ['messages'];
 
-    public function server() {
+    public function server()
+    {
         return $this->belongsTo(Server::class, 'id', 'server');
     }
 }

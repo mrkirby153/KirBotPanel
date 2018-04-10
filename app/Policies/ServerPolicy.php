@@ -8,7 +8,8 @@ use App\Utils\DiscordAPI;
 use App\Utils\PermissionHandler;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class ServerPolicy {
+class ServerPolicy
+{
     use HandlesAuthorization;
 
 
@@ -18,8 +19,9 @@ class ServerPolicy {
      * @param $ability
      * @return bool
      */
-    public function before($user, $ability){
-        if($user->admin){
+    public function before($user, $ability)
+    {
+        if ($user->admin) {
             return true;
         }
     }
@@ -31,7 +33,8 @@ class ServerPolicy {
      * @param  \App\Models\Server $serverSettings
      * @return mixed
      */
-    public function view(User $user, Server $serverSettings) {
+    public function view(User $user, Server $serverSettings)
+    {
         return PermissionHandler::canView($user, $serverSettings->id);
     }
 
@@ -41,7 +44,8 @@ class ServerPolicy {
      * @param  \App\User $user
      * @return mixed
      */
-    public function create(User $user) {
+    public function create(User $user)
+    {
         return false;
     }
 
@@ -52,7 +56,8 @@ class ServerPolicy {
      * @param  \App\Models\Server $serverSettings
      * @return mixed
      */
-    public function update(User $user, Server $serverSettings) {
+    public function update(User $user, Server $serverSettings)
+    {
         return PermissionHandler::canEdit($user, $serverSettings->id);
     }
 
@@ -63,7 +68,8 @@ class ServerPolicy {
      * @param  \App\Models\Server $serverSettings
      * @return mixed
      */
-    public function delete(User $user, Server $serverSettings) {
+    public function delete(User $user, Server $serverSettings)
+    {
         return false;
     }
 }

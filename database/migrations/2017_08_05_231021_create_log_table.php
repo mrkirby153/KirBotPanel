@@ -13,7 +13,7 @@ class CreateLogTable extends Migration
      */
     public function up()
     {
-        Schema::create('log', function(Blueprint $table){
+        Schema::create('log', function (Blueprint $table) {
             $table->increments('id');
             $table->string('server_id');
             $table->string('action');

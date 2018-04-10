@@ -4,8 +4,8 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddForeignKeys extends Migration {
-
+class AddForeignKeys extends Migration
+{
     private $relations = [
         'channels' => ['server:server_settings.id'],
         'custom_commands' => ['server:server_settings.id'],
@@ -28,12 +28,13 @@ class AddForeignKeys extends Migration {
      *
      * @return void
      */
-    public function up() {
+    public function up()
+    {
         // Make the groups id column unique (if it isn't already) so we can add a foreign key to it
-        Schema::table('groups', function (Blueprint $table){
+        Schema::table('groups', function (Blueprint $table) {
             $sm = Schema::getConnection()->getDoctrineSchemaManager();
             $indexes = $sm->listTableIndexes('groups');
-            if(!array_key_exists('groups_id_unique', $indexes)) {
+            if (!array_key_exists('groups_id_unique', $indexes)) {
                 $table->unique('id');
             }
         });
@@ -58,7 +59,8 @@ class AddForeignKeys extends Migration {
      *
      * @return void
      */
-    public function down() {
+    public function down()
+    {
         foreach ($this->relations as $table => $relations) {
             foreach ($relations as $relation) {
                 $key = explode(':', $relation)[0];

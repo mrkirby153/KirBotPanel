@@ -3,7 +3,8 @@
 /**
  * @param $server mixed The server to sync
  */
-function syncServer($server) {
+function syncServer($server)
+{
     if ($server instanceof \App\Models\Server) {
         $server = $server->id;
     }

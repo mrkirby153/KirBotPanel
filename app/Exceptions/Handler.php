@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
 
-class Handler extends ExceptionHandler {
+class Handler extends ExceptionHandler
+{
     /**
      * A list of the exception types that are not reported.
      *
@@ -35,7 +36,8 @@ class Handler extends ExceptionHandler {
      * @param  \Exception $exception
      * @return void
      */
-    public function report(Exception $exception) {
+    public function report(Exception $exception)
+    {
         parent::report($exception);
     }
 
@@ -46,7 +48,8 @@ class Handler extends ExceptionHandler {
      * @param  \Exception $exception
      * @return \Illuminate\Http\Response
      */
-    public function render($request, Exception $exception) {
+    public function render($request, Exception $exception)
+    {
         // Handle JSON
         if ($request->wantsJson() && !($exception instanceof ValidationException)) {
             $response = [
@@ -59,14 +62,15 @@ class Handler extends ExceptionHandler {
                 $response['trace'] = $exception->getTrace();
 
                 $status = 400;
-                if ($exception instanceof ModelNotFoundException)
+                if ($exception instanceof ModelNotFoundException) {
                     $status = 404;
+                }
                 if ($this->isHttpException($exception)) {
                     $status = $exception->getCode();
-
                 }
-                if ($status == 0)
+                if ($status == 0) {
                     $status = 400;
+                }
                 return response()->json([
                     'success' => false,
                     'code' => $status,

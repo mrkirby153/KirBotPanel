@@ -13,7 +13,7 @@ class UpdateCustomCommandsAddRespectWhitelist extends Migration
      */
     public function up()
     {
-        Schema::table('custom_commands', function(Blueprint $table){
+        Schema::table('custom_commands', function (Blueprint $table) {
             $table->boolean('respect_whitelist')->after('type')->default(false);
         });
     }
@@ -25,7 +25,7 @@ class UpdateCustomCommandsAddRespectWhitelist extends Migration
      */
     public function down()
     {
-        Schema::table('custom_commands', function(Blueprint $table){
+        Schema::table('custom_commands', function (Blueprint $table) {
             $table->dropColumn('respect_whitelist');
         });
     }

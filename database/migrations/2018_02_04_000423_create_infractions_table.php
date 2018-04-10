@@ -4,13 +4,15 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateInfractionsTable extends Migration {
+class CreateInfractionsTable extends Migration
+{
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up() {
+    public function up()
+    {
         Schema::create('infractions', function (Blueprint $table) {
             $table->increments('id');
             $table->string('user_id');
@@ -31,7 +33,8 @@ class CreateInfractionsTable extends Migration {
      *
      * @return void
      */
-    public function down() {
+    public function down()
+    {
         Schema::dropIfExists('infractions');
     }
 }

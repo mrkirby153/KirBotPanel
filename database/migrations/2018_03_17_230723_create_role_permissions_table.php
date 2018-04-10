@@ -4,13 +4,15 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRolePermissionsTable extends Migration {
+class CreateRolePermissionsTable extends Migration
+{
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up() {
+    public function up()
+    {
         Schema::create('role_permissions', function (Blueprint $table) {
             $table->string('id')->unique();
             $table->string('server_id')->index();
@@ -35,7 +37,8 @@ class CreateRolePermissionsTable extends Migration {
      *
      * @return void
      */
-    public function down() {
+    public function down()
+    {
         Schema::dropIfExists('role_permissions');
         Schema::table('server_settings', function (Blueprint $table) {
             $table->string('bot_manager')->after('cmd_whitelist');

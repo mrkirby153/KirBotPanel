@@ -5,7 +5,8 @@ namespace App\Http\Middleware;
 use Carbon\Carbon;
 use Closure;
 
-class ValidDiscordToken {
+class ValidDiscordToken
+{
     /**
      * Handle an incoming request.
      *
@@ -13,7 +14,8 @@ class ValidDiscordToken {
      * @param  \Closure $next
      * @return mixed
      */
-    public function handle($request, Closure $next) {
+    public function handle($request, Closure $next)
+    {
         if (\Auth::guest()) {
             return redirect('/login?returnUrl='.\Request::getUri());
         }

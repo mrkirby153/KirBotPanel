@@ -3,14 +3,14 @@
 
 namespace App\Utils;
 
-
 use App\Models\Server;
 use App\User;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 
-class DiscordAPI {
+class DiscordAPI
+{
 
     /**
      * Gets the servers the user has access to from the discord API
@@ -18,7 +18,8 @@ class DiscordAPI {
      * @param bool $refreshAttempted If a refresh was attempted
      * @return mixed
      */
-    public static function getServersFromAPI(User $user, $refreshAttempted = false) {
+    public static function getServersFromAPI(User $user, $refreshAttempted = false)
+    {
         if ($user->token_type != "NAME_SERVERS") {
             self::redirectToLogin(); // This token doesn't have access to servers
         }
@@ -48,10 +49,11 @@ class DiscordAPI {
                 if (!self::attemptRefresh($user)) {
                     self::redirectToLogin(); // Refresh failed, redirecting to login
                 } else {
-                    if ($refreshAttempted)
+                    if ($refreshAttempted) {
                         self::redirectToLogin();
-                    else
+                    } else {
                         return self::getServersFromAPI($user, true);
+                    }
                 }
             }
             if ($response->getStatusCode() == 429) {
@@ -70,10 +72,12 @@ class DiscordAPI {
      * @param string $id The id
      * @return mixed
      */
-    public static function getServerById(User $user, $id) {
+    public static function getServerById(User $user, $id)
+    {
         foreach (DiscordAPI::getServersFromAPI($user) as $server) {
-            if ($server->id == $id)
+            if ($server->id == $id) {
                 return $server;
+            }
         }
         return null;
     }
@@ -83,7 +87,8 @@ class DiscordAPI {
      * @param User $user The user
      * @return array
      */
-    public static function getServers(User $user) {
+    public static function getServers(User $user)
+    {
         $servers = array();
         foreach (DiscordAPI::getServersFromAPI($user) as $server) {
             $server->has_icon = $server->icon != null;
@@ -92,10 +97,12 @@ class DiscordAPI {
             $servers[] = $server;
         }
         usort($servers, function ($a, $b) {
-            if ($a->on && !$b->on)
+            if ($a->on && !$b->on) {
                 return -1;
-            if ($b->on && !$a->on)
+            }
+            if ($b->on && !$a->on) {
                 return 1;
+            }
             return strtolower($a->name) <=> strtolower($b->name);
         });
         return $servers;
@@ -106,7 +113,8 @@ class DiscordAPI {
      * @param User $user
      * @return bool True if successful
      */
-    public static function attemptRefresh(User $user) {
+    public static function attemptRefresh(User $user)
+    {
         $client = new Client();
         try {
             $response = $client->post('https://discordapp.com/api/v6/oauth2/token', [
@@ -141,15 +149,18 @@ class DiscordAPI {
      * @param User $user
      * @return bool True if the api token is valid
      */
-    private static function isApiTokenValid(User $user) {
+    private static function isApiTokenValid(User $user)
+    {
         return Carbon::now()->timestamp < Carbon::parse($user->expires_in)->timestamp;
     }
 
-    private static function redirectToLogin() {
+    private static function redirectToLogin()
+    {
         \App::abort(302, '', ['Location' => '/login?returnUrl=' . \Request::getRequestUri() . '&requireGuilds=true']);
     }
 
-    public static function hasPermission($permissionRaw, $permission) {
+    public static function hasPermission($permissionRaw, $permission)
+    {
         return ($permissionRaw & $permission) > 0;
     }
 }

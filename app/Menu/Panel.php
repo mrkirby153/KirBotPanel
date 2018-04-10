@@ -3,10 +3,10 @@
 
 namespace App\Menu;
 
-
-class Panel {
-
-    public static function getServerSettingsTabs() {
+class Panel
+{
+    public static function getServerSettingsTabs()
+    {
         $tabs = [
             new Tab('back', 'dashboard.all', 'left arrow', 'Back'),
             new ServerDashboardSettingsTab('permissions', 'dashboard.permissions', 'shield', 'Permissions', 'blue'),
@@ -20,10 +20,11 @@ class Panel {
         return $tabs;
     }
 
-    public static function getPanelColor($panel){
-        foreach(self::getServerSettingsTabs() as $t){
-            if($t->name == $panel){
-                if($t instanceof ServerDashboardSettingsTab){
+    public static function getPanelColor($panel)
+    {
+        foreach (self::getServerSettingsTabs() as $t) {
+            if ($t->name == $panel) {
+                if ($t instanceof ServerDashboardSettingsTab) {
                     return $t->color;
                 }
             }

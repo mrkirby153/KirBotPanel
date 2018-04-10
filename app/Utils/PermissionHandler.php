@@ -3,36 +3,41 @@
 
 namespace App\Utils;
 
-
 use App\Models\ServerPermission;
 use App\User;
 
-class PermissionHandler {
-
-    public static function canEdit(User $user, $serverId) {
-        if(\Auth::user()->admin)
+class PermissionHandler
+{
+    public static function canEdit(User $user, $serverId)
+    {
+        if (\Auth::user()->admin) {
             return true;
+        }
         $server = DiscordAPI::getServerById($user, $serverId);
-        if ($server->owner)
+        if ($server->owner) {
             return true;
-        else {
+        } else {
             $perm = ServerPermission::whereServerId($serverId)->whereUserId(\Auth::id())->first();
-            if($perm == null)
+            if ($perm == null) {
                 return false;
+            }
             return $perm->permission == "EDIT";
         }
     }
 
-    public static function canView(User $user, $serverId) {
-        if(self::canEdit($user, $serverId))
+    public static function canView(User $user, $serverId)
+    {
+        if (self::canEdit($user, $serverId)) {
             return true;
+        }
         $server = DiscordAPI::getServerById($user, $serverId);
-        if ($server->owner)
+        if ($server->owner) {
             return true;
-        else {
+        } else {
             $perm = ServerPermission::whereServerId($serverId)->whereUserId(\Auth::id())->first();
-            if($perm == null)
+            if ($perm == null) {
                 return false;
+            }
             return $perm->permission == "VIEW";
         }
     }

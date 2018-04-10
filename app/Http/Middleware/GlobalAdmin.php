@@ -15,7 +15,7 @@ class GlobalAdmin
      */
     public function handle($request, Closure $next)
     {
-        if($request->user()->admin) {
+        if ($request->user()->admin) {
             return $next($request);
         } else {
             return redirect('/');

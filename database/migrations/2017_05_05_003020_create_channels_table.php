@@ -3,13 +3,15 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateChannelsTable extends Migration {
+class CreateChannelsTable extends Migration
+{
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up() {
+    public function up()
+    {
         Schema::create('channels', function (Blueprint $table) {
             $table->string('id')->primary()->unique();
             $table->string('server');
@@ -24,7 +26,8 @@ class CreateChannelsTable extends Migration {
      *
      * @return void
      */
-    public function down() {
+    public function down()
+    {
         Schema::drop('channels');
     }
 }

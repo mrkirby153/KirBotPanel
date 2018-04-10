@@ -3,7 +3,6 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-
 use App\Models\CustomCommand;
 use App\Http\Controllers\Controller;
 use App\Models\Server;
@@ -11,9 +10,10 @@ use App\Utils\AuditLogger;
 use Illuminate\Http\Request;
 use Keygen\Keygen;
 
-class CommandController extends Controller {
-
-    public function showCommands(Server $server, Request $request) {
+class CommandController extends Controller
+{
+    public function showCommands(Server $server, Request $request)
+    {
         $this->authorize('view', $server);
         if ($request->expectsJson()) {
             return response()->json($server->commands);
@@ -25,7 +25,8 @@ class CommandController extends Controller {
         return view('server.dashboard.commands')->with(['server' => $server, 'tab' => 'commands']);
     }
 
-    public function updateCommand(Server $server, CustomCommand $command, Request $request) {
+    public function updateCommand(Server $server, CustomCommand $command, Request $request)
+    {
         $this->authorize('update', $server);
         $this->validate($request, [
             'name' => 'required|max:255|without_spaces',
@@ -46,7 +47,8 @@ class CommandController extends Controller {
         return $command;
     }
 
-    public function updateDiscrim(Server $server, Request $request) {
+    public function updateDiscrim(Server $server, Request $request)
+    {
         $this->authorize('update', $server);
         $this->validate($request, [
             'discriminator' => 'required'
@@ -56,7 +58,8 @@ class CommandController extends Controller {
     }
 
 
-    public function createCommand(Server $server, Request $request) {
+    public function createCommand(Server $server, Request $request)
+    {
         $this->authorize('update', $server);
         $this->validate($request, [
             'name' => 'required|max:255|without_spaces',
@@ -77,10 +80,10 @@ class CommandController extends Controller {
         return $cmd;
     }
 
-    public function deleteCommand(Server $server, $command) {
+    public function deleteCommand(Server $server, $command)
+    {
         $this->authorize('update', $server);
         CustomCommand::destroy($command);
         syncServer($server->id);
     }
-
 }

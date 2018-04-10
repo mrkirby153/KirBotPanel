@@ -10,20 +10,24 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Redis;
 
-class Controller extends BaseController {
+class Controller extends BaseController
+{
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     private $connect_timeout = 0.25; // 1/4 a second
 
-    protected function getServerById($id) {
+    protected function getServerById($id)
+    {
         foreach ($this->getServersFromAPI() as $server) {
-            if ($server->id == $id)
+            if ($server->id == $id) {
                 return $server;
+            }
         }
         return null;
     }
 
-    public static function getServersFromAPI() {
+    public static function getServersFromAPI()
+    {
         $token = \Auth::user()->token;
         $cacheId = "SERVERS-$token";
         $body = "[]";
@@ -48,7 +52,8 @@ class Controller extends BaseController {
         return json_decode($body);
     }
 
-    protected function getChannelsFromBot($server) {
+    protected function getChannelsFromBot($server)
+    {
         /*        $client = new \GuzzleHttp\Client();
                 try {
                     $response = $client->request('GET', env('KIRBOT_URL') . 'v1/channels/' . $server, [
@@ -60,10 +65,10 @@ class Controller extends BaseController {
                     return Channel::whereServer($server)->get();
                 }*/
         return Channel::whereServer($server)->get();
-
     }
 
-    protected function getTextChannelsFromBot($server) {
+    protected function getTextChannelsFromBot($server)
+    {
         /*        $client = new \GuzzleHttp\Client();
                 try {
                     $response = $client->request('GET', env('KIRBOT_URL') . 'v1/channels/' . $server . '/text', [
@@ -76,10 +81,10 @@ class Controller extends BaseController {
                 }*/
 
         return Channel::whereServer($server)->whereType('TEXT')->get();
-
     }
 
-    protected function getVoiceChannelsFromBot($server) {
+    protected function getVoiceChannelsFromBot($server)
+    {
         /*        $client = new \GuzzleHttp\Client();
                 try {
                     $response = $client->request('GET', env('KIRBOT_URL') . 'v1/channels/' . $server . '/voice', [
@@ -92,6 +97,5 @@ class Controller extends BaseController {
                 }*/
 
         return Channel::whereServer($server)->whereType('VOICE')->get();
-
     }
 }

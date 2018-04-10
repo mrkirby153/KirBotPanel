@@ -9,9 +9,10 @@ use App\Models\SpamSettings;
 use Illuminate\Http\Request;
 use JavaScript;
 
-class SpamController extends Controller {
-
-    public function index(Server $server) {
+class SpamController extends Controller
+{
+    public function index(Server $server)
+    {
         $model = SpamSettings::whereId($server->id)->first();
         $censor = CensorSettings::whereId($server->id)->first();
         Javascript::put([
@@ -22,7 +23,8 @@ class SpamController extends Controller {
         return view('server.dashboard.spam')->with(['tab' => 'spam', 'server' => $server]);
     }
 
-    public function updateSettings(Request $request, Server $server) {
+    public function updateSettings(Request $request, Server $server)
+    {
         $this->authorize('update', $server);
         $request->validate([
             'settings' => 'required'
@@ -33,7 +35,8 @@ class SpamController extends Controller {
         ]);
     }
 
-    public function updateCensor(Request $request, Server $server){
+    public function updateCensor(Request $request, Server $server)
+    {
         $this->authorize('update', $server);
         $request->validate([
             'settings' => 'required'
