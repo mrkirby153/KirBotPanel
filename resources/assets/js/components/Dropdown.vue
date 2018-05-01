@@ -22,7 +22,7 @@
         },
         data() {
             return {
-                data: "",
+                data: [],
                 emit: true,
             }
         },
