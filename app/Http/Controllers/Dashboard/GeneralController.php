@@ -41,7 +41,6 @@ class GeneralController extends Controller
     {
         $this->authorize('view', $server);
         $server->load('channels');
-        $server->load('logSettings');
         \JavaScript::put([
             'Server' => $server
         ]);

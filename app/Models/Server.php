@@ -8,12 +8,12 @@ class Server extends Model
 {
     use DeletesRelations;
 
-    public $table = 'server_settings';
+    public $table = "server_settings";
 
     public $incrementing = false;
 
     public $fillable = [
-        'id', 'name', 'realname', 'require_realname', 'command_discriminator', 'cmd_whitelist', 'bot_manager'
+        'id', 'name', 'realname', 'require_realname', 'command_discriminator', 'log_channel', 'cmd_whitelist', 'bot_manager'
     ];
 
     protected $casts = [
@@ -61,10 +61,5 @@ class Server extends Model
         $save = parent::save($options);
         syncServer($this->getAttribute('id'));
         return $save;
-    }
-
-    public function logSettings()
-    {
-        return $this->hasMany(LogSetting::class, 'server_id');
     }
 }
