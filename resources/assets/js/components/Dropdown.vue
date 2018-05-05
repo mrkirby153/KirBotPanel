@@ -1,5 +1,7 @@
 <template>
-    <select class="ui fluid dropdown" v-model="data" @change="onChange($event)">
+    <select class="ui fluid dropdown">
+        <option disabled selected value>{{prompt}}</option>
+        <option v-for="(v, k) in options" :key="k" :v="v">{{k}}</option>
         <slot></slot>
     </select>
 </template>
@@ -10,28 +12,51 @@
         props: {
             value: {
                 required: false
+            },
+            prompt: {
+                required: false,
+                type: String,
+                default: ""
+            },
+            options: {
+                required: false,
+                type: Object,
+                default() {
+                    return {}
+                }
+            }
+        },
+        data() {
+            return {
+                emit: true,
+                ready: false,
             }
         },
         mounted() {
+            let vm = this;
             $(document).ready(() => {
+                vm.ready = true;
+                $(this.$el).dropdown().on('change', event => {
+                    if (vm.emit) {
+                        vm.$emit('input', $(vm.$el).val());
+                        vm.$emit('change', event);
+                    }
+                });
                 this.emit = false;
                 $(this.$el).dropdown('set selected', this.value);
                 this.emit = true;
             });
-            this.data = this.value;
         },
-        data() {
-            return {
-                data: [],
-                emit: true,
-            }
-        },
-        methods: {
-            onChange(event) {
-                if (this.emit) {
-                    this.$emit('input', this.data);
-                    this.$emit('change', event);
-                }
+        watch: {
+            value(newVal, oldVal) {
+                if (!this.ready)
+                    return;
+                this.emit = false;
+                let toAdd = _.filter(newVal, v => _.indexOf(oldVal, v) === -1);
+                let toRemove = _.filter(oldVal, v => _.indexOf(newVal, v) === -1);
+                $(this.$el).dropdown('set selected', toAdd);
+                $(this.$el).dropdown('remove selected', toRemove);
+                this.emit = true;
             }
         }
     }
