@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Infraction;
 use App\Models\Log;
+use App\Models\LogSetting;
 use App\Models\Server;
 use App\Utils\AuditLogger;
 use App\Utils\DiscordAPI;
@@ -41,11 +42,16 @@ class GeneralController extends Controller
     {
         $this->authorize('view', $server);
         $server->load('channels');
+        $server->load('logSettings');
         \JavaScript::put([
             'Server' => $server
         ]);
-        return view('server.dashboard.general')->with(['tab' => 'general', 'server' => $server,
-            'textChannels' => $this->getTextChannelsFromBot($server->id), 'roles' => $server->roles]);
+        return view('server.dashboard.general')->with([
+            'tab' => 'general',
+            'server' => $server,
+            'textChannels' => $this->getTextChannelsFromBot($server->id),
+            'roles' => $server->roles
+        ]);
     }
 
 
@@ -124,18 +130,26 @@ class GeneralController extends Controller
         $server->save();
         Redis::publish('kirbot:nickname', \GuzzleHttp\json_encode([
             'nickname' => !$request->has('name') ? null : $request->get('name'),
-            'server' => $server->id]));
+            'server' => $server->id
+        ]));
     }
 
     public function showInfractions(Server $server)
     {
         $this->authorize('view', $server);
-        $infractions = Infraction::with(['issuedBy' => function ($q) use ($server) {
-            $q->where('server_id', '=', $server->id);
-        }, 'user' => function ($q) use ($server) {
-            $q->where('server_id', '=', $server->id);
-        }])->where('guild', $server->id)->get();
-        return view('server.dashboard.infractions')->with(['infractions' => $infractions, 'server' => $server, 'tab' => 'infractions']);
+        $infractions = Infraction::with([
+            'issuedBy' => function ($q) use ($server) {
+                $q->where('server_id', '=', $server->id);
+            },
+            'user' => function ($q) use ($server) {
+                $q->where('server_id', '=', $server->id);
+            }
+        ])->where('guild', $server->id)->get();
+        return view('server.dashboard.infractions')->with([
+            'infractions' => $infractions,
+            'server' => $server,
+            'tab' => 'infractions'
+        ]);
     }
 
     public function makeIcon(Request $request)
@@ -168,5 +182,40 @@ class GeneralController extends Controller
         $response->header('Content-Type', 'text/plain');
         $response->header('TTL', Redis::ttl("archive:$key"));
         return $response;
+    }
+
+    public function createLogSetting(Request $request, Server $server)
+    {
+        $this->authorize('update', $server);
+        $request->validate([
+            'channel' => 'required|exists:channels,id'
+        ]);
+        $settings = $server->logSettings()->create([
+            'channel_id' => $request->get('channel'),
+            'events' => 0
+        ]);
+        $settings->load('channel');
+        return $settings;
+    }
+
+    public function deleteLogSetting(Server $server, LogSetting $setting)
+    {
+        $this->authorize('update', $server);
+        $setting->delete();
+    }
+
+    public function updateLogSetting(Request $request, Server $server, LogSetting $setting)
+    {
+        $request->validate([
+            'events' => 'array'
+        ]);
+        $events = 0;
+        foreach ($request->get('events') as $e) {
+            $events = $events | ((int)$e);
+        }
+
+        $setting->events = $events;
+        $setting->save();
+        return $setting;
     }
 }

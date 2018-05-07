@@ -4,73 +4,67 @@
     <?php
     $color = \App\Menu\Panel::getPanelColor($tab)
     ?>
-    <div class="ui {{$color}} segment">
-        <h2>Real Name Settings</h2>
-        <settings-realname inline-template>
-            <panel-form :form="forms.realName">
-                <div slot="inputs">
-                    <div class="two fields">
-                        <field name="requireRealname" :form="forms.realName"
-                               :class="{'disabled': forms.realName.realnameSetting == 'OFF' || readonly}">
-                            <div class="ui checkbox">
-                                <input type="checkbox" name="requireRealname" v-model="forms.realName.requireRealname"
-                                       @change="sendForm" :disabled="readonly"/>
-                                <label>Require Real Names</label>
-                            </div>
-                            <p>If checked, users will be assigned a role if they have not set their real name</p>
-                        </field>
-                        <field name="realnameSetting" :form="forms.realName">
-                            <label>Real Name</label>
-                            <dropdown name="realName" v-model="forms.realName.realnameSetting" @change="sendForm"
-                                      :disabled="readonly">
-                                <option value="OFF">Disabled</option>
-                                <option value="FIRST_ONLY">Display first name only</option>
-                                <option value="FIRST_LAST">Display first and last name</option>
-                            </dropdown>
-                        </field>
-                    </div>
-                </div>
-            </panel-form>
-        </settings-realname>
-    </div>
     <div class="ui grid">
-        <div class="eight wide column">
-            <div class="ui {{$color}} segment">
-                <h2>Logging</h2>
-                <p>Enabling this module will log various actions taken by the bot to a designated channel</p>
-                <settings-logging inline-template>
-                    <panel-form :form="forms.logging">
+        <div class="sixteen wide column">
+            <div class="ui {{$color}} fluid segment">
+                <h2>Real Name Settings</h2>
+                <settings-realname inline-template>
+                    <panel-form :form="forms.realName">
                         <div slot="inputs">
                             <div class="two fields">
-                                <field name="enabled" :form="forms.logging">
-                                    <div class="ui slider checkbox">
-                                        <input type="checkbox" name="enabled" v-model="forms.logging.enabled"
-                                               @change="save" :disabled="readonly"/>
-                                        <label>Enable</label>
+                                <field name="requireRealname" :form="forms.realName"
+                                       :class="{'disabled': forms.realName.realnameSetting == 'OFF' || readonly}">
+                                    <div class="ui checkbox">
+                                        <input type="checkbox" name="requireRealname"
+                                               v-model="forms.realName.requireRealname"
+                                               @change="sendForm" :disabled="readonly"/>
+                                        <label>Require Real Names</label>
                                     </div>
+                                    <p>If checked, users will be assigned a role if they have not set their real
+                                        name</p>
                                 </field>
-                                <field name="channel" :form="forms.logging"
-                                       :class="{'disabled': !forms.logging.enabled}">
-                                    <label>Logging Channel</label>
-                                    <dropdown class="search selection" name="channel" v-model="forms.logging.channel"
-                                              @change="save" :disabled="readonly">
-                                        @foreach($textChannels as $channel)
-                                            @if($channel->type == 'TEXT')
-                                                <option value="{{$channel->id}}">#{{$channel->channel_name}}</option>
-                                            @endif
-                                        @endforeach
+                                <field name="realnameSetting" :form="forms.realName">
+                                    <label>Real Name</label>
+                                    <dropdown name="realName" v-model="forms.realName.realnameSetting"
+                                              @change="sendForm"
+                                              :disabled="readonly">
+                                        <option value="OFF">Disabled</option>
+                                        <option value="FIRST_ONLY">Display first name only</option>
+                                        <option value="FIRST_LAST">Display first and last name</option>
                                     </dropdown>
                                 </field>
                             </div>
-                            <field name="timezone" :form="forms.logging" :class="{'disabled': !forms.logging.enabled}" v-show="forms.logging.enabled">
-                                <label>Log Timezone</label>
-                                <p>The timezone for timestamped log messages to be shown in. Supports most timezones (i.e
-                                    <code>America/Los Angeles</code>, <code>UTC</code>).</p>
-                                <input type="text" name="timezone" v-model="forms.logging.timezone" :disabled="readonly"
-                                       @change="save"/>
-                            </field>
                         </div>
                     </panel-form>
+                </settings-realname>
+            </div>
+        </div>
+
+        <div class="sixteen wide column">
+            <div class="ui {{$color}} segment">
+                <h2>Logging</h2>
+                <settings-logging inline-template>
+                    <div>
+                        <div class="ui fluid labeled action input" v-for="setting in settings"
+                             style="margin-bottom: 10px">
+                            <div class="ui label">#@{{ setting.channel.channel_name }}</div>
+                            <dropdown class="search" multiple="multiple" v-model="setting.events"
+                                      @change="updateSettings(setting.id)">
+                                <option v-for="(v, k) in logOptions" :key="k" :value="v">@{{ k }}</option>
+
+                            </dropdown>
+                            <button class="ui red icon button" @click="deleteSettings(setting.id)">
+                                <i class="x icon"></i>
+                            </button>
+                        </div>
+                        <hr/>
+                        <dropdown class="search" v-model="selectedChan" @change="onChange"
+                                  :disabled="readonly || channels.length === 0" prompt="Select a channel to add">
+                            <option v-for="channel in channels" :key="channel.id" :value="channel.id">
+                                #@{{channel.channel_name}}
+                            </option>
+                        </dropdown>
+                    </div>
                 </settings-logging>
             </div>
         </div>
@@ -90,10 +84,8 @@
                 </settings-bot-name>
             </div>
         </div>
-    </div>
 
-    <div class="ui grid">
-        <div class="sixteen wide column">
+        <div class="eight wide column">
             <div class="ui {{$color}} segment">
                 <h2>Channel Whitelist</h2>
                 <settings-channel-whitelist inline-template>
@@ -119,25 +111,28 @@
                 </settings-channel-whitelist>
             </div>
         </div>
-    </div>
 
-    <div class="ui {{$color}} segment">
-        <h2>User Persistence</h2>
-        <p>When enabled, users' roles and nicknames will be restored when they rejoin. This does
-            <b>NOT</b> affect per channel permissions</p>
-        <settings-user-persistence inline-template>
-            <panel-form :form="forms.persist">
-                <div slot="inputs">
-                    <field name="persistence" :form="forms.persist">
-                        <div class="ui slider checkbox">
-                            <input type="checkbox" name="enabled" v-model="forms.persist.persistence" @change="save"
-                                   :disabled="readonly"/>
-                            <label>Enable</label>
+        <div class="sixteen wide column">
+            <div class="ui {{$color}} segment">
+                <h2>User Persistence</h2>
+                <p>When enabled, users' roles and nicknames will be restored when they rejoin. This does
+                    <b>NOT</b> affect per channel permissions</p>
+                <settings-user-persistence inline-template>
+                    <panel-form :form="forms.persist">
+                        <div slot="inputs">
+                            <field name="persistence" :form="forms.persist">
+                                <div class="ui slider checkbox">
+                                    <input type="checkbox" name="enabled" v-model="forms.persist.persistence"
+                                           @change="save"
+                                           :disabled="readonly"/>
+                                    <label>Enable</label>
+                                </div>
+                            </field>
                         </div>
-                    </field>
-                </div>
-            </panel-form>
-        </settings-user-persistence>
+                    </panel-form>
+                </settings-user-persistence>
 
+            </div>
+        </div>
     </div>
 @endsection

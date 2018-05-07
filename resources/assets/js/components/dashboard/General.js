@@ -1,4 +1,6 @@
 import Form from "../../form/form2";
+import axios from 'axios';
+import LogSettings from "../../logsettings";
 
 Vue.component('settings-realname', {
 
@@ -34,27 +36,79 @@ Vue.component('settings-realname', {
 });
 
 Vue.component('settings-logging', {
+
     data() {
         return {
-            forms: {
-                logging: new Form('patch', '/dashboard/' + Server.id + '/logging', {
-                    enabled: Server.log_channel !== null,
-                    channel: Server.log_channel,
-                    timezone: Server.log_timezone
-                })
-            },
-            loaded: false,
-            readonly: ReadOnly
+            readonly: ReadOnly,
+            settings: {},
+            selectedChan: "",
+            logOptions: LogSettings,
         }
     },
 
+    computed: {
+        channels() {
+            return _.filter(Server.channels, chan => {
+                if (chan.type !== "TEXT")
+                    return false;
+                return _.indexOf(_.map(this.settings, f => f.channel_id), chan.id) === -1;
+            })
+        },
+    },
+
     methods: {
-        save() {
-            if (!this.forms.logging.enabled) {
-                this.forms.logging.channel = null
+        onMount() {
+            this.settings = Server.log_settings;
+            this.settings.forEach(s => {
+                s.events = this.splitEvents(s.events);
+            });
+            this.updateSettings = _.debounce(this.updateSettings, 500);
+        },
+        createSettings(chan) {
+            axios.put('/dashboard/' + Server.id + '/logSetting', {
+                channel: chan
+            }).then(resp => {
+                let obj = resp.data;
+                obj.events = this.splitEvents(obj.events);
+                this.settings.push(obj);
+            })
+        },
+        deleteSettings(id) {
+            axios.delete('/dashboard/' + Server.id + '/logSetting/' + id).then(resp => {
+                this.settings = _.filter(this.settings, f => f.id !== id)
+            })
+        },
+        updateSettings(id) {
+            axios.patch('/dashboard/' + Server.id + '/logSetting/' + id, {
+                events: this.settings[_.findIndex(this.settings, f => f.id === id)].events
+            })
+        },
+
+        onChange() {
+            this.createSettings(this.selectedChan);
+            let vm = this;
+            setTimeout(function () {
+                vm.selectedChan = "";
+            }, 20);
+        },
+
+
+        splitEvents(num) {
+            let arr = [];
+            Object.keys(LogSettings).forEach(k => {
+                if ((num & LogSettings[k]) !== 0 && LogSettings[k] !== LogSettings.ALL_EVENTS) {
+                    arr.push("" + LogSettings[k]);
+                }
+            });
+            if (num === LogSettings.ALL_EVENTS) {
+                return ["" + LogSettings.ALL_EVENTS]
             }
-            this.forms.logging.save();
+            return arr;
         }
+    },
+
+    mounted() {
+        this.onMount();
     }
 });
 

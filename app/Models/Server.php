@@ -13,17 +13,34 @@ class Server extends Model
     public $incrementing = false;
 
     public $fillable = [
-        'id', 'name', 'realname', 'require_realname', 'command_discriminator', 'log_channel', 'cmd_whitelist', 'bot_manager'
+        'id',
+        'name',
+        'realname',
+        'require_realname',
+        'command_discriminator',
+        'log_channel',
+        'cmd_whitelist',
+        'bot_manager'
     ];
 
     protected $casts = [
         'cmd_whitelist' => 'array',
         'bot_manager' => 'array',
-        'user_persistence', 'boolean'
+        'user_persistence',
+        'boolean'
     ];
 
     protected $deletableRelations = [
-        'channels', 'roles', 'quotes', 'commands', 'musicSettings', 'groups', 'overrides', 'feeds', 'auditLog', 'members'
+        'channels',
+        'roles',
+        'quotes',
+        'commands',
+        'musicSettings',
+        'groups',
+        'overrides',
+        'feeds',
+        'auditLog',
+        'members'
     ];
 
     public function channels()
@@ -54,6 +71,11 @@ class Server extends Model
     public function infractions()
     {
         return $this->hasMany(Infraction::class, 'guild');
+    }
+
+    public function logSettings()
+    {
+        return $this->hasMany(LogSetting::class, 'server_id');
     }
 
     public function save(array $options = [])

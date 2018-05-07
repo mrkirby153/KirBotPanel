@@ -69,6 +69,13 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
         Route::get('/{server}/spam', 'Dashboard\SpamController@index')->name('dashboard.spam');
         Route::patch('/{server}/spam', 'Dashboard\SpamController@updateSettings')->name('dashboard.spamUpdate');
         Route::patch('/{server}/censor', 'Dashboard\SpamController@updateCensor')->name('dashboard.censorUpdate');
+
+        // Logging
+        Route::group([], function(){
+            Route::put('/{server}/logSetting', 'Dashboard\GeneralController@createLogSetting');
+            Route::delete('/{server}/logSetting/{setting}', 'Dashboard\GeneralController@deleteLogSetting');
+            Route::patch('/{server}/logSetting/{setting}', 'Dashboard\GeneralController@updateLogSetting');
+        });
     });
 });
 Route::post('/dashboard/{server}/channels/{channel}/visibility', 'Dashboard\ChannelController@visibility')->middleware('auth');

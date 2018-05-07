@@ -51,6 +51,12 @@
             value(newVal, oldVal) {
                 if (!this.ready)
                     return;
+                if(newVal === "" || newVal === undefined || newVal === null){
+                    this.emit = false;
+                    $(this.$el).dropdown('clear');
+                    this.emit = true;
+                    return;
+                }
                 this.emit = false;
                 let toAdd = _.filter(newVal, v => _.indexOf(oldVal, v) === -1);
                 let toRemove = _.filter(oldVal, v => _.indexOf(newVal, v) === -1);
