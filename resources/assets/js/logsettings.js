@@ -20,10 +20,11 @@ export const Logsettings = {
     USER_UNMUTE: 32768,
     USER_BAN: 65536,
     USER_UNBAN: 131072,
+    USER_KICK: 262144,
 
-    MESSAGE_CENSOR: 262144,
+    MESSAGE_CENSOR: 524288,
 
-    ALL_EVENTS: 524287
+    ALL_EVENTS: 1048575
 };
 
 export default Logsettings
