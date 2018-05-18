@@ -60,49 +60,47 @@ Vue.component('settings-logging', {
         onMount() {
             this.settings = Server.log_settings;
             this.settings.forEach(s => {
-                s.events = this.splitEvents(s.events);
+                s.included = this.splitEvents(s.included);
+                s.excluded = this.splitEvents(s.excluded);
             });
-            this.updateSettings = _.debounce(this.updateSettings, 500);
+            this.updateSettings = _.debounce(this.updateSettings, 250);
         },
         createSettings(chan) {
             axios.put('/dashboard/' + Server.id + '/logSetting', {
                 channel: chan
             }).then(resp => {
                 let obj = resp.data;
-                obj.events = this.splitEvents(obj.events);
+                obj.included = this.splitEvents(obj.included);
+                obj.excluded = this.splitEvents(obj.excluded);
                 this.settings.push(obj);
+                this.selectedChan = "";
             })
         },
         deleteSettings(id) {
-            axios.delete('/dashboard/' + Server.id + '/logSetting/' + id).then(resp => {
-                this.settings = _.filter(this.settings, f => f.id !== id)
-            })
+            // Delete the setting on the client before the server
+            this.settings = _.filter(this.settings, f => f.id !== id);
+            axios.delete('/dashboard/' + Server.id + '/logSetting/' + id)
         },
         updateSettings(id) {
+            let setting = this.settings[_.findIndex(this.settings, f => f.id === id)];
             axios.patch('/dashboard/' + Server.id + '/logSetting/' + id, {
-                events: this.settings[_.findIndex(this.settings, f => f.id === id)].events
+                included: setting.included,
+                excluded: setting.excluded
             })
         },
 
         onChange() {
             this.createSettings(this.selectedChan);
-            let vm = this;
-            setTimeout(function () {
-                vm.selectedChan = "";
-            }, 20);
         },
 
 
         splitEvents(num) {
             let arr = [];
             Object.keys(LogSettings).forEach(k => {
-                if ((num & LogSettings[k]) !== 0 && LogSettings[k] !== LogSettings.ALL_EVENTS) {
+                if ((num & LogSettings[k]) !== 0) {
                     arr.push("" + LogSettings[k]);
                 }
             });
-            if (num === LogSettings.ALL_EVENTS) {
-                return ["" + LogSettings.ALL_EVENTS]
-            }
             return arr;
         }
     },

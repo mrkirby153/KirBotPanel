@@ -11,7 +11,8 @@ class LogSetting extends RandomIdModel
     protected $fillable = [
         'server_id',
         'channel_id',
-        'events'
+        'included',
+        'excluded'
     ];
 
     protected $with = [

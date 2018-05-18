@@ -43,21 +43,28 @@
         <div class="sixteen wide column">
             <div class="ui {{$color}} segment">
                 <h2>Logging</h2>
+                <p>
+                    <b>Include:</b> A list of events to include in the log. <i>Leave blank to include all events</i><br/>
+                    <b>Exclude:</b> A list of events to exclude from the log channel. <i>Leave blank to exclude nothing</i>
+                </p>
                 <settings-logging inline-template>
                     <div>
-                        <div class="ui fluid labeled action input" v-for="setting in settings"
-                             style="margin-bottom: 10px">
-                            <div class="ui label">#@{{ setting.channel.channel_name }}</div>
-                            <dropdown class="search" multiple="multiple" v-model="setting.events"
-                                      @change="updateSettings(setting.id)">
-                                <option v-for="(v, k) in logOptions" :key="k" :value="v">@{{ k }}</option>
-
-                            </dropdown>
-                            <button class="ui red icon button" @click="deleteSettings(setting.id)">
-                                <i class="x icon"></i>
-                            </button>
+                        <div v-for="setting in settings">
+                            <b>#@{{ setting.channel.channel_name }}</b> <i class="x icon" style="cursor: pointer;" @click="deleteSettings(setting.id)"></i>
+                            <div class="ui fluid labeled action input" style="margin-bottom: 10px;">
+                                <div class="ui label">Include</div>
+                                <dropdown class="search" multiple="multiple" v-model="setting.included" @change="updateSettings(setting.id)">
+                                    <option v-for="(v, k) in logOptions" :k="k" :value="v">@{{ k }}</option>
+                                </dropdown>
+                            </div>
+                            <div class="ui fluid labeled action input" style="margin-bottom: 10px;">
+                                <div class="ui label">Exclude</div>
+                                <dropdown class="search" multiple="multiple" v-model="setting.excluded" @change="updateSettings(setting.id)">
+                                    <option v-for="(v, k) in logOptions" :k="k" :value="v">@{{ k }}</option>
+                                </dropdown>
+                            </div>
+                            <hr/>
                         </div>
-                        <hr/>
                         <dropdown class="search" v-model="selectedChan" @change="onChange"
                                   :disabled="readonly || channels.length === 0" prompt="Select a channel to add">
                             <option v-for="channel in channels" :key="channel.id" :value="channel.id">
