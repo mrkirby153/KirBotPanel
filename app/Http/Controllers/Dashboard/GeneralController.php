@@ -164,6 +164,9 @@ class GeneralController extends Controller {
         if ($data == null) {
             return response('Archive not found or expired', 404);
         }
+        if(starts_with($data, "e:")) {
+            $data = decrypt(substr($data, 2));
+        }
         $response = Response::make($data, 200);
         $response->header('Content-Type', 'text/plain');
         $response->header('TTL', Redis::ttl("archive:$key"));
