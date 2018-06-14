@@ -22,7 +22,9 @@ export const Logsettings = {
     USER_UNBAN: 131072,
     USER_KICK: 262144,
 
-    MESSAGE_CENSOR: 524288
+    MESSAGE_CENSOR: 524288,
+
+    VOICE_ACTION: 1048576
 };
 
 export default Logsettings
