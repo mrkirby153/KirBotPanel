@@ -203,7 +203,7 @@ class GeneralController extends Controller {
             $included = $included | ((int)$e);
         }
         foreach ($request->get('excluded') as $e) {
-            $excluded = $included | ((int)$e);
+            $excluded = $excluded | ((int)$e);
         }
 
         $setting->included = $included;
