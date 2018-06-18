@@ -24,7 +24,8 @@ export const Logsettings = {
 
     MESSAGE_CENSOR: 524288,
 
-    VOICE_ACTION: 1048576
+    VOICE_ACTION: 1048576,
+    USER_WARN: 2097152
 };
 
 export default Logsettings
