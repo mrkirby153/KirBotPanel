@@ -3,12 +3,12 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Models\CustomCommand;
 use App\Http\Controllers\Controller;
+use App\Models\CommandAlias;
+use App\Models\CustomCommand;
 use App\Models\Server;
 use App\Utils\AuditLogger;
 use Illuminate\Http\Request;
-use Keygen\Keygen;
 
 class CommandController extends Controller
 {
@@ -20,7 +20,8 @@ class CommandController extends Controller
         }
         \JavaScript::put([
             'Server' => $server,
-            'Commands' => $server->commands
+            'Commands' => $server->commands,
+            'CommandAliases' => $server->commandAliases
         ]);
         return view('server.dashboard.commands')->with(['server' => $server, 'tab' => 'commands']);
     }
@@ -85,5 +86,34 @@ class CommandController extends Controller
         $this->authorize('update', $server);
         CustomCommand::destroy($command);
         syncServer($server->id);
+    }
+
+    public function createAlias(Server $server, Request $request)
+    {
+        $this->authorize('update', $server);
+        $this->validate($request, [
+            'command' => 'required|max:255|without_spaces|unique:command_aliases',
+            'alias' => 'without_spaces',
+            'clearance' => 'required|numeric',
+        ], [
+            'validation.without_spaces' => 'Spaces are not allowed in command names'
+        ]);
+
+        $command = new CommandAlias();
+        $command->command = $request->get('command');
+        $command->alias = $request->get('alias');
+        $command->clearance = $request->get('clearance');
+        $command->server_id = $server->id;
+        $command->save();
+
+        syncServer($server->id);
+        return $command;
+    }
+
+    public function deleteAlias(Server $server, $alias)
+    {
+        CommandAlias::destroy($alias);
+        syncServer($server->id);
+        return $server->commandAliases;
     }
 }

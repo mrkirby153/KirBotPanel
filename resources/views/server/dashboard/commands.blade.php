@@ -14,7 +14,8 @@
                         <div class="one field">
                             <field name="discriminator" :form="forms.cmdDiscriminator">
                                 <label>Discriminator</label>
-                                <input name="discriminator" v-model="forms.cmdDiscriminator.discriminator" @change="saveDiscrim" :disabled="readonly"/>
+                                <input name="discriminator" v-model="forms.cmdDiscriminator.discriminator"
+                                       @change="saveDiscrim" :disabled="readonly"/>
                             </field>
                         </div>
                     </div>
@@ -45,8 +46,12 @@
                         <td>@{{ command.clearance_level }}</td>
                         <td>
                             <div class="ui buttons">
-                                <button class="ui button blue" @click="editCommand(command.id)" :disabled="readonly">Edit</button>
-                                <button class="ui button red" @click="confirmDelete(command.id)" :disabled="readonly">Delete</button>
+                                <button class="ui button blue" @click="editCommand(command.id)" :disabled="readonly">
+                                    Edit
+                                </button>
+                                <button class="ui button red" @click="confirmDelete(command.id)" :disabled="readonly">
+                                    Delete
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -54,7 +59,8 @@
                     <tfoot>
                     <tr>
                         <th colspan="6">
-                            <button class="ui right floated button" @click="newCommand()" :disabled="readonly">Add Command
+                            <button class="ui right floated button" @click="newCommand()" :disabled="readonly">Add
+                                Command
                             </button>
                         </th>
                     </tr>
@@ -120,4 +126,65 @@
             </div>
         </div>
     </settings-commands>
+
+    <div class="ui {{$color}} segment">
+        <h2>Command Aliases</h2>
+        <p>A list of all configured command aliases</p>
+        <settings-command-aliases inline-template>
+            <div>
+                <table class="ui celled table">
+                    <thead>
+                    <tr>
+                        <th>Command</th>
+                        <th>Alias</th>
+                        <th>Clearance Override</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="alias in aliases" :key="alias.id">
+                        <td>@{{ command_discriminator + alias.command }}</td>
+                        <td v-if="alias.alias">@{{command_discriminator + alias.alias }}</td>
+                        <td v-else><em>No Alias Specified -- Overriding clearance</em></td>
+                        <td v-if="alias.clearance !== -1">@{{ alias.clearance }}</td>
+                        <td v-else>Inherit</td>
+                        <td>
+                            <button class="ui red icon button" @click.prevent="removeAlias(alias.id)"><i class="x icon"></i></button>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th colspan="4">
+                            <button class="ui right floated button" :disabled="readonly" @click="adding = true">Add Alias</button>
+                        </th>
+                    </tr>
+                    </tfoot>
+                </table>
+                <panel-form :form="forms.createAlias" v-show="adding" @submit="addAlias">
+                    <div slot="inputs">
+                        <div class="three fields">
+                            <field name="command" :form="forms.createAlias">
+                                <label>Command Name</label>
+                                <input type="text" v-model="forms.createAlias.command"/>
+                            </field>
+                            <field name="alias" :form="forms.createAlias">
+                                <label>Alias <small><em>Leave blank to override clearance only</em></small></label>
+                                <input type="text" v-model="forms.createAlias.alias"/>
+                            </field>
+                            <field name="clearance" :form="forms.createAlias">
+                                <label>Clearance Override <small><em>Set to -1 to inherit override</em></small></label>
+                                <input type="number" v-model="forms.createAlias.clearance" min="-1" max="100"/>
+                            </field>
+                        </div>
+                        <div class="two buttons">
+                            <button class="ui green icon button"><i class="check icon"></i> Save</button>
+                            <button class="ui yellow icon button" @click.prevent="cancelAdd"><i class="x icon"></i> Cancel</button>
+                        </div>
+                    </div>
+                </panel-form>
+            </div>
+
+        </settings-command-aliases>
+    </div>
 @endsection

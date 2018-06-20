@@ -151,3 +151,54 @@ Vue.component('settings-commands', {
         }
     }
 });
+
+Vue.component('settings-command-aliases', {
+    data() {
+        return {
+            forms: {
+                createAlias: new Form('PUT', '/dashboard/' + Server.id + '/commands/alias', {
+                    command: "",
+                    alias: null,
+                    clearance: -1
+                })
+            },
+            aliases: CommandAliases,
+            readonly: ReadOnly,
+            adding: false
+        }
+    },
+
+    mounted() {
+        this.onMount()
+    },
+
+    methods: {
+        onMount() {
+
+        },
+        cancelAdd() {
+            this.forms.createAlias.command = "";
+            this.forms.createAlias.alias = null;
+            this.forms.createAlias.clearance = -1;
+            this.adding = false;
+        },
+        addAlias() {
+            this.forms.createAlias.save().then(resp => {
+                this.aliases.push(resp.data);
+                this.cancelAdd();
+            }).catch(err => {
+                console.log(err);
+            });
+        },
+        removeAlias(id) {
+            axios.delete('/dashboard/' + Server.id + '/commands/alias/' + id).then(resp => {
+                this.aliases = resp.data
+            })
+        }
+    },
+    computed: {
+        command_discriminator() {
+            return Server.command_discriminator;
+        }
+    }
+});

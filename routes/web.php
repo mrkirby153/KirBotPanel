@@ -39,6 +39,9 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
             Route::delete('/{server}/command/{command}', 'Dashboard\CommandController@deleteCommand');
             Route::patch('/{server}/discriminator', 'Dashboard\CommandController@updateDiscrim');
             Route::put('/{server}/commands', 'Dashboard\CommandController@createCommand');
+
+            Route::put('/{server}/commands/alias', 'Dashboard\CommandController@createAlias');
+            Route::delete('/{server}/commands/alias/{alias}', 'Dashboard\CommandController@deleteAlias');
         });
 
         // Music

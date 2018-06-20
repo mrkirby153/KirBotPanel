@@ -78,6 +78,11 @@ class Server extends Model
         return $this->hasMany(LogSetting::class, 'server_id');
     }
 
+    public function commandAliases()
+    {
+        return $this->hasMany(CommandAlias::class, 'server_id');
+    }
+
     public function save(array $options = [])
     {
         $save = parent::save($options);
