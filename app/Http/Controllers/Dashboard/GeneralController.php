@@ -40,8 +40,13 @@ class GeneralController extends Controller {
         $this->authorize('view', $server);
         $server->load('channels');
         $server->load('logSettings');
+        $events = Redis::get("log_events");
+        if($events == null){
+            $events = "{}";
+        }
         \JavaScript::put([
-            'Server' => $server
+            'Server' => $server,
+            'LogEvents' => json_decode($events)
         ]);
         return view('server.dashboard.general')->with([
             'tab' => 'general',
@@ -164,7 +169,7 @@ class GeneralController extends Controller {
         if ($data == null) {
             return response('Archive not found or expired', 404);
         }
-        if(starts_with($data, "e:")) {
+        if (starts_with($data, "e:")) {
             $data = decrypt(substr($data, 2));
         }
         $response = Response::make($data, 200);

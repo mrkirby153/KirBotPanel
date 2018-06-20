@@ -13,11 +13,11 @@
                         <div slot="inputs">
                             <div class="two fields">
                                 <field name="requireRealname" :form="forms.realName"
-                                       :class="{'disabled': forms.realName.realnameSetting == 'OFF' || readonly}">
+                                        :class="{'disabled': forms.realName.realnameSetting == 'OFF' || readonly}">
                                     <div class="ui checkbox">
                                         <input type="checkbox" name="requireRealname"
-                                               v-model="forms.realName.requireRealname"
-                                               @change="sendForm" :disabled="readonly"/>
+                                                v-model="forms.realName.requireRealname"
+                                                @change="sendForm" :disabled="readonly"/>
                                         <label>Require Real Names</label>
                                     </div>
                                     <p>If checked, users will be assigned a role if they have not set their real
@@ -26,8 +26,8 @@
                                 <field name="realnameSetting" :form="forms.realName">
                                     <label>Real Name</label>
                                     <dropdown name="realName" v-model="forms.realName.realnameSetting"
-                                              @change="sendForm"
-                                              :disabled="readonly">
+                                            @change="sendForm"
+                                            :disabled="readonly">
                                         <option value="OFF">Disabled</option>
                                         <option value="FIRST_ONLY">Display first name only</option>
                                         <option value="FIRST_LAST">Display first and last name</option>
@@ -42,35 +42,49 @@
 
         <div class="sixteen wide column">
             <div class="ui {{$color}} segment">
-                <h2>Logging</h2>
-                <p>
-                    <b>Include:</b> A list of events to include in the log. <i>Leave blank to include all events</i><br/>
-                    <b>Exclude:</b> A list of events to exclude from the log channel. <i>Leave blank to exclude nothing</i>
-                </p>
                 <settings-logging inline-template>
                     <div>
-                        <div v-for="setting in settings">
-                            <b>#@{{ setting.channel.channel_name }}</b> <i class="x icon" style="cursor: pointer;" @click="deleteSettings(setting.id)"></i>
-                            <div class="ui fluid labeled action input" style="margin-bottom: 10px;">
-                                <div class="ui label">Include</div>
-                                <dropdown class="search" multiple="multiple" v-model="setting.included" @change="updateSettings(setting.id)">
-                                    <option v-for="(v, k) in logOptions" :k="k" :value="v">@{{ k }}</option>
-                                </dropdown>
+                        <h2>Logging</h2>
+                        <div class="ui error icon message" v-if="communicationError">
+                            <i class="warning icon"></i>
+                            <div class="content">
+                                <div class="header">
+                                    Bot Communication Error
+                                </div>
+                                There was an error retrieving available log events. Your data has not been modified and you cannot modify current settings
                             </div>
-                            <div class="ui fluid labeled action input" style="margin-bottom: 10px;">
-                                <div class="ui label">Exclude</div>
-                                <dropdown class="search" multiple="multiple" v-model="setting.excluded" @change="updateSettings(setting.id)">
-                                    <option v-for="(v, k) in logOptions" :k="k" :value="v">@{{ k }}</option>
-                                </dropdown>
-                            </div>
-                            <hr/>
                         </div>
-                        <dropdown class="search" v-model="selectedChan" @change="onChange"
-                                  :disabled="readonly || channels.length === 0" prompt="Select a channel to add">
-                            <option v-for="channel in channels" :key="channel.id" :value="channel.id">
-                                #@{{channel.channel_name}}
-                            </option>
-                        </dropdown>
+                        <div v-show="!communicationError">
+                            <p>
+                                <b>Include:</b> A list of events to include in the log.
+                                <i>Leave blank to include all events</i><br/>
+                                <b>Exclude:</b> A list of events to exclude from the log channel.
+                                <i>Leave blank to exclude nothing</i>
+                            </p>
+                            <div v-for="setting in settings">
+                                <b>#@{{ setting.channel.channel_name }}</b>
+                                <i class="x icon" :style="{cursor: readonly? 'default' : 'pointer'}" @click="deleteSettings(setting.id)"></i>
+                                <div class="ui fluid labeled action input" style="margin-bottom: 10px;">
+                                    <div class="ui label">Include</div>
+                                    <dropdown class="search" multiple="multiple" v-model="setting.included" @change="updateSettings(setting.id)" :disabled="readonly">
+                                        <option v-for="(v, k) in logOptions" :k="k" :value="v">@{{ k }}</option>
+                                    </dropdown>
+                                </div>
+                                <div class="ui fluid labeled action input" style="margin-bottom: 10px;">
+                                    <div class="ui label">Exclude</div>
+                                    <dropdown class="search" multiple="multiple" v-model="setting.excluded" @change="updateSettings(setting.id)" :disabled="readonly">
+                                        <option v-for="(v, k) in logOptions" :k="k" :value="v">@{{ k }}</option>
+                                    </dropdown>
+                                </div>
+                                <hr/>
+                            </div>
+                            <dropdown class="search" v-model="selectedChan" @change="onChange"
+                                    :disabled="readonly || channels.length === 0" prompt="Select a channel to add">
+                                <option v-for="channel in channels" :key="channel.id" :value="channel.id">
+                                    #@{{channel.channel_name}}
+                                </option>
+                            </dropdown>
+                        </div>
                     </div>
                 </settings-logging>
             </div>
@@ -105,7 +119,7 @@
                             <field name="channels" :form="forms.whitelist">
                                 <label><b>Channels</b></label>
                                 <dropdown class="search" multiple="" name="channels[]"
-                                          v-model="forms.whitelist.channels" @change="save" :disabled="readonly">
+                                        v-model="forms.whitelist.channels" @change="save" :disabled="readonly">
                                     @foreach($textChannels as $channel)
                                         @if($channel->type == 'TEXT')
                                             <option value="{{$channel->id}}">#{{$channel->channel_name}}</option>
@@ -130,8 +144,8 @@
                             <field name="persistence" :form="forms.persist">
                                 <div class="ui slider checkbox">
                                     <input type="checkbox" name="enabled" v-model="forms.persist.persistence"
-                                           @change="save"
-                                           :disabled="readonly"/>
+                                            @change="save"
+                                            :disabled="readonly"/>
                                     <label>Enable</label>
                                 </div>
                             </field>

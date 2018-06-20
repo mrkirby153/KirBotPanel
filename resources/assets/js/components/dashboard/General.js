@@ -1,6 +1,5 @@
 import Form from "../../form/form2";
 import axios from 'axios';
-import LogSettings from "../../logsettings";
 
 Vue.component('settings-realname', {
 
@@ -42,7 +41,8 @@ Vue.component('settings-logging', {
             readonly: ReadOnly,
             settings: {},
             selectedChan: "",
-            logOptions: LogSettings,
+            logOptions: LogEvents,
+            communicationError: false
         }
     },
 
@@ -64,6 +64,10 @@ Vue.component('settings-logging', {
                 s.excluded = this.splitEvents(s.excluded);
             });
             this.updateSettings = _.debounce(this.updateSettings, 250);
+            if (Object.keys(this.logOptions).length === 0) {
+                this.readonly = true;
+                this.communicationError = true;
+            }
         },
         createSettings(chan) {
             axios.put('/dashboard/' + Server.id + '/logSetting', {
@@ -77,6 +81,8 @@ Vue.component('settings-logging', {
             })
         },
         deleteSettings(id) {
+            if (this.readonly)
+                return;
             // Delete the setting on the client before the server
             this.settings = _.filter(this.settings, f => f.id !== id);
             axios.delete('/dashboard/' + Server.id + '/logSetting/' + id)
@@ -96,9 +102,9 @@ Vue.component('settings-logging', {
 
         splitEvents(num) {
             let arr = [];
-            Object.keys(LogSettings).forEach(k => {
-                if ((num & LogSettings[k]) !== 0) {
-                    arr.push("" + LogSettings[k]);
+            Object.keys(LogEvents).forEach(k => {
+                if ((num & LogEvents[k]) !== 0) {
+                    arr.push("" + LogEvents[k]);
                 }
             });
             return arr;
