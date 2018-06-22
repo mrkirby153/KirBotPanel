@@ -21,7 +21,7 @@ class CreateCommandAliasesTable extends Migration
             $table->integer('clearance');
             $table->timestamps();
 
-            $table->foreign('server_id')->references('id')->on('server_settings');
+            $table->foreign('server_id')->references('id')->on('server_settings')->onDelete('cascade');
         });
     }
 
