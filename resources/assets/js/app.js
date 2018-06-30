@@ -8,7 +8,8 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 
-require('./semantic');
+// Include Bootstrap
+require('bootstrap');
 
 require('./form/form2');
 
@@ -29,6 +30,8 @@ require('./components/UserInfo');
 require('./components/ServerDashboard');
 require('./components/BotChat');
 require('./components/MusicQueue');
+
+require('./components/nav/bootstrapper');
 
 const app = new Vue({
     el: '#app'

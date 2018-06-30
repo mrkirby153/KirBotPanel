@@ -19,6 +19,7 @@ _ide_helper_models\.php
 storage/app/public/
 
 public/css/app\.css
+public/fonts/vendor
 
 public/js/app\.js
 
