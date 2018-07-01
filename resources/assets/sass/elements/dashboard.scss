@@ -1,0 +1,36 @@
+@import "~bootstrap/scss/variables";
+
+$server-image-base: 128px;
+
+.dashboard-sidebar {
+  .nav-item {
+    .nav-link {
+      .active {
+        background-color: #000 !important;
+      }
+      &:not(.active) {
+        &:hover {
+          background-color: $gray-300;
+        }
+      }
+    }
+  }
+}
+
+.server-image {
+  border-radius: 50%;
+}
+
+@media(min-width: map_get($grid-breakpoints, 'md')) {
+  .server-image {
+    width: $server-image-base / 2;
+    height: $server-image-base / 2;
+  }
+}
+
+@media(min-width: map_get($grid-breakpoints, 'lg')) {
+  .server-image {
+    width: 100%;
+    height: 100%;
+  }
+}

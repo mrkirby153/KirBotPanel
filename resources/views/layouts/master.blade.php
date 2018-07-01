@@ -38,6 +38,8 @@
         @yield('content')
     </div>
 </div>
+
+@include('footer')
 <!-- Scripts -->
 <script src="{{mix('js/app.js')}}"></script>
 <!-- Font Awesome -->
