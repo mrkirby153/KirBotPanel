@@ -1,0 +1,9 @@
+// Bootstrap overrides
+
+// Override custom forms
+.custom-control-label::before, .custom-control-label::after {
+  transition: 0.2s all;
+}
+.custom-control-label {
+  user-select: none;
+}

@@ -24,7 +24,7 @@
             </div>
         </div>
     </div>
-    <div class="row">
+    <div class="row mt-1">
         <div class="col-lg-8 offset-lg-2">
             <h1 class="text-center text-capitalize">Add to your server</h1>
             <div class="row justify-content-center server-select">
