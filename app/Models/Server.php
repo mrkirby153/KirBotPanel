@@ -89,4 +89,13 @@ class Server extends Model
         syncServer($this->getAttribute('id'));
         return $save;
     }
+
+    public function getIcon()
+    {
+        if ($this->getAttribute('icon_id') == null) {
+            return route('serverIcon') . '?server_name=' . urlencode($this->getAttribute('name'));
+        } else {
+            return "https://cdn.discordapp.com/icons/" . $this->getAttribute('id') . "/" . $this->getAttribute('icon_id') . ".webp";
+        }
+    }
 }
