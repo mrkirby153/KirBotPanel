@@ -30,7 +30,7 @@ $server-image-base: 128px;
 
 @media(min-width: map_get($grid-breakpoints, 'lg')) {
   .server-image {
-    width: 100%;
-    height: 100%;
+    width: $server-image-base;
+    height: $server-image-base;
   }
 }
