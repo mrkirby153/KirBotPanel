@@ -25,6 +25,7 @@ Vue.component('panel-form', require('./components/Form.vue'));
 Vue.component('field', require('./components/Field.vue'));
 Vue.component('dropdown', require('./components/Dropdown'));
 Vue.component('dropdown-menu', require('./components/DropdownMenu'));
+Vue.component('input-switch', require('./components/Switch'));
 
 require('./components/UserInfo');
 require('./components/ServerDashboard');
