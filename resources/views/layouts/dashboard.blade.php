@@ -13,18 +13,12 @@
                 <div class="card-body d-flex flex-column">
                     <img class="m-auto server-image" src="{{$server->getIcon()}}">
                     <ul class="nav nav-pills nav-fill flex-column mt-3 dashboard-sidebar">
-                        <li class="nav-item">
-                            <a class="nav-link active text-left" href="#">General</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-left" href="#">General</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-left" href="#">General</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-left" href="#">General</a>
-                        </li>
+                        @foreach(\App\Menu\Panel::getServerSettingsTabs() as $t)
+                            <li class="nav-item">
+                                <a class="nav-link text-left {{(isset($tab) && $tab == $t->name)? 'active' : ''}}"
+                                   href="{{route($t->route, ['server'=>$server])}}"><i class="fas fa-{{$t->icon}} menu-icon"></i>{{$t->label}}</a>
+                            </li>
+                        @endforeach
                     </ul>
                 </div>
             </div>
@@ -34,8 +28,8 @@
         {{-- Main Content --}}
         <div class="col-lg-10 col-md-12 pb-sm-2">
             <div class="card">
-                <div class="card-header">
-                    General
+                <div class="card-header text-capitalize">
+                    {{\App\Menu\Panel::getPanelByName($tab)->label}}
                 </div>
                 <div class="card-body">
                     @yield('panel')
