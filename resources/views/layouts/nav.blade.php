@@ -4,7 +4,7 @@
 </ul>
 <ul class="navbar-nav">
     @if(Auth::guest())
-        <navbar-link href="{{url('/login')}}">Log In</navbar-link>
+        <navbar-link href="{{route('login')}}">Log In</navbar-link>
     @else
         <navbar-dropdown name="{{Auth::user()->username}}" direction="right">
             @if(Auth::user()->admin)

@@ -17,11 +17,11 @@ class ValidDiscordToken
     public function handle($request, Closure $next)
     {
         if (\Auth::guest()) {
-            return redirect('/login?returnUrl='.\Request::getUri());
+            return redirect(route('login') . '?returnUrl=' . \Request::getUri());
         }
         $static = Carbon::createFromTimestamp(strtotime(\Auth::user()->expires_in));
         if ($static->isPast()) {
-            return redirect('/login?returnUrl='.\Request::getUri());
+            return redirect(route('login') . '?returnUrl=' . \Request::getUri());
         }
         return $next($request);
     }

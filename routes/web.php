@@ -93,5 +93,6 @@ Route::get('/{server}/commands', 'Dashboard\GeneralController@showCommandList');
 Route::get('/{server}/queue', 'Dashboard\MusicController@displayQueue');
 Route::get('/{server}/quotes', 'Dashboard\GeneralController@showQuotes');
 
-Route::get('login', 'AuthController@login')->name('login');
+Route::get('login', 'AuthController@doLogin')->name('login.do');
+Route::get('/auth/login', 'AuthController@showLogin')->name('login');
 Route::get('logout', 'AuthController@logout')->name('logout');

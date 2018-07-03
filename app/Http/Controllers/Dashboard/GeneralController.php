@@ -15,13 +15,12 @@ use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Response;
 use Intervention\Image\AbstractFont;
 
-class GeneralController extends Controller {
-    public function displayOverview() {
-        if (\Auth::guest()) {
-            return redirect('/login?returnUrl=/servers&requireGuilds=true');
-        }
-        if (\Auth::user()->token_type == 'NAME_ONLY') {
-            return redirect('/login?returnUrl=/servers&requireGuilds=true');
+class GeneralController extends Controller
+{
+    public function displayOverview(Request $request)
+    {
+        if (\Auth::guest() || \Auth::user()->token_type == 'NAME_ONLY') {
+            return redirect(route('login') . '?returnUrl=' . urlencode($request->getRequestUri()) . '&requireGuilds=true');
         }
         $servers = DiscordAPI::getServers(\Auth::user());
         $onServers = array();
@@ -36,12 +35,13 @@ class GeneralController extends Controller {
         return view('server.serverlist')->with(['onServers' => $onServers, 'notOnServers' => $notOnServers]);
     }
 
-    public function showDashboard(Server $server) {
+    public function showDashboard(Server $server)
+    {
         $this->authorize('view', $server);
         $server->load('channels');
         $server->load('logSettings');
         $events = Redis::get("log_events");
-        if($events == null){
+        if ($events == null) {
             $events = "{}";
         }
         \JavaScript::put([
@@ -57,7 +57,8 @@ class GeneralController extends Controller {
     }
 
 
-    public function setRealnameSettings(Server $server, Request $request) {
+    public function setRealnameSettings(Server $server, Request $request)
+    {
         $this->authorize('update', $server);
         $request->validate([
             'realnameSetting' => 'required',
@@ -69,7 +70,8 @@ class GeneralController extends Controller {
         Redis::publish('kirbot:update-name', json_encode(['server' => $server->id]));
     }
 
-    public function updateLogging(Server $server, Request $request) {
+    public function updateLogging(Server $server, Request $request)
+    {
         $this->authorize('update', $server);
         $request->validate([
             'enabled' => 'required|boolean'
@@ -86,7 +88,8 @@ class GeneralController extends Controller {
         return $server;
     }
 
-    public function updateChannelWhitelist(Server $server, Request $request) {
+    public function updateChannelWhitelist(Server $server, Request $request)
+    {
         $this->authorize('update', $server);
         $whitelist = $request->get('channels');
         $server->cmd_whitelist = $whitelist;
@@ -94,27 +97,32 @@ class GeneralController extends Controller {
         return $server;
     }
 
-    public function showCommandList(Server $server) {
+    public function showCommandList(Server $server)
+    {
         return view('server.commandlist')->with(['commands' => $server->commands, 'server' => $server]);
     }
 
-    public function showLog(Server $server) {
+    public function showLog(Server $server)
+    {
         $this->authorize('view', $server);
         $logData = Log::whereServerId($server->id)->orderBy('created_at', 'desc')->paginate(10);
         return view('server.dashboard.log')->with(['logData' => $logData, 'tab' => 'log', 'server' => $server]);
     }
 
-    public function showQuotes(Server $server) {
+    public function showQuotes(Server $server)
+    {
         return view('server.quotes')->with(['quotes' => $server->quotes, 'server' => $server]);
     }
 
-    public function setPersistence(Server $server, Request $request) {
+    public function setPersistence(Server $server, Request $request)
+    {
         $this->authorize('update', $server);
         $server->user_persistence = $request->get('persistence') == true;
         $server->save();
     }
 
-    public function setUsername(Server $server, Request $request) {
+    public function setUsername(Server $server, Request $request)
+    {
         $this->authorize('update', $server);
         if ($request->has('name')) {
             $server->bot_nick = $request->get('name');
@@ -128,7 +136,8 @@ class GeneralController extends Controller {
         ]));
     }
 
-    public function showInfractions(Server $server) {
+    public function showInfractions(Server $server)
+    {
         $this->authorize('view', $server);
         $infractions = Infraction::with([
             'issuedBy' => function ($q) use ($server) {
@@ -145,7 +154,8 @@ class GeneralController extends Controller {
         ]);
     }
 
-    public function makeIcon(Request $request) {
+    public function makeIcon(Request $request)
+    {
         $serverName = $request->get('server_name');
         $words = explode(" ", $serverName);
         $acronym = "";
@@ -164,7 +174,8 @@ class GeneralController extends Controller {
         return $img->response();
     }
 
-    public function showArchived($key) {
+    public function showArchived($key)
+    {
         $data = Redis::get("archive:$key");
         if ($data == null) {
             return response('Archive not found or expired', 404);
@@ -178,7 +189,8 @@ class GeneralController extends Controller {
         return $response;
     }
 
-    public function createLogSetting(Request $request, Server $server) {
+    public function createLogSetting(Request $request, Server $server)
+    {
         $this->authorize('update', $server);
         $request->validate([
             'channel' => 'required|exists:channels,id'
@@ -192,12 +204,14 @@ class GeneralController extends Controller {
         return $settings;
     }
 
-    public function deleteLogSetting(Server $server, LogSetting $setting) {
+    public function deleteLogSetting(Server $server, LogSetting $setting)
+    {
         $this->authorize('update', $server);
         $setting->delete();
     }
 
-    public function updateLogSetting(Request $request, Server $server, LogSetting $setting) {
+    public function updateLogSetting(Request $request, Server $server, LogSetting $setting)
+    {
         $request->validate([
             'included' => 'array',
             'excluded' => 'array'

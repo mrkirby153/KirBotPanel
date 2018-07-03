@@ -17,6 +17,7 @@ class DiscordAPI
      * @param User $user The user
      * @param bool $refreshAttempted If a refresh was attempted
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function getServersFromAPI(User $user, $refreshAttempted = false)
     {
@@ -31,38 +32,31 @@ class DiscordAPI
             }
         }
         $token = $user->token;
-        $cacheId = "SERVERS-$token";
-        $body = "[]";
-        if (\Cache::has($cacheId)) {
-            $body = \Cache::get($cacheId);
-        } else {
-            $client = new \GuzzleHttp\Client(['http_errors' => false]);
-            $response = $client->request('GET', "https://discordapp.com/api/users/@me/guilds", [
-                'headers' => [
-                    'User-Agent' => 'KirBotPanel v1.0',
-                    'Authorization' => "Bearer $token",
-                    'Content-Type' => 'application/json'
-                ]
-            ]);
-            if ($response->getStatusCode() == 401) {
-                // User's token is not valid, attempt to refresh it
-                if (!self::attemptRefresh($user)) {
-                    self::redirectToLogin(); // Refresh failed, redirecting to login
+        $client = new \GuzzleHttp\Client(['http_errors' => false]);
+        $response = $client->request('GET', "https://discordapp.com/api/users/@me/guilds", [
+            'headers' => [
+                'User-Agent' => 'KirBotPanel v1.0',
+                'Authorization' => "Bearer $token",
+                'Content-Type' => 'application/json'
+            ]
+        ]);
+        if ($response->getStatusCode() == 401) {
+            // User's token is not valid, attempt to refresh it
+            if (!self::attemptRefresh($user)) {
+                self::redirectToLogin(); // Refresh failed, redirecting to login
+            } else {
+                if ($refreshAttempted) {
+                    self::redirectToLogin();
                 } else {
-                    if ($refreshAttempted) {
-                        self::redirectToLogin();
-                    } else {
-                        return self::getServersFromAPI($user, true);
-                    }
+                    return self::getServersFromAPI($user, true);
                 }
             }
-            if ($response->getStatusCode() == 429) {
-                \Log::warning("Hit Discord Ratelimit. Aborting...");
-                \App::abort(503);
-            }
-            $body = $response->getBody();
-            \Cache::put($cacheId, "$body", 5);
         }
+        if ($response->getStatusCode() == 429) {
+            \Log::warning("Hit Discord Ratelimit. Aborting...");
+            \App::abort(503);
+        }
+        $body = $response->getBody();
         return json_decode($body);
     }
 
@@ -156,7 +150,8 @@ class DiscordAPI
 
     private static function redirectToLogin()
     {
-        \App::abort(302, '', ['Location' => '/login?returnUrl=' . \Request::getRequestUri() . '&requireGuilds=true']);
+        \App::abort(302, '',
+            ['Location' => route('login') . '?returnUrl=' . \Request::getRequestUri() . '&requireGuilds=true']);
     }
 
     public static function hasPermission($permissionRaw, $permission)

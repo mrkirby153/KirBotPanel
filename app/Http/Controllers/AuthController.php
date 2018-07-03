@@ -9,7 +9,12 @@ use Illuminate\Http\Request;
 
 class AuthController extends Controller implements AuthenticateUserListener
 {
-    public function login(AuthenticateUser $authenticateUser, Request $request)
+    public function showLogin(Request $request)
+    {
+        return view('login');
+    }
+
+    public function doLogin(AuthenticateUser $authenticateUser, Request $request)
     {
         $returnUrl = '/';
         if ($request->has('returnUrl')) {
