@@ -65,6 +65,7 @@ class DiscordAPI
      * @param User $user The user to use when performing the request
      * @param string $id The id
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function getServerById(User $user, $id)
     {
@@ -80,13 +81,22 @@ class DiscordAPI
      * Gets the servers the user has access to
      * @param User $user The user
      * @return array
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function getServers(User $user)
     {
         $servers = array();
-        foreach (DiscordAPI::getServersFromAPI($user) as $server) {
+        $serversFromAPI = DiscordAPI::getServersFromAPI($user);
+        $ids = array_map(function ($e) {
+            return $e->id;
+        }, $serversFromAPI);
+        $inServers = Server::whereIn('id', $ids)->get()->toArray();
+        $inIds = array_map(function ($s) {
+            return $s["id"];
+        }, $inServers);
+        foreach ($serversFromAPI as $server) {
             $server->has_icon = $server->icon != null;
-            $server->on = Server::whereId($server->id)->count() > 0;
+            $server->on = in_array($server->id, $inIds);
             $server->manager = self::hasPermission($server->permissions, 0x00000020);
             $servers[] = $server;
         }
