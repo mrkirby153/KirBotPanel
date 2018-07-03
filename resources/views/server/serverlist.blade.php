@@ -36,7 +36,8 @@
                     @if($server->manager)
                         <div class="server col-md-4 col-sm-6 h-100">
                             <div class="server-icon">
-                                <a href="{{url('/dashboard/'.$server->id)}}" class="d-flex">
+                                <a href="https://discordapp.com/api/oauth2/authorize?client_id={{env('DISCORD_KEY')}}&permissions=8&scope=bot&guild_id={{$server->id}}"
+                                   class="d-flex" target="_blank">
                                     <img src="{{$server_icon}}" alt="{{$server->name}}"
                                          class="greyscale rounded-circle"/>
                                     <span class="server-name align-middle my-auto text-center w-100">{{$server->name}}</span>
