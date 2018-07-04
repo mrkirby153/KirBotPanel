@@ -1,0 +1,33 @@
+@import "~bootstrap/scss/variables";
+
+.log-channel {
+  padding: 10px;
+  box-sizing: border-box;
+  margin-top: 10px;
+  height: 150px;
+
+  border-radius: 0.25rem;
+  border: 1px solid $card-border-color;
+
+  .channel-name::before {
+    content: "#";
+    font-weight: bold;
+  }
+  .channel-name {
+    font-weight: bold;
+  }
+  .included::before {
+    content: "Included: ";
+    font-weight: bold;
+  }
+  .excluded::before {
+    content: "Excluded: ";
+    font-weight: bold;
+  }
+}
+.log-channels {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 500px;
+  padding: 5px;
+}

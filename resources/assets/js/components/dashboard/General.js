@@ -147,7 +147,7 @@ Vue.component('settings-bot-name', {
                     name: ''
                 })
             },
-            readonly: ReadOnly
+            readonly: false
         }
     },
 
