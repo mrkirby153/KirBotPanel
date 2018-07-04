@@ -13,7 +13,6 @@
 
         methods: {
             resetFormState(element) {
-                this.form.busy = false;
                 this.form.errors.clear(element);
                 this.form.successful = false;
             },
