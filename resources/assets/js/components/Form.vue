@@ -1,6 +1,7 @@
 <template>
     <div>
-        <form @keydown="resetFormState($event.target.name)" @change="resetFormState($event.target.name)" @submit.prevent="submit">
+        <form @keydown="resetFormState($event.target.name)" @change="resetFormState($event.target.name)" @submit.prevent="submit"
+            :class="{'busy': form.busy}">
             <slot></slot>
         </form>
     </div>
@@ -16,7 +17,7 @@
                 this.form.errors.clear(element);
                 this.form.successful = false;
             },
-            submit(){
+            submit() {
                 this.$emit('submit');
             }
         }

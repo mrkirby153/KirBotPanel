@@ -4,6 +4,7 @@
 @import '~bootstrap/scss/bootstrap';
 @import 'overrides.scss';
 
+@import 'elements/form';
 @import 'elements/switch';
 @import 'elements/dashboard';
 
@@ -50,4 +51,14 @@
 
 .greyscale {
   filter: grayscale(100%);
+}
+
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg)
+  }
+  100% {
+    transform: rotate(360deg)
+  }
 }
