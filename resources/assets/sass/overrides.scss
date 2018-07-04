@@ -16,6 +16,8 @@
   }
   .form-control {
     border-color: $form-feedback-valid-color;
+  }
+  .form-control:focus {
     box-shadow: 0 0 0 $input-focus-width rgba($form-feedback-valid-color, 0.25)
   }
 }
@@ -26,6 +28,8 @@
   }
   .form-control {
     border-color: $form-feedback-invalid-color;
+  }
+  .form-control:focus {
     box-shadow: 0 0 0 $input-focus-width rgba($form-feedback-invalid-color, 0.25)
   }
 }
