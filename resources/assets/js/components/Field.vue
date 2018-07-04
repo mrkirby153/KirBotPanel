@@ -1,8 +1,9 @@
 <template>
-    <div class="ui field" :class="{'error': form.errors.has(name), 'required': required}">
+    <div class="form-group" :class="{'is-invalid': form.errors.get(name)}">
         <slot></slot>
-        <div class="form-error">
-            {{ form.errors.get(name) }}
+        <div class="invalid-feedback">{{form.errors.get(name)}}</div>
+        <div class="valid-feedback">
+            <slot name="valid-feedback"></slot>
         </div>
     </div>
 </template>
@@ -18,7 +19,7 @@
             },
             required: {
                 default: false
-            }
+            },
         }
     }
 </script>
