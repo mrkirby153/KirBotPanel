@@ -73,8 +73,40 @@
             </settings-bot-name>
         </div>
         <div class="col-6">
-            <h2>Channel Whitelist</h2>
+            <h2>User Persistence</h2>
+            <p>
+                When enabled, users' roles and nicknames will be restored when they rejoin. This does <b>NOT</b> affect
+                per channel overrides
+            </p>
+            <input-switch label="Enable Persistence"></input-switch>
         </div>
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="col-12">
+            <h2>Channel Whitelist</h2>
+            <p>
+                Channels specified here are the only channels that bot commands can be run. The bot will ignore most
+                commands in any other channels.
+            </p>
+        </div>
+        <div class="col-6 d-flex align-items-center">
+            <div class="channel-whitelist">
+                <div class="channel">
+                  #Channel <i class="fas fa-times x-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <select class="form-control">
+                <option disabled selected>Add a channel</option>
+                <option>#Channel1</option>
+                <option>#Channel1</option>
+                <option>#Channel1</option>
+                <option>#Channel1</option>
+            </select>
+        </div>
+
     </div>
 
 @endsection

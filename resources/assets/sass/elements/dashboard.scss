@@ -37,3 +37,47 @@ $server-image-base: 128px;
     height: $server-image-base;
   }
 }
+
+.channel-whitelist {
+  display: flex;
+  flex-wrap: wrap;
+  .channel {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    border-radius: 1em;
+    padding: 2px 5px 2px 5px;
+    background: rgba(0, 0, 0, 0.30);
+    margin-right: 5px;
+    margin-top: 5px;
+    cursor: default;
+    transition: all 0.2s ease-in-out 0s;
+  }
+
+  .channel:hover {
+    background: rgba(0, 0, 0, 0.4);
+  }
+
+  .channel:last-child {
+    margin-right: 0;
+  }
+
+  .x-icon {
+    color: $gray-700;
+    cursor: pointer;
+    vertical-align: middle;
+    border: 1px solid $gray-600;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    padding: 1px;
+    background: lighten($gray-600, 30%);
+    margin-left: 5px;
+    transition: all 0.2s ease-in-out 0s;
+  }
+  .x-icon:hover {
+    background: $gray-600;
+    color: $gray-400;
+  }
+}
