@@ -1,0 +1,38 @@
+$transition-speed: 0.5s !default;
+
+// Scale Transition
+.scale-enter-active, .scale-leave-active {
+  transition: transform $transition-speed ease-in-out;
+}
+
+.scale-enter, .scale-leave-to {
+  transform: scaleX(0);
+}
+
+// Fade Transition
+.fade-enter-active, .fade-leave-active {
+  transition: opacity $transition-speed ease-in-out;
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+
+.drop-in-enter-active {
+  animation: drop-in $transition-speed;
+}
+
+.drop-in-leave-active {
+  animation: drop-in $transition-speed reverse;
+}
+
+@keyframes drop-in {
+  0% {
+    transform: translateY(-75px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
