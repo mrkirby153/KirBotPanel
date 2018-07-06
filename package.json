@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "bootstrap-sass": "^3.3.7",
-    "jsoneditor": "^5.14.1"
+    "jsoneditor": "^5.14.1",
+    "toastr": "^2.1.4"
   }
 }

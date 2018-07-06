@@ -4,6 +4,9 @@
 @import '~bootstrap/scss/bootstrap';
 @import 'overrides.scss';
 
+// Toastr
+@import "~toastr/toastr";
+
 @import 'elements/form';
 @import 'elements/switch';
 @import 'elements/dashboard';
@@ -53,6 +56,10 @@
 
 .greyscale {
   filter: grayscale(100%);
+}
+
+#app {
+  margin-bottom: 20px;
 }
 
 

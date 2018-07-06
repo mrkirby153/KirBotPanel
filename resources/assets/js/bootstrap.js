@@ -1,3 +1,5 @@
+import toastr from 'toastr';
+
 window._ = require('lodash');
 window.Popper = require('popper.js').default;
 
@@ -7,9 +9,10 @@ window.Popper = require('popper.js').default;
  * code may be modified to fit the specific needs of your application.
  */
 
-try{
+try {
     window.$ = window.jQuery = require('jquery');
-}catch(e) {}
+} catch (e) {
+}
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
@@ -28,6 +31,13 @@ if (token) {
 } else {
     console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
+
+window.axios.interceptors.response.use(null, function (error) {
+    if (error.status !== 422) {
+        toastr["error"]("An unknown error occurred. Please try again");
+    }
+    return Promise.reject(error);
+});
 
 /**
  * Declare panel object
