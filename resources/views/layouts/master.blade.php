@@ -13,7 +13,7 @@
         ]) !!}
             window.App = {!! json_encode([
             "user" => Auth::guest()? null : Auth::user()->load('info'),
-            "readonly" => isset($server)? Auth::user()->can('update', $server) : false
+            "readonly" => !(isset($server)? Auth::user()->can('update', $server) : false)
         ]) !!}
     </script>
 </head>

@@ -64,6 +64,9 @@ $server-image-base: 128px;
   }
 
   .x-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     color: $gray-700;
     cursor: pointer;
     vertical-align: middle;

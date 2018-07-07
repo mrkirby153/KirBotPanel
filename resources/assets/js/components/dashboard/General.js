@@ -7,19 +7,11 @@ Vue.component('settings-realname', {
         return {
             forms: {
                 realName: new Form('POST', '/dashboard/' + Server.id + '/realname', {
-                    requireRealname: false,
-                    realnameSetting: 'OFF'
+                    requireRealname: Server.require_realname,
+                    realnameSetting: Server.realname
                 })
             },
-            readonly: ReadOnly
-        }
-    },
-
-
-    mounted() {
-        if (Server != null) {
-            this.forms.realName.requireRealname = Server.require_realname;
-            this.forms.realName.realnameSetting = Server.realname;
+            readonly: App.readonly
         }
     },
 
@@ -38,11 +30,19 @@ Vue.component('settings-logging', {
 
     data() {
         return {
-            readonly: ReadOnly,
+            readonly: App.readonly,
             settings: {},
             selectedChan: "",
             logOptions: LogEvents,
-            communicationError: false
+            confirming: [],
+            communicationError: false,
+            editing: {
+                chan: null,
+                name: '',
+                mode: 'include',
+                include: {},
+                exclude: {}
+            }
         }
     },
 
@@ -63,11 +63,22 @@ Vue.component('settings-logging', {
                 s.included = this.splitEvents(s.included);
                 s.excluded = this.splitEvents(s.excluded);
             });
-            this.updateSettings = _.debounce(this.updateSettings, 250);
             if (Object.keys(this.logOptions).length === 0) {
                 this.readonly = true;
                 this.communicationError = true;
             }
+            let vm = this;
+            this.editing.include = this.cleanLogEvents();
+            this.editing.exclude = this.cleanLogEvents();
+            $("#logSettingModal").on('hide.bs.modal', e => {
+                vm.editing = {
+                    chan: null,
+                    name: '',
+                    mode: 'include',
+                    include: this.cleanLogEvents(),
+                    exclude: this.cleanLogEvents()
+                };
+            })
         },
         createSettings(chan) {
             axios.put('/dashboard/' + Server.id + '/logSetting', {
@@ -88,7 +99,7 @@ Vue.component('settings-logging', {
             axios.delete('/dashboard/' + Server.id + '/logSetting/' + id)
         },
         updateSettings(id) {
-            let setting = this.settings[_.findIndex(this.settings, f => f.id === id)];
+            let setting = _.find(this.settings, ['id', id]);
             axios.patch('/dashboard/' + Server.id + '/logSetting/' + id, {
                 included: setting.included,
                 excluded: setting.excluded
@@ -108,6 +119,85 @@ Vue.component('settings-logging', {
                 }
             });
             return arr;
+        },
+        localizeEvents(split, defaultMsg = "All Events") {
+            let str = "";
+            let exists = false;
+            split.forEach(e => {
+                Object.keys(LogEvents).forEach(k => {
+                    if (LogEvents[k] == e) {
+                        str += k + ", ";
+                        exists = true;
+                    }
+                })
+            });
+            if (exists) {
+                str = str.substring(0, str.lastIndexOf(","));
+            }
+            if (str === "") {
+                str = defaultMsg;
+            }
+            return str;
+        },
+
+        confirmDelete(id) {
+            if (this.isConfirming(id)) {
+                this.confirming = _.without(this.confirming, id);
+                this.deleteSettings(id);
+            } else {
+                this.confirming.push(id);
+                setTimeout(() => {
+                    this.confirming = _.without(this.confirming, id);
+                }, 5000);
+            }
+        },
+
+        isConfirming(id) {
+            return _.indexOf(this.confirming, id) !== -1
+        },
+
+        showEditModal(id) {
+            let el = null;
+            this.settings.forEach(e => {
+                if (e.id === id) {
+                    el = e;
+                }
+            });
+            this.editing.chan = id;
+            this.editing.name = el.channel.channel_name;
+
+            Object.keys(LogEvents).forEach(option => {
+                this.editing.include[option] = _.indexOf(el.included, "" + LogEvents[option]) !== -1;
+                this.editing.exclude[option] = _.indexOf(el.excluded, "" + LogEvents[option]) !== -1;
+            });
+            $("#logSettingModal").modal('show');
+        },
+
+        transformEditSettings(obj) {
+            let arr = [];
+            Object.keys(LogEvents).forEach(option => {
+                if (obj[option]) {
+                    arr.push(LogEvents[option] + "");
+                }
+            });
+            return arr;
+        },
+
+        saveEditSettings() {
+            let obj = _.find(this.settings, ['id', this.editing.chan]);
+            obj.included = this.transformEditSettings(this.editing.include);
+            obj.excluded = this.transformEditSettings(this.editing.exclude);
+            // commit to the db
+            this.updateSettings(obj.id);
+            $("#logSettingModal").modal('hide');
+        },
+
+        cleanLogEvents() {
+            let el = {};
+            Object.keys(LogEvents).forEach(option => {
+                el[option] = false;
+            });
+            return el;
         }
     },
 
@@ -124,7 +214,8 @@ Vue.component('settings-channel-whitelist', {
                     channels: []
                 })
             },
-            readonly: ReadOnly
+            chanAdd: "",
+            readonly: App.readonly
         }
     },
 
@@ -132,9 +223,39 @@ Vue.component('settings-channel-whitelist', {
         this.forms.whitelist.channels = (Server.cmd_whitelist == null) ? [] : Server.cmd_whitelist;
     },
 
+    computed: {
+        channels() {
+            let arr = [];
+            this.forms.whitelist.channels.forEach(id => {
+                arr.push(_.first(_.filter(Server.channels, c => {
+                    return c.id === id
+                })))
+            });
+            return arr;
+        },
+        availableChannels(){
+            let arr = [];
+            Server.channels.forEach(c => {
+                if(!_.find(this.channels, ['id', c.id]) && c.type === "TEXT")
+                    arr.push(c);
+            });
+            return arr;
+        }
+    },
+
     methods: {
         save() {
             this.forms.whitelist.save();
+        },
+
+        addChannel() {
+            this.forms.whitelist.channels.push(this.chanAdd);
+            this.chanAdd = "";
+            this.save()
+        },
+        removeChannel(id) {
+            this.forms.whitelist.channels = _.without(this.forms.whitelist.channels, id);
+            this.save()
         }
     }
 });
@@ -144,16 +265,13 @@ Vue.component('settings-bot-name', {
         return {
             forms: {
                 name: new Form('post', '/dashboard/' + Server.id + '/botName', {
-                    name: ''
+                    name: Server.bot_nick
                 })
             },
             readonly: false
         }
     },
 
-    mounted() {
-        this.forms.name.name = Server.bot_nick;
-    },
     methods: {
         save() {
             this.forms.name.save();
@@ -166,15 +284,11 @@ Vue.component('settings-user-persistence', {
         return {
             forms: {
                 persist: new Form('patch', '/dashboard/' + Server.id + '/persistence', {
-                    persistence: false
+                    persistence: Server.user_persistence
                 })
             },
-            readonly: ReadOnly
+            readonly: App.readonly
         }
-    },
-
-    mounted() {
-        this.forms.persist.persistence = Server.user_persistence;
     },
 
     methods: {

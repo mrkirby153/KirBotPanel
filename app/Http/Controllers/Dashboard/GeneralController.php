@@ -10,6 +10,7 @@ use App\Models\LogSetting;
 use App\Models\Server;
 use App\Utils\AuditLogger;
 use App\Utils\DiscordAPI;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Response;

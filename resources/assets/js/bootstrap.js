@@ -33,7 +33,7 @@ if (token) {
 }
 
 window.axios.interceptors.response.use(null, function (error) {
-    if (error.status !== 422) {
+    if (error.response.status !== 422) {
         toastr["error"]("An unknown error occurred. Please try again");
     }
     return Promise.reject(error);

@@ -26,8 +26,8 @@ class Server extends Model
     protected $casts = [
         'cmd_whitelist' => 'array',
         'bot_manager' => 'array',
-        'user_persistence',
-        'boolean'
+        'user_persistence' => 'boolean',
+        'require_realname' => 'boolean'
     ];
 
     protected $deletableRelations = [

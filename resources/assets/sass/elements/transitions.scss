@@ -6,7 +6,16 @@ $transition-speed: 0.5s !default;
 }
 
 .scale-enter, .scale-leave-to {
-  transform: scaleX(0);
+  transform: scale(0);
+}
+
+// Scale Transition
+.scale-fast-enter-active, .scale-leave-active {
+  transition: transform #{$transition-speed/2} ease-in-out;
+}
+
+.scale-fast-enter, .scale-fast-leave-to {
+  transform: scale(0);
 }
 
 // Fade Transition
