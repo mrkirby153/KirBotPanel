@@ -7,6 +7,7 @@ use App\Models\Role;
 use App\Models\RolePermission;
 use App\Models\Server;
 use App\Models\ServerPermission;
+use App\Utils\DiscordAPI;
 use Illuminate\Http\Request;
 
 class PermissionController extends Controller
@@ -30,10 +31,12 @@ class PermissionController extends Controller
         $this->authorize('view', $server);
         $results = $this->getPermissions($server);
         \JavaScript::put([
+            'Admin' => \Auth::user()->can('admin', $server),
             'Permissions' => $results,
             'Server' => $server,
             'UserId' => \Auth::id(),
             'Roles' => Role::whereServerId($server->id)->orderBy('order', 'DESC')->get(),
+            'Owner' => DiscordAPI::getServerById(\Auth::user(), $server->id)->owner
         ]);
         return view('server.dashboard.permissions')->with(['server' => $server, 'tab' => 'permissions']);
     }
@@ -66,7 +69,7 @@ class PermissionController extends Controller
     {
         $this->authorize('update', $server);
         $request->validate([
-            'userId' => 'required|numeric',
+            'userId' => 'required|numeric|unique:server_permissions,user_id',
             'permission' => 'required'
         ]);
 

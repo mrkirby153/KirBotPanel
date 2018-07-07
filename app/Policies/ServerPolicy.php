@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Server;
 use App\User;
-use App\Utils\DiscordAPI;
 use App\Utils\PermissionHandler;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -32,6 +31,7 @@ class ServerPolicy
      * @param  \App\User $user
      * @param  \App\Models\Server $serverSettings
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function view(User $user, Server $serverSettings)
     {
@@ -55,6 +55,7 @@ class ServerPolicy
      * @param  \App\User $user
      * @param  \App\Models\Server $serverSettings
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function update(User $user, Server $serverSettings)
     {
@@ -71,5 +72,16 @@ class ServerPolicy
     public function delete(User $user, Server $serverSettings)
     {
         return false;
+    }
+
+    /**
+     * @param User $user
+     * @param Server $server
+     * @return bool
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function admin(User $user, Server $server)
+    {
+        return PermissionHandler::isAdmin($user, $server->id);
     }
 }

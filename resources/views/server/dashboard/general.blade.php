@@ -118,7 +118,7 @@
     </settings-logging>
     <hr/>
     <div class="row">
-        <div class="col-6">
+        <div class="col-lg-6 col-md-12">
             <settings-bot-name inline-template>
                 <div>
                     <h2>Bot Nickname</h2>
@@ -132,7 +132,7 @@
             </settings-bot-name>
         </div>
         <settings-user-persistence inline-template>
-            <div class="col-6">
+            <div class="col-lg-6 col-md-12">
                 <h2>User Persistence</h2>
                 <p>
                     When enabled, users' roles and nicknames will be restored when they rejoin. This does <b>NOT</b>

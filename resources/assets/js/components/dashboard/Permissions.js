@@ -3,22 +3,20 @@ import axios from 'axios'
 Vue.component('settings-permissions', {
     data() {
         return {
-            permissions: [],
-            user: '',
+            permissions: Permissions,
+            user: UserId,
             adding: false,
             addingUser: new Form('PUT', '/dashboard/' + Server.id + '/permissions', {
                 userId: '',
-                permission: 'VIEW'
+                permission: ''
             }),
-            readonly: ReadOnly
+            readonly: false,
+            admin: Admin,
+            owner: Owner
         }
     },
 
     methods: {
-        onMount() {
-            this.permissions = Permissions;
-            this.user = UserId;
-        },
 
         updatePermission(selected, id) {
             // Perform a post request to update
@@ -40,15 +38,18 @@ Vue.component('settings-permissions', {
             this.addingUser.save().then(resp => {
                 this.permissions = resp.data;
                 this.adding = false;
-                this.addingUser.userId = '';
-                this.addingUser.permission = 'VIEW';
-                this.addingUser.successful = false;
             })
         }
     },
-
-    mounted() {
-        this.onMount();
+    watch: {
+        adding(newval) {
+            if (!newval) {
+                this.addingUser.userId = '';
+                this.addingUser.permission = '';
+                this.addingUser.successful = false;
+                this.addingUser.errors.clearAll();
+            }
+        }
     }
 
 });
