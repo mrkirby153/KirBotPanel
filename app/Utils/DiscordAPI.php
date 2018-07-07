@@ -21,15 +21,12 @@ class DiscordAPI
      */
     public static function getServersFromAPI(User $user, $refreshAttempted = false)
     {
-        if ($user->token_type != "NAME_SERVERS") {
-            self::redirectToLogin(); // This token doesn't have access to servers
-        }
-        $key = "servers:".$user->id;
-        if(\Cache::has($key)){
+        $key = "servers:" . $user->id;
+        if (\Cache::has($key)) {
             return json_decode(\Cache::get($key));
         }
-        if(\Cache::has("ratelimited:".$user->id)) {
-            \Log::info("Cached ratelimit. ".\Cache::get("ratelimited:".$user->id));
+        if (\Cache::has("ratelimited:" . $user->id)) {
+            \Log::info("Cached ratelimit. " . \Cache::get("ratelimited:" . $user->id));
             \App::abort(429);
         }
         if (!self::isApiTokenValid($user)) {
@@ -63,13 +60,17 @@ class DiscordAPI
         if ($response->getStatusCode() == 429) {
             $body = $response->getBody();
             $json = json_decode($body);
-            $retryAfter = Carbon::now()->addSeconds($json->retry_after);
-            \Cache::put("ratelimited:".$user->id, $retryAfter->toDateTimeString(), $retryAfter);
-            \Log::warning("Hit Discord Ratelimit (Retry after $retryAfter). Aborting...\n". json_encode($json));
+            // TODO 2018-07-07: Mock this and check if it actually works
+            if ($json->retry_after > 1000) {
+                // It's less than a second, lets not bother with ratelimiting cos it'll be cleared the next request probably anyways
+                $retryAfter = Carbon::now()->addSeconds($json->retry_after / 1000);
+                \Cache::put("ratelimited:" . $user->id, $retryAfter->toDateTimeString(), $retryAfter);
+            }
+            \Log::warning("Hit Discord Ratelimit. Aborting...\n" . json_encode($json));
             \App::abort(429);
         }
         $body = $response->getBody();
-        \Cache::put($key, $body->getContents());
+        \Cache::put($key, $body->getContents(), 0.5);
         return json_decode($body);
     }
 
