@@ -92,6 +92,9 @@ $switch-transition: .2s all !default;
     &:disabled + label::before {
       background-color: $switch-disabled-bg;
     }
+    &:disabled:checked + label::before {
+      background-color: lighten($switch-checked-bg, 20%);
+    }
   }
 
   // Small variation
