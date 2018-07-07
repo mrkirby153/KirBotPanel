@@ -42,7 +42,8 @@ Vue.component('settings-logging', {
                 mode: 'include',
                 include: {},
                 exclude: {}
-            }
+            },
+            loading: false
         }
     },
 
@@ -89,6 +90,7 @@ Vue.component('settings-logging', {
                 obj.excluded = this.splitEvents(obj.excluded);
                 this.settings.push(obj);
                 this.selectedChan = "";
+                this.loading = false;
             })
         },
         deleteSettings(id) {
@@ -107,6 +109,7 @@ Vue.component('settings-logging', {
         },
 
         onChange() {
+            this.loading = true;
             this.createSettings(this.selectedChan);
         },
 
@@ -254,6 +257,8 @@ Vue.component('settings-channel-whitelist', {
             this.save()
         },
         removeChannel(id) {
+            if(this.readonly)
+                return;
             this.forms.whitelist.channels = _.without(this.forms.whitelist.channels, id);
             this.save()
         }
@@ -268,7 +273,7 @@ Vue.component('settings-bot-name', {
                     name: Server.bot_nick
                 })
             },
-            readonly: false
+            readonly: App.readonly
         }
     },
 

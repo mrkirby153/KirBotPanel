@@ -14,7 +14,7 @@
             <div class="col-md-6 col-sm-12">
                 <div class="form-group">
                     <label for="realname-settings"><b>Realname Settings</b></label>
-                    <select class="form-control" id="realname-settings" v-model="forms.realName.realnameSetting"
+                    <select class="form-control" id="realname-settings" v-model="forms.realName.realnameSetting" :disabled="readonly"
                             @change="sendForm">
                         <option disabled selected>Select an option...</option>
                         <option value="OFF">Disabled</option>
@@ -57,10 +57,10 @@
                                 <code>@{{ localizeEvents(chan.excluded, 'No Events') }}</code>
                             </div>
                             <div class="btn-group mt-2">
-                                <button class="btn btn-info" @click="showEditModal(chan.id)"><i class="fas fa-edit"></i>
+                                <button class="btn btn-info" @click="showEditModal(chan.id)" :disabled="readonly"><i class="fas fa-edit"></i>
                                     Edit
                                 </button>
-                                <button class="btn btn-danger" @click="confirmDelete(chan.id)">
+                                <button class="btn btn-danger" @click="confirmDelete(chan.id)" :disabled="readonly">
                                     <i class="fas fa-times"></i> <span v-if="isConfirming(chan.id)">Confirm?</span><span
                                             v-else>Delete</span>
                                 </button>
@@ -76,7 +76,7 @@
                     </transition>
                 </div>
             </div>
-            <div class="modal" tabindex="-1" role="dialog" id="logSettingModal">
+            <div class="modal fade" tabindex="-1" role="dialog" id="logSettingModal">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -124,7 +124,7 @@
                     <h2>Bot Nickname</h2>
                     <panel-form :form="forms.name" @submit="save">
                         <field name="name" :form="forms.name" :class="{'is-valid': forms.name.successful}">
-                            <input type="text" class="form-control" v-model="forms.name.name" @change="save"/>
+                            <input type="text" class="form-control" v-model="forms.name.name" @change="save" :disabled="readonly"/>
                             <span slot="valid-feedback">Name has been updated!</span>
                         </field>
                     </panel-form>
@@ -140,7 +140,7 @@
                     per channel overrides
                 </p>
                 <input-switch label="Enable Persistence" v-model="forms.persist.persistence"
-                              @change="save"></input-switch>
+                              @change="save" :disabled="readonly"></input-switch>
             </div>
         </settings-user-persistence>
     </div>
@@ -157,13 +157,13 @@
             <div class="col-6 d-flex align-items-center">
                 <transition-group name="scale-fast" class="channel-whitelist" mode="out-in">
                     <div class="channel" v-for="channel in channels" :key="channel.id">
-                        #@{{ channel.channel_name }} <span class="x-icon" @click="removeChannel(channel.id)"><i
+                        #@{{ channel.channel_name }} <span class="x-icon" @click="removeChannel(channel.id)" v-if="!readonly"><i
                                     class="fas fa-times"></i></span>
                     </div>
                 </transition-group>
             </div>
             <div class="col-6">
-                <select class="form-control" v-model="chanAdd" @change="addChannel">
+                <select class="form-control" v-model="chanAdd" @change="addChannel" :disabled="readonly">
                     <option disabled selected value="">Add a channel</option>
                     <option v-for="chan in availableChannels" :key="chan.id" :value="chan.id">#@{{ chan.channel_name
                         }}
