@@ -10,7 +10,7 @@ use App\Models\LogSetting;
 use App\Models\Server;
 use App\Utils\AuditLogger;
 use App\Utils\DiscordAPI;
-use Exception;
+use App\Utils\PermissionHandler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Response;
@@ -28,7 +28,9 @@ class GeneralController extends Controller
         $notOnServers = array();
         foreach ($servers as $server) {
             if ($server->on) {
-                $onServers[] = $server;
+                if (PermissionHandler::canView(\Auth::user(), $server->id)) {
+                    $onServers[] = $server;
+                }
             } else {
                 $notOnServers[] = $server;
             }
