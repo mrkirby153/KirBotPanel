@@ -24,7 +24,7 @@
                         <th scope="col">Actions</th>
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody name="fade" is="transition-group">
                     <tr v-for="permission in permissions" :key="permission.id">
                         <td>@{{ permission.user_id }}</td>
                         <td v-if="permission.user_name && permission.user_discrim">@{{ permission.user_name }}#@{{
@@ -69,7 +69,8 @@
                                     <div class="col-md-3">
                                         <field name="permission" :form="addingUser">
                                             <label for="permission">Permission</label>
-                                            <select v-model="addingUser.permission" class="form-control" id="permission" name="permission">
+                                            <select v-model="addingUser.permission" class="form-control" id="permission"
+                                                    name="permission">
                                                 <option value="" disabled>Select an option</option>
                                                 <option value="VIEW">View</option>
                                                 <option value="EDIT">Edit</option>
@@ -79,21 +80,105 @@
                                     </div>
                                 </div>
                             </panel-form>
-                                <div class="form-row">
-                                    <div class="col-12">
-                                        <div class="btn-group">
-                                            <button class="btn btn-success" @click="sendForm"><i class="fas fa-check"></i> Save</button>
-                                            <button class="btn btn-warning" @click="adding = false"><i
-                                                        class="fas fa-times"></i> Cancel
-                                            </button>
-                                        </div>
+                            <div class="form-row">
+                                <div class="col-12">
+                                    <div class="btn-group">
+                                        <button class="btn btn-success" @click="sendForm"><i class="fas fa-check"></i>
+                                            Save
+                                        </button>
+                                        <button class="btn btn-warning" @click="adding = false"><i
+                                                    class="fas fa-times"></i> Cancel
+                                        </button>
                                     </div>
                                 </div>
+                            </div>
                         </th>
                     </tr>
                     </tfoot>
                 </table>
             </div>
         </settings-permissions>
+    </div>
+    <hr/>
+    <div class="row">
+        <settings-role-permissions inline-template>
+            <div class="col-12">
+                <h1>Role Permissions</h1>
+                The below table controls clearance level for roles. If a user has multiple roles, their effective
+                permission will be of the highest permission level
+
+                <table class="table mt-2">
+                    <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Role ID</th>
+                        <th scope="col">Role Name</th>
+                        <th scope="col">Clearance Level</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody is="transition-group" name="fade">
+                    <tr v-for="role in permissions" :key="role.id">
+                        <td>@{{ role.role_id }}</td>
+                        <td>@{{ role.name }}</td>
+                        <td>
+                            <form @submit.prevent="updatePermissionLevel(role.id)">
+                                <div class="form-group">
+                                    <input type="number" class="form-control" min="0" max="100"
+                                           v-model="role.permission_level" @change="updatePermissionLevel(role.id)"/>
+                                </div>
+                            </form>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger" :disabled="readonly"
+                                    @click.prevent="deletePermission(role.id)"><i class="fas fa-times"></i> Delete
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td colspan="4" v-if="!adding">
+                            <button class="btn btn-success" @click.prevent="adding = true">Add</button>
+                        </td>
+                        <td colspan="4" v-else>
+                            <panel-form :form="permissionForm" @submit="addPermission">
+                                <div class="form-row">
+                                    <div class="col-3">
+                                        <field name="roleId" :form="permissionForm">
+                                            <label>Role</label>
+                                            <select class="form-control" v-model="permissionForm.roleId">
+                                                <option v-for="role in roles" :key="role.id" :value="role.id">@{{
+                                                    role.name }}
+                                                </option>
+                                            </select>
+                                        </field>
+                                    </div>
+                                    <div class="col-3">
+                                        <field name="permissionLevel" :form="permissionForm">
+                                            <label>Clearance</label>
+                                            <input type="number" min="0" max="100" class="form-control"
+                                                   v-model="permissionForm.permissionLevel"/>
+                                        </field>
+                                    </div>
+                                </div>
+                            </panel-form>
+                            <div class="form-row">
+                                <div class="col-12">
+                                    <div class="btn-group">
+                                        <button class="btn btn-success" @click.prevent="addPermission"><i
+                                                    class="fas fa-check"></i> Save
+                                        </button>
+                                        <button class="btn btn-danger" @click.prevent="adding = false"><i
+                                                    class="fas fa-times"></i> Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </settings-role-permissions>
     </div>
 @endsection

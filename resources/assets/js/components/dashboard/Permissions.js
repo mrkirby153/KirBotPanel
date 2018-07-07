@@ -63,7 +63,7 @@ Vue.component('settings-role-permissions', {
                 permissionLevel: ''
             }),
             adding: false,
-            readonly: ReadOnly,
+            readonly: App.readonly,
             roles: Roles
         }
     },
@@ -75,6 +75,7 @@ Vue.component('settings-role-permissions', {
             axios.get('/dashboard/' + Server.id + '/rolePermissions').then(resp => {
                 this.permissions = resp.data;
             })
+            this.updatePermissionLevel = _.debounce(this.updatePermissionLevel, 400);
         },
         updatePermissionLevel(id) {
             let p = _.find(this.permissions, {
@@ -94,10 +95,17 @@ Vue.component('settings-role-permissions', {
         addPermission() {
             this.permissionForm.save().then(resp => {
                 this.permissions.push(resp.data);
-                this.permissionForm.roleId = "";
-                this.permissionForm.permissionLevel = "";
                 this.adding = false;
             })
+        }
+    },
+    watch: {
+        adding(newval) {
+            if (!newval) {
+                this.permissionForm.roleId = "";
+                this.permissionForm.permissionLevel = "";
+                this.permissionForm.errors.clearAll();
+            }
         }
     }
 });
