@@ -24,6 +24,14 @@ class DiscordAPI
         if ($user->token_type != "NAME_SERVERS") {
             self::redirectToLogin(); // This token doesn't have access to servers
         }
+        $key = "servers:".$user->id;
+        if(\Cache::has($key)){
+            return json_decode(\Cache::get($key));
+        }
+        if(\Cache::has("ratelimited:".$user->id)) {
+            \Log::info("Cached ratelimit. ".\Cache::get("ratelimited:".$user->id));
+            \App::abort(429);
+        }
         if (!self::isApiTokenValid($user)) {
             \Log::debug("API token is out of date. Refreshing");
             if (!self::attemptRefresh($user)) {
@@ -53,10 +61,15 @@ class DiscordAPI
             }
         }
         if ($response->getStatusCode() == 429) {
-            \Log::warning("Hit Discord Ratelimit. Aborting...");
-            \App::abort(503);
+            $body = $response->getBody();
+            $json = json_decode($body);
+            $retryAfter = Carbon::now()->addSeconds($json->retry_after);
+            \Cache::put("ratelimited:".$user->id, $retryAfter->toDateTimeString(), $retryAfter);
+            \Log::warning("Hit Discord Ratelimit (Retry after $retryAfter). Aborting...\n". json_encode($json));
+            \App::abort(429);
         }
         $body = $response->getBody();
+        \Cache::put($key, $body->getContents());
         return json_decode($body);
     }
 
