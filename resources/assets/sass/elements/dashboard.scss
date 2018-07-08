@@ -86,3 +86,19 @@ $server-image-base: 128px;
     color: $gray-400;
   }
 }
+
+.custom-command-data {
+  max-width: 500px;
+  word-wrap: break-word;
+}
+
+.modal-lg {
+  max-width: 60% !important;
+}
+
+#commandModal {
+  textarea {
+    height: 12em;
+    resize: none;
+  }
+}

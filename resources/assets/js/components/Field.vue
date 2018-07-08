@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group" :class="{'is-invalid': form.errors.get(name)}">
+    <div class="form-group" :class="{'is-invalid': form.errors.get(name), 'is-valid' : showSuccess && form.successful}">
         <slot></slot>
         <small class="form-text text-muted">{{help}}</small>
         <div class="invalid-feedback">{{form.errors.get(name)}}</div>
@@ -24,6 +24,10 @@
             help: {
                 required: false,
                 default: ""
+            },
+            showSuccess: {
+                required: false,
+                default: "false"
             }
         }
     }

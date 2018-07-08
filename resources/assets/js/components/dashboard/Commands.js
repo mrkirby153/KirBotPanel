@@ -1,4 +1,5 @@
 import Form from "../../form/form2";
+import axios from 'axios';
 
 Vue.component('settings-commands', {
     data() {
@@ -10,7 +11,7 @@ Vue.component('settings-commands', {
                 editCommand: new Form("", "", {
                     name: '',
                     description: '',
-                    clearance: '',
+                    clearance: 0,
                     id: '',
                     respect_whitelist: true
                 })
@@ -18,27 +19,19 @@ Vue.component('settings-commands', {
             commands: Commands,
             addingCommand: false,
             toDelete: '',
-            readonly: ReadOnly
+            readonly: App.readonly,
+            confirming: []
         }
     },
 
+    mounted() {
+        let vm = this;
+        $("#commandModal").on('hide.bs.modal', () => {
+            vm.resetEditForm();
+        })
+    },
+
     methods: {
-        localizeClearance(clearance) {
-            switch (clearance) {
-                case "BOT_OWNER":
-                    return "Bot Owner";
-                case "SERVER_OWNER":
-                    return "Server Owner";
-                case "SERVER_ADMINISTRATOR":
-                    return "Server Administrator";
-                case "BOT_MANAGER":
-                    return "Bot Manager";
-                case "USER":
-                    return "User";
-                case "BOT":
-                    return "Bot";
-            }
-        },
 
         getCommand(id) {
             return _.find(this.commands, {
@@ -46,109 +39,82 @@ Vue.component('settings-commands', {
             })
         },
 
-        newCommand() {
-            let vm = this;
-            this.addingCommand = true;
-            $("#edit-command-modal").modal({
-                closable: false,
-                transition: 'scale',
-                onApprove() {
-                    vm.forms.editCommand.put('/dashboard/' + Server.id + '/commands').then(resp => {
-                        vm.commands.push(resp.data);
-                        setTimeout(() => {
-                            $("#edit-command-modal").modal('hide')
-                        }, 1000)
-                    }, () => {
-                        // Rejected
-                    });
-                    return false
-                },
-                onHide() {
-                    vm.forms.editCommand.name = "";
-                    vm.forms.editCommand.clearance = "";
-                    vm.forms.editCommand.description = "";
-                    vm.forms.editCommand.id = "";
-                }
-            }).modal('show');
+        deleteCommand(id) {
+            if (_.indexOf(this.confirming, id) !== -1) {
+                axios.delete('/dashboard/' + Server.id + '/command/' + id).then(resp => {
+                    this.commands = _.without(this.commands, this.getCommand(id));
+                })
+            } else {
+                let vm = this;
+                this.confirming.push(id);
+                setTimeout(() => {
+                    vm.confirming = _.without(vm.confirming, id);
+                }, 1500)
+            }
+        },
+
+        isConfirming(id) {
+            return _.indexOf(this.confirming, id) !== -1;
         },
 
         editCommand(id) {
-            let c = this.getCommand(id);
-            if (c === undefined) {
-                console.log("Command " + id + " not found. Ignoring edit request");
-                return;
-            } else {
-                console.log(c);
+            let cmd = this.getCommand(id);
+            if (cmd == null) {
+                return; // The command wasn't found, don't edit it
             }
-
-            this.forms.editCommand.successful = false;
-            this.forms.editCommand.busy = false;
-            this.forms.editCommand.errors.clearAll();
-            this.addingCommand = true;
-
-            this.forms.editCommand.name = c.name;
-            this.forms.editCommand.clearance = c.clearance_level;
-            this.forms.editCommand.description = c.data;
-            this.forms.editCommand.id = c.id;
-            this.forms.editCommand.respect_whitelist = c.respect_whitelist;
-            let vm = this;
-            $("#edit-command-modal").modal({
-                closable: false,
-                transition: 'scale',
-                onApprove() {
-                    vm.forms.editCommand.patch('/dashboard/' + Server.id + '/command/' + vm.forms.editCommand.id).then(resp => {
-                        let index = _.findIndex(vm.commands, {
-                            id: id
-                        });
-                        if (index === -1) {
-                            console.log("Command not found, refreshing all of them");
-                            vm.refreshCommands();
-                        } else {
-                            vm.commands[index] = resp.data;
-                        }
-                        setTimeout(() => {
-                            $("#edit-command-modal").modal('hide')
-                        }, 1000)
-                    }, () => {
-                        // Rejected
-                    });
-                    return false
-                },
-                onHide() {
-                    vm.forms.editCommand.name = "";
-                    vm.forms.editCommand.clearance = "";
-                    vm.forms.editCommand.description = "";
-                    vm.forms.editCommand.id = "";
-                }
-
-            }).modal('show');
+            this.resetEditForm();
+            this.forms.editCommand.name = cmd.name;
+            this.forms.editCommand.description = cmd.data;
+            this.forms.editCommand.clearance = cmd.clearance_level;
+            this.forms.editCommand.id = cmd.id;
+            this.forms.editCommand.respect_whitelist = cmd.respect_whitelist;
+            this.adding = false;
+            this.showModal();
         },
 
-        confirmDelete(id) {
-            this.toDelete = id;
-            let vm = this;
-            $("#delete-command-modal").modal({
-                closable: false,
-                transition: 'scale',
-                onApprove() {
-                    axios.delete('/dashboard/' + Server.id + '/command/' + id).then(resp => {
-                        vm.commands = _.without(vm.commands, _.find(vm.commands, {
-                            id: id
-                        }))
-                    })
+        showModal() {
+            $("#commandModal").modal({
+                backdrop: 'static',
+                keyboard: false,
+                show: true
+            });
+        },
+
+        saveCommand() {
+            let method = this.addingCommand ? "put" : "patch";
+            let url = '/dashboard/' + Server.id + (this.addingCommand ? '/commands' : '/command/' + this.forms.editCommand.id);
+            console.log("Performing " + method + " to " + url);
+            this.forms.editCommand[method](url).then(resp => {
+                if (this.addingCommand) {
+                    this.commands.push(resp.data);
+                } else {
+                    let index = _.findIndex(this.commands, {
+                        id: this.forms.editCommand.id
+                    });
+                    if (index === -1) {
+                        console.error("Could not find command with the ID " + this.forms.editCommand.id)
+                        return;
+                    }
+                    this.commands[index] = resp.data;
                 }
-            }).modal('show');
+                $("#commandModal").modal('hide');
+            });
+        },
+
+        addCommand() {
+            this.resetEditForm();
+            this.addingCommand = true;
+            this.showModal();
+        },
+
+        resetEditForm() {
+            this.adding = false;
+            this.forms.editCommand.reset();
         },
 
         saveDiscrim() {
             this.forms.cmdDiscriminator.save();
         },
-
-        refreshCommands() {
-            axios.get('/dashboard/' + Server.id + '/commands').then(response => {
-                this.commands = response.data;
-            })
-        }
     }
 });
 
@@ -163,8 +129,9 @@ Vue.component('settings-command-aliases', {
                 })
             },
             aliases: CommandAliases,
-            readonly: ReadOnly,
-            adding: false
+            readonly: App.readonly,
+            adding: false,
+            confirming: []
         }
     },
 
@@ -190,6 +157,24 @@ Vue.component('settings-command-aliases', {
                 console.log(err);
             });
         },
+
+        isConfirming(id) {
+            return _.indexOf(this.confirming, id) !== -1;
+        },
+
+        deleteAlias(id) {
+            if (this.isConfirming(id)) {
+                console.log(":blobowo:");
+                this.removeAlias(id)
+            } else {
+                console.log(":awauu:");
+                this.confirming.push(id);
+                setTimeout(() => {
+                    this.confirming = _.without(this.confirming, id);
+                }, 1500);
+            }
+        },
+
         removeAlias(id) {
             axios.delete('/dashboard/' + Server.id + '/commands/alias/' + id).then(resp => {
                 this.aliases = resp.data
