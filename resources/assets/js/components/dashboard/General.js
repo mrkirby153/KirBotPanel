@@ -201,6 +201,26 @@ Vue.component('settings-logging', {
                 el[option] = false;
             });
             return el;
+        },
+        select(mode){
+            switch(mode){
+                case "all":
+                    Object.keys(LogEvents).forEach(option => {
+                        this.editing[this.editing.mode][option] = true;
+                    });
+                    break;
+                case "none":
+                    Object.keys(LogEvents).forEach(option => {
+                        this.editing[this.editing.mode][option] = false;
+                    });
+                    break;
+                case "invert":
+                    Object.keys(LogEvents).forEach(option => {
+                        this.editing[this.editing.mode][option] = !this.editing[this.editing.mode][option];
+                    });
+                    break;
+            }
+
         }
     },
 

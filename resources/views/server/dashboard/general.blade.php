@@ -98,6 +98,11 @@
                                 Below are log events that can be @{{ editing.mode }}ded from the log channel. Leave
                                 blank to <span v-if="editing.mode==='include'">include all events</span><span v-else>exclude no events</span>
                             </p>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-secondary" @click="select('all')">Select All</button>
+                                <button class="btn btn-secondary" @click="select('none')">Select None</button>
+                                <button class="btn btn-secondary" @click="select('invert')">Invert</button>
+                            </div>
                             <div class="custom-control custom-checkbox" v-for="option in Object.keys(logOptions)"
                                  :key="option">
                                 <input type="checkbox" class="custom-control-input" :id="'include_'+logOptions[option]"
