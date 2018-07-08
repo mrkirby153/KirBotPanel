@@ -11,6 +11,7 @@ export class Form {
         this.method = method.toLowerCase();
         this.uri = uri;
         this.timer = 0;
+        this.initialState = data;
     }
 
     start() {
@@ -18,6 +19,25 @@ export class Form {
         this.errors.clearAll();
         this.busy = true;
         this.successful = false;
+    }
+
+    reset() {
+        this.errors.clearAll();
+        this.busy = false;
+        this.successful = false;
+        for (let field in this.initialState) {
+            if (this.hasOwnProperty(field)) {
+                this[field] = this.initialState[field];
+            }
+        }
+    }
+
+    updateInitialState() {
+        let obj = {};
+        for (let field in this.initialState) {
+            obj[field] = this[field];
+        }
+        this.initialState = obj;
     }
 
     complete() {
