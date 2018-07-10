@@ -43,7 +43,12 @@ Vue.component('settings-logging', {
                 include: {},
                 exclude: {}
             },
-            loading: false
+            loading: false,
+            forms: {
+                logTimezone: new Form('patch', '/dashboard/'+Server.id+'/logging', {
+                    timezone: Server.log_timezone
+                })
+            }
         }
     },
 
@@ -220,7 +225,10 @@ Vue.component('settings-logging', {
                     });
                     break;
             }
+        },
 
+        updateTimezone() {
+            this.forms.logTimezone.save();
         }
     },
 

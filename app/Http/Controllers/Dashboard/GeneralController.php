@@ -77,15 +77,8 @@ class GeneralController extends Controller
     {
         $this->authorize('update', $server);
         $request->validate([
-            'enabled' => 'required|boolean'
+            'timezone' => 'required|timezone'
         ]);
-        if ($request->enabled) {
-            $request->validate([
-                'channel' => 'required',
-                'timezone' => 'required|timezone'
-            ]);
-        }
-        $server->log_channel = $request->get('enabled') ? $request->get('channel') : null;
         $server->log_timezone = $request->get('timezone');
         $server->save();
         return $server;

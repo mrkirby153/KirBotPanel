@@ -14,7 +14,8 @@
             <div class="col-md-6 col-sm-12">
                 <div class="form-group">
                     <label for="realname-settings"><b>Realname Settings</b></label>
-                    <select class="form-control" id="realname-settings" v-model="forms.realName.realnameSetting" :disabled="readonly"
+                    <select class="form-control" id="realname-settings" v-model="forms.realName.realnameSetting"
+                            :disabled="readonly"
                             @change="sendForm">
                         <option disabled selected>Select an option...</option>
                         <option value="OFF">Disabled</option>
@@ -36,16 +37,31 @@
                     <b>Exclude:</b> A list of events that are excluded from the channel <i>Leave blank to exclude
                         nothing</i>
                 </p>
-                <div class="form-group">
-                    <label for="channelAdd"><b>Add a channel</b></label>
-                    <select class="form-control" name="channelAdd" id="channelAdd" v-model="selectedChan"
-                            @change="onChange" :disabled="readonly || communicationError">
-                        <option selected disabled value="">Add a channel...</option>
-                        <option v-for="channel in channels" :key="channel.id" :value="channel.id">
-                            #@{{channel.channel_name }}
-                        </option>
-                    </select>
+                <div class="form-row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="channelAdd"><b>Add a channel</b></label>
+                            <select class="form-control" name="channelAdd" id="channelAdd" v-model="selectedChan"
+                                    @change="onChange" :disabled="readonly || communicationError">
+                                <option selected disabled value="">Add a channel...</option>
+                                <option v-for="channel in channels" :key="channel.id" :value="channel.id">
+                                    #@{{channel.channel_name }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <panel-form :form="forms.logTimezone" @submit="updateTimezone">
+                            <field name="timezone" :form="forms.logTimezone" show-success="true">
+                                <label for="timezone"><b>Log Timezone</b></label>
+                                <input type="text" class="form-control" id="timezone"
+                                       v-model="forms.logTimezone.timezone" @change="updateTimezone"/>
+                                <span slot="valid-feedback">Timezone has been updated</span>
+                            </field>
+                        </panel-form>
+                    </div>
                 </div>
+
                 <div class="log-channels">
                     <transition-group name="fade">
                         <div class="log-channel" v-for="chan in settings" :key="chan.id" v-if="!communicationError">
@@ -57,7 +73,8 @@
                                 <code>@{{ localizeEvents(chan.excluded, 'No Events') }}</code>
                             </div>
                             <div class="btn-group mt-2">
-                                <button class="btn btn-info" @click="showEditModal(chan.id)" :disabled="readonly"><i class="fas fa-edit"></i>
+                                <button class="btn btn-info" @click="showEditModal(chan.id)" :disabled="readonly">
+                                    <i class="fas fa-edit"></i>
                                     Edit
                                 </button>
                                 <button class="btn btn-danger" @click="confirmDelete(chan.id)" :disabled="readonly">
@@ -129,7 +146,8 @@
                     <h2>Bot Nickname</h2>
                     <panel-form :form="forms.name" @submit="save">
                         <field name="name" :form="forms.name" :class="{'is-valid': forms.name.successful}">
-                            <input type="text" class="form-control" v-model="forms.name.name" @change="save" :disabled="readonly"/>
+                            <input type="text" class="form-control" v-model="forms.name.name" @change="save"
+                                   :disabled="readonly"/>
                             <span slot="valid-feedback">Name has been updated!</span>
                         </field>
                     </panel-form>
@@ -162,7 +180,8 @@
             <div class="col-6 d-flex align-items-center">
                 <transition-group name="scale-fast" class="channel-whitelist" mode="out-in">
                     <div class="channel" v-for="channel in channels" :key="channel.id">
-                        #@{{ channel.channel_name }} <span class="x-icon" @click="removeChannel(channel.id)" v-if="!readonly"><i
+                        #@{{ channel.channel_name }} <span class="x-icon" @click="removeChannel(channel.id)"
+                                                           v-if="!readonly"><i
                                     class="fas fa-times"></i></span>
                     </div>
                 </transition-group>
