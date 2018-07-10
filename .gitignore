@@ -27,3 +27,5 @@ public/mix-manifest\.json
 
 \.DS_Store
 .php_cs.cache
+
+.vscode/
