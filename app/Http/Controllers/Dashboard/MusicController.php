@@ -13,6 +13,7 @@ class MusicController extends Controller
     public function index(Server $server)
     {
         $this->authorize('view', $server);
+        $server->load('channels');
         \JavaScript::put([
             'Music' => $server->musicSettings,
             'Server' => $server

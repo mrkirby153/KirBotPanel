@@ -13,7 +13,9 @@ class MusicSettings extends Model
     ];
 
     protected $casts = [
-        'channels' => 'array'
+        'channels' => 'array',
+        'enabled' => 'boolean',
+        'playlists' => 'boolean'
     ];
 
     public function server()

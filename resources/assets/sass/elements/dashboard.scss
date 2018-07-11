@@ -43,6 +43,8 @@ $server-image-base: 128px;
 .channel-whitelist {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
+  min-height: 35px;
   .channel {
     display: flex;
     align-items: center;

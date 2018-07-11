@@ -177,7 +177,7 @@
                     commands in any other channels.
                 </p>
             </div>
-            <div class="col-6 d-flex align-items-center">
+            <div class="col-6 ">
                 <transition-group name="scale-fast" class="channel-whitelist" mode="out-in">
                     <div class="channel" v-for="channel in channels" :key="channel.id">
                         #@{{ channel.channel_name }} <span class="x-icon" @click="removeChannel(channel.id)"

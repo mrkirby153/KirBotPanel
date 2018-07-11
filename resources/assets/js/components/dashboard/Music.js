@@ -3,45 +3,68 @@ import Form from "../../form/form2";
 Vue.component('settings-music', {
     data() {
         return {
-            forms: {
-                music: new Form('post', '/dashboard/'+Server.id+'/music', {
-                    enabled: true,
-                    whitelist_mode: 'OFF',
-                    channels: [],
-                    blacklisted_urls: '',
-                    max_queue_length: -1,
-                    max_song_length: -1,
-                    skip_cooldown: 0,
-                    skip_timer: 30,
-                    playlists: false
-                })
-            },
-            readonly: ReadOnly
+            music: new Form('post', '/dashboard/' + Server.id + '/music', {
+                enabled: Music.enabled,
+                whitelist_mode: Music.mode,
+                channels: Music.mode !== 'OFF' ? Music.channels : [],
+                blacklisted_urls: '',
+                max_queue_length: Music.max_queue_length,
+                max_song_length: Music.max_song_length,
+                skip_cooldown: Music.skip_cooldown,
+                skip_timer: Music.skip_timer,
+                playlists: Music.playlists
+            }),
+            readonly: App.readonly,
+            selecting: "",
         }
     },
 
-    mounted() {
-        this.forms.music.enabled = Music.enabled;
-        this.forms.music.whitelist_mode = Music.mode;
-        if (Music.mode !== 'OFF')
-            this.forms.music.channels = Music.channels;
-
-        this.forms.music.max_queue_length = Music.max_queue_length;
-        this.forms.music.max_song_length = Music.max_song_length;
-        this.forms.music.skip_cooldown = Music.skip_cooldown;
-        this.forms.music.skip_timer = Music.skip_timer;
-        this.forms.music.playlists = Music.playlists;
+    computed: {
+        channels() {
+            let vc = _.filter(Server.channels, c => {
+                return c.type === "VOICE"
+            });
+            let chans = [];
+            vc.forEach(chan => {
+                if (_.indexOf(this.music.channels, chan.id) === -1) {
+                    chans.push(chan);
+                }
+            });
+            return chans;
+        },
+        selectedChannels() {
+            let chans = [];
+            this.music.channels.forEach(cId => {
+                let found = _.find(Server.channels, {
+                    id: cId
+                });
+                if (found !== undefined)
+                    chans.push(found)
+            });
+            return chans;
+        }
     },
 
     methods: {
         sendForm() {
-            if(this.readonly)
+            if (this.readonly)
                 return;
-            this.forms.music.save();
+            this.music.save();
         },
         capitalizeFirstLetter(string) {
             string = string.toLowerCase();
             return string.charAt(0).toUpperCase() + string.slice(1);
+        },
+        addEntry() {
+            setTimeout(() => {
+                this.music.channels.push(this.selecting);
+                this.selecting = "";
+                this.sendForm();
+            }, 250);
+        },
+        removeEntry(id) {
+            this.music.channels = _.without(this.music.channels, id);
+            this.sendForm();
         }
     }
 });
