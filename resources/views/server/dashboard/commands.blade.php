@@ -27,45 +27,48 @@
                         The table below is all the commands registered on the server
                     </p>
 
-                    <table class="table mt-1 table-bordered table-hover">
-                        <thead class="thead-light">
-                        <tr>
-                            <th scope="col">Name</th>
-                            <th scope="col">Created At</th>
-                            <th scope="col">Response</th>
-                            <th scope="col">Clearance</th>
-                            <th scope="col">Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody is="transition-group" name="fade">
-                        <tr v-for="command in commands" :key="command.id">
-                            <td>@{{ command.name }}</td>
-                            <td>@{{ command.created_at }}</td>
-                            <td class="custom-command-data">@{{ command.data }}</td>
-                            <td>@{{ command.clearance_level }}</td>
-                            <td>
-                                <div class="btn-group">
-                                    <button class="btn btn-info" @click="editCommand(command.id)"><i
-                                                class="fas fa-pen"></i> Edit
+                    <div class="table-responsive">
+                        <table class="table mt-1 table-bordered table-hover">
+                            <thead class="thead-light">
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Created At</th>
+                                <th scope="col">Response</th>
+                                <th scope="col">Clearance</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody is="transition-group" name="fade">
+                            <tr v-for="command in commands" :key="command.id">
+                                <td>@{{ command.name }}</td>
+                                <td>@{{ command.created_at }}</td>
+                                <td class="custom-command-data">@{{ command.data }}</td>
+                                <td>@{{ command.clearance_level }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button class="btn btn-info" @click="editCommand(command.id)"><i
+                                                    class="fas fa-pen"></i> Edit
+                                        </button>
+                                        <button class="btn btn-danger" @click="deleteCommand(command.id)"><i
+                                                    class="fas fa-times"></i>
+                                            <span v-if="isConfirming(command.id)">Confirm?</span><span
+                                                    v-else>Delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="5">
+                                    <button class="btn btn-success" @click="addCommand"><i class="fas fa-plus"></i> New
+                                        Command
                                     </button>
-                                    <button class="btn btn-danger" @click="deleteCommand(command.id)"><i
-                                                class="fas fa-times"></i>
-                                        <span v-if="isConfirming(command.id)">Confirm?</span><span v-else>Delete</span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        </tbody>
-                        <tfoot>
-                        <tr>
-                            <td colspan="5">
-                                <button class="btn btn-success" @click="addCommand"><i class="fas fa-plus"></i> New
-                                    Command
-                                </button>
-                            </td>
-                        </tr>
-                        </tfoot>
-                    </table>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
             </div>
             <div class="modal fade" tabindex="-1" role="dialog" id="commandModal">
@@ -112,72 +115,78 @@
             <div class="col-12">
                 <h2>Command Aliases</h2>
                 <p>A list of all configured command aliases.</p>
-                <table class="table table-hover mt-2">
-                    <thead class="thead-light">
-                    <tr>
-                        <th scope="col">Command</th>
-                        <th scope="col">Alias</th>
-                        <th scope="col">Clearance Override</th>
-                        <th scope="col">Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody is="transition-group" name="fade">
-                    <tr v-for="alias in aliases" :key="alias.id">
-                        <td>@{{ alias.command }}</td>
-                        <td v-if="alias.alias">@{{ alias.alias }}</td>
-                        <td v-else><i>Clearance Override Only</i></td>
-                        <td v-if="alias.clearance !== -1">@{{ alias.clearance }}</td>
-                        <td v-else><i>Inherit</i></td>
-                        <td>
-                            <div class="btn-group">
-                                <button class="btn btn-danger" @click="deleteAlias(alias.id)"><i
-                                            class="fas fa-times"></i>
-                                    <span v-if="isConfirming(alias.id)">Confirm?</span><span v-else>Delete</span>
+                <div class="table-responsive">
+
+                    <table class="table table-hover mt-2">
+                        <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Command</th>
+                            <th scope="col">Alias</th>
+                            <th scope="col">Clearance Override</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody is="transition-group" name="fade">
+                        <tr v-for="alias in aliases" :key="alias.id">
+                            <td>@{{ alias.command }}</td>
+                            <td v-if="alias.alias">@{{ alias.alias }}</td>
+                            <td v-else><i>Clearance Override Only</i></td>
+                            <td v-if="alias.clearance !== -1">@{{ alias.clearance }}</td>
+                            <td v-else><i>Inherit</i></td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-danger" @click="deleteAlias(alias.id)"><i
+                                                class="fas fa-times"></i>
+                                        <span v-if="isConfirming(alias.id)">Confirm?</span><span v-else>Delete</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <th v-if="adding" colspan="4">
+                                <panel-form :form="forms.createAlias">
+                                    <div class="form-row">
+                                        <div class="col-md-3">
+                                            <field name="command" :form="forms.createAlias">
+                                                <label>Command</label>
+                                                <input type="text" class="form-control"
+                                                       v-model="forms.createAlias.command"/>
+                                            </field>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <field name="alias" :form="forms.createAlias">
+                                                <label>Alias</label>
+                                                <input type="text" class="form-control"
+                                                       v-model="forms.createAlias.alias"/>
+                                            </field>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <field name="clearance" :form="forms.createAlias">
+                                                <label>Clearance</label>
+                                                <input type="number" min="-1" max="100" class="form-control"
+                                                       v-model="forms.createAlias.clearance"/>
+                                            </field>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="btn-group">
+                                            <button class="btn btn-warning" @click="adding = false">Cancel</button>
+                                            <button class="btn btn-success" @click="addAlias">Save</button>
+                                        </div>
+                                    </div>
+                                </panel-form>
+                            </th>
+                            <th v-else colspan="4">
+                                <button class="btn btn-success" @click="adding = true"><i class="fas fa-plus"></i> New
+                                    Alias
                                 </button>
-                            </div>
-                        </td>
-                    </tr>
-                    </tbody>
-                    <tfoot>
-                    <tr>
-                        <th v-if="adding" colspan="4">
-                            <panel-form :form="forms.createAlias">
-                                <div class="form-row">
-                                    <div class="col-md-3">
-                                        <field name="command" :form="forms.createAlias">
-                                            <label>Command</label>
-                                            <input type="text" class="form-control"
-                                                   v-model="forms.createAlias.command"/>
-                                        </field>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <field name="alias" :form="forms.createAlias">
-                                            <label>Alias</label>
-                                            <input type="text" class="form-control" v-model="forms.createAlias.alias"/>
-                                        </field>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <field name="clearance" :form="forms.createAlias">
-                                            <label>Clearance</label>
-                                            <input type="number" min="-1" max="100" class="form-control"
-                                                   v-model="forms.createAlias.clearance"/>
-                                        </field>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="btn-group">
-                                        <button class="btn btn-warning" @click="adding = false">Cancel</button>
-                                        <button class="btn btn-success" @click="addAlias">Save</button>
-                                    </div>
-                                </div>
-                            </panel-form>
-                        </th>
-                        <th v-else colspan="4">
-                            <button class="btn btn-success" @click="adding = true"><i class="fas fa-plus"></i> New Alias</button>
-                        </th>
-                    </tr>
-                    </tfoot>
-                </table>
+                            </th>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
             </div>
         </div>
     </settings-command-aliases>

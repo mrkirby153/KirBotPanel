@@ -22,7 +22,7 @@
                         <div class="col-12">
                             <h2>Channel Whitelist/Blacklist</h2>
                             <div class="form-row">
-                                <div class="col-6">
+                                <div class="col-lg-6 col-md-12">
                                     <div class="form-group">
                                         <label><b>Mode</b></label>
                                         <select class="form-control" v-model="music.whitelist_mode" @change="sendForm">
@@ -33,7 +33,7 @@
                                     </div>
                                 </div>
                                 <transition name="fade">
-                                    <div class="col-6" v-if="music.whitelist_mode !== 'OFF'">
+                                    <div class="col-lg-6 col-md-12" v-if="music.whitelist_mode !== 'OFF'">
                                         <div class="form-group">
                                             <label><b>Add Channel</b></label>
                                             <select class="form-control" v-model="selecting" @change="addEntry">
@@ -61,7 +61,7 @@
                                 Controls various aspects of the queue
                             </p>
                             <div class="form-row">
-                                <div class="col-4">
+                                <div class="col-lg-4 col-md-12">
                                     <div class="form-group">
                                         <label><b>Queue Length</b></label>
                                         <input type="number" min="-1" class="form-control" v-model="music.max_queue_length" @change="sendForm"/>
@@ -70,7 +70,7 @@
                                         </small>
                                     </div>
                                 </div>
-                                <div class="col-4">
+                                <div class="col-lg-4 col-md-12">
                                     <div class="form-group">
                                         <label><b>Max Song Length</b></label>
                                         <input type="number" min="-1" class="form-control" v-model="music.max_song_length" @change="sendForm"/>
@@ -79,7 +79,7 @@
                                         </small>
                                     </div>
                                 </div>
-                                <div class="col-4">
+                                <div class="col-lg-4 col-md-12">
                                     <div class="form-group">
                                         <label><b>Allow Playlists</b></label>
                                         <select class="form-control" v-model="music.playlists" @change="sendForm">
@@ -94,6 +94,7 @@
                             </div>
                         </div>
                     </div>
+                    <hr/>
                     <div class="row">
                         <hr/>
                         <div class="col-12">
@@ -102,7 +103,7 @@
                                 Configure settings for vote skipping
                             </p>
                             <div class="form-row">
-                                <div class="col-6">
+                                <div class="col-lg-6 col-md-12">
                                     <div class="form-group">
                                         <label><b>Skip Cooldown</b></label>
                                         <input type="number" min="0" class="form-control" v-model="music.skip_cooldown" @change="sendForm"/>
@@ -112,7 +113,7 @@
                                         </small>
                                     </div>
                                 </div>
-                                <div class="col-6">
+                                <div class="col-lg-6 col-md-12">
                                     <div class="form-group">
                                         <label><b>Skip Timer</b></label>
                                         <input type="number" min="0" class="form-control" v-model="music.skip_timer" @change="sendForm"/>
