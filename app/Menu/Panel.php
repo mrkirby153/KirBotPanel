@@ -15,7 +15,6 @@ class Panel
             new Tab('permissions', 'dashboard.permissions', 'user-shield', 'Permissions'),
             new Tab('commands', 'dashboard.commands', 'sticky-note', 'Commands'),
             new Tab('music', 'dashboard.music', 'music', 'Music'),
-            new Tab('channels', 'dashboard.channels', 'hashtag', 'Channels'),
             new Tab('infractions', 'dashboard.infractions', 'exclamation-triangle', 'Infractions'),
             new Tab('spam', 'dashboard.spam', 'fire-extinguisher', 'Spam')
         ];

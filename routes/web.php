@@ -50,11 +50,6 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
             Route::post('/{server}/music', 'Dashboard\MusicController@update');
         });
 
-        // Channels
-        Route::group([], function () {
-            Route::get('/{server}/channels', 'Dashboard\ChannelController@index')->middleware('auth')->name('dashboard.channels');
-        });
-
         Route::group(['middleware' => 'auth'], function () {
             Route::get('/{server}/permissions', 'Dashboard\PermissionController@showPane')->name('dashboard.permissions');
             Route::post('/{server}/permissions/{permission}', 'Dashboard\PermissionController@update');
