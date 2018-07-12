@@ -12,13 +12,18 @@ class Infraction extends Model
         'active' => 'boolean'
     ];
 
-    public function issuedBy()
-    {
-        return $this->belongsTo(GuildMember::class, 'issuer', 'user_id');
-    }
+    protected $with = [
+        'user', 'moderator'
+    ];
+
 
     public function user()
     {
-        return $this->belongsTo(GuildMember::class, 'user_id', 'user_id');
+        return $this->belongsTo(DiscordUser::class, 'user_id', 'id');
+    }
+
+    public function moderator()
+    {
+        return $this->belongsTo(DiscordUser::class, 'issuer', 'id');
     }
 }

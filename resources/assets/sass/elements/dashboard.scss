@@ -104,3 +104,19 @@ $server-image-base: 128px;
     resize: none;
   }
 }
+
+.infraction-table {
+  .infraction-reason {
+    max-width: 330px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+  }
+  .infraction-timestamp {
+    width: 109px;
+  }
+  .infraction-id {
+    width: 73px;
+  }
+}

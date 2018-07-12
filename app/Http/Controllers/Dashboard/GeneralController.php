@@ -135,18 +135,40 @@ class GeneralController extends Controller
     public function showInfractions(Server $server)
     {
         $this->authorize('view', $server);
-        $infractions = Infraction::with([
-            'issuedBy' => function ($q) use ($server) {
-                $q->where('server_id', '=', $server->id);
-            },
-            'user' => function ($q) use ($server) {
-                $q->where('server_id', '=', $server->id);
-            }
-        ])->where('guild', $server->id)->get();
+        \JavaScript::put([
+            'Server' => $server
+        ]);
         return view('server.dashboard.infractions')->with([
-            'infractions' => $infractions,
             'server' => $server,
             'tab' => 'infractions'
+        ]);
+    }
+
+    public function retrieveInfractions(Request $request, Server $server)
+    {
+        $map = [
+            'id' => 'id',
+            'uid' => 'user_id',
+            'mid' => 'issuer'
+        ];
+        $this->authorize('view', $server);
+        $builder = Infraction::whereGuild($server->id);
+        foreach ($map as $k => $v) {
+            $builder = $builder->where($v, 'LIKE', '%' . $request->get($k, '') . '%');
+        }
+        $builder->orderBy('id', 'desc');
+        return $builder->paginate();
+    }
+
+    public function showInfraction(Server $server, Infraction $infraction)
+    {
+        if ($infraction->guild !== $server->id) {
+            abort(404);
+        }
+        return view('server.dashboard.infraction')->with([
+            'infraction' => $infraction,
+            'tab' => 'infractions',
+            'server' => $server
         ]);
     }
 

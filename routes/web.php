@@ -30,6 +30,8 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
             Route::post('/{server}/whitelist', 'Dashboard\GeneralController@updateChannelWhitelist');
             Route::post('/{server}/botName', 'Dashboard\GeneralController@setUsername');
             Route::patch('/{server}/persistence', 'Dashboard\GeneralController@setPersistence');
+
+            Route::get('/{server}/api/infractions', 'Dashboard\GeneralController@retrieveInfractions');
         });
 
         // Commands
@@ -57,6 +59,7 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
             Route::delete('/{server}/permissions/{permission}', 'Dashboard\PermissionController@delete');
 
             Route::get('/{server}/infractions', 'Dashboard\GeneralController@showInfractions')->name('dashboard.infractions');
+            Route::get('/{server}/infractions/{infraction}', 'Dashboard\GeneralController@showInfraction');
 
             Route::get('/{server}/rolePermissions', 'Dashboard\PermissionController@getRolePermissions');
             Route::put('/{server}/rolePermissions', 'Dashboard\PermissionController@createRolePermission');

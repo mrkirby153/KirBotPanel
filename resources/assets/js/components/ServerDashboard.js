@@ -4,3 +4,4 @@ require("./dashboard/Music");
 require("./dashboard/Channels");
 require("./dashboard/Permissions");
 require("./dashboard/Spam");
+require("./dashboard/Infractions");
