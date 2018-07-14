@@ -46,7 +46,7 @@
                     </td>
                 </tr>
                 <tr v-for="inf in infractions.data" v-else>
-                    <td><a :href="getInfractionUrl(inf.id)">@{{ inf.id }}</a></td>
+                    <td><a :href="getInfractionUrl(inf.id)" target="_blank">@{{ inf.id }}</a></td>
                     <td>@{{ inf.user.username+'#'+inf.user.discriminator }}</td>
                     <td>@{{ inf.user.id }}</td>
                     <td>@{{ inf.moderator.username+'#'+inf.moderator.discriminator }}</td>

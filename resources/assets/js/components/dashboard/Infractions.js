@@ -31,6 +31,11 @@ Vue.component('infractions', {
                 + encodeURIComponent(this.filter.id) + '&uid=' + encodeURIComponent(this.filter.uid) + '&mid='
                 + encodeURIComponent(this.filter.modId)).then(resp => {
                 this.infractions = resp.data;
+                if (this.infractions.last_page < this.page) {
+                    this.page = this.infractions.last_page;
+                    this.getInfractions();
+                    return;
+                }
                 this.busy = false;
             })
         },
