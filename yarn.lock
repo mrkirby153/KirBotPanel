@@ -3680,6 +3680,10 @@ javascript-natural-sort@0.7.1:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/javascript-natural-sort/-/javascript-natural-sort-0.7.1.tgz#f9e2303d4507f6d74355a73664d1440fb5a0ef59"
 
+jmespath@0.15.0:
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/jmespath/-/jmespath-0.15.0.tgz#a3f222a9aae9f966f5d27c796510e28091764217"
+
 jquery@>=1.12.0, jquery@^3.2:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca"
@@ -3748,13 +3752,16 @@ json5@^0.5.0, json5@^0.5.1:
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/json5/-/json5-0.5.1.tgz#1eade7acc012034ad84e2396767ead9fa5495821"
 
-jsoneditor@^5.14.1:
-  version "5.14.1"
-  resolved "https://registry.yarnpkg.com/jsoneditor/-/jsoneditor-5.14.1.tgz#30fbb4b78ae431d46ab31b2d79401339a7367ad9"
+jsoneditor@^5.19.0:
+  version "5.19.0"
+  resolved "https://registry.yarnpkg.com/jsoneditor/-/jsoneditor-5.19.0.tgz#89fc651873e2c25888d8c034059f8a1eb4a4cde9"
   dependencies:
     ajv "5.5.2"
     brace "0.11.0"
     javascript-natural-sort "0.7.1"
+    jmespath "0.15.0"
+    mobius1-selectr "2.4.1"
+    picomodal "3.0.0"
 
 jsonfile@^3.0.0:
   version "3.0.1"
@@ -4342,6 +4349,10 @@ mkdirp@0.5.x, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0, mkd
   dependencies:
     minimist "0.0.8"
 
+mobius1-selectr@2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/mobius1-selectr/-/mobius1-selectr-2.4.1.tgz#95d547f60bc2c45a145fd858982dcc9f58c06efa"
+
 move-concurrently@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/move-concurrently/-/move-concurrently-1.0.1.tgz#be2c005fda32e0b29af1f05d7c4b33214c701f92"
@@ -4876,6 +4887,10 @@ performance-now@^0.2.0:
 performance-now@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
+
+picomodal@3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/picomodal/-/picomodal-3.0.0.tgz#facd30f4fbf34a809c1e04ea525f004f399c0b82"
 
 pify@^2.0.0, pify@^2.3.0:
   version "2.3.0"
