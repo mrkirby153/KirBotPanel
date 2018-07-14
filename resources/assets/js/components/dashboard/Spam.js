@@ -1,5 +1,6 @@
 import JSONEditor from 'jsoneditor'
 import axios from 'axios'
+import {CensorSchema, SpamSchema} from "./Schemas";
 
 Vue.component('settings-spam', {
     data() {
@@ -29,7 +30,8 @@ Vue.component('settings-spam', {
             },
             onChange() {
                 vm.changed = true
-            }
+            },
+            schema: SpamSchema
         });
         let parsed = JSON.parse(JSON.parse(SpamSettings).settings);
         this.original = parsed;
@@ -98,7 +100,8 @@ Vue.component('settings-censor', {
             },
             onChange() {
                 vm.changed = true
-            }
+            },
+            schema: CensorSchema
         });
         let parsed = JSON.parse(JSON.parse(CensorSettings).settings);
         this.original = parsed;
