@@ -87,9 +87,11 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('/', 'AdminController@show')->name('admin.main');
 });
 
-Route::get('/{server}/commands', 'Dashboard\GeneralController@showCommandList');
-Route::get('/{server}/queue', 'Dashboard\MusicController@displayQueue');
-Route::get('/{server}/quotes', 'Dashboard\GeneralController@showQuotes');
+Route::group(['prefix' => 'server'], function(){
+    Route::get('/{server}/commands', 'Dashboard\GeneralController@showCommandList');
+    Route::get('/{server}/queue', 'Dashboard\MusicController@displayQueue');
+    Route::get('/{server}/quotes', 'Dashboard\GeneralController@showQuotes');
+});
 
 Route::get('login', 'AuthController@doLogin')->name('login.do');
 Route::get('/auth/login', 'AuthController@showLogin')->name('login');

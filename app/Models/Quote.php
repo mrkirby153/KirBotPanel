@@ -12,9 +12,17 @@ class Quote extends Model
         'server_id', 'user', 'content', 'message_id'
     ];
 
+    protected $with = [
+        'userData'
+    ];
+
 
     public function server()
     {
         return $this->belongsTo(Server::class, 'server_id');
+    }
+
+    public function userData(){
+        return $this->belongsTo(DiscordUser::class, 'user');
     }
 }

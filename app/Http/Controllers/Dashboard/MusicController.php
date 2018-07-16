@@ -21,14 +21,10 @@ class MusicController extends Controller
         return view('server.dashboard.music')->with(['server' => $server, 'tab' => 'music', 'channels' => $this->getVoiceChannelsFromBot($server->id)]);
     }
 
-    public function displayQueue($server)
+    public function displayQueue(Server $server)
     {
-        $queue = $this->getQueue($server);
-        $playing = $this->getNowPlaying($server);
-        $server = Server::whereId($server)->first();
-        if ($server == null) {
-            $server = new Server(['name' => 'Unknown']);
-        }
+        $queue = $this->getQueue($server->id);
+        $playing = $this->getNowPlaying($server->id);
         return view('server.queue')->with(['queue' => $queue, 'server' => $server, 'playing'=>$playing]);
     }
 

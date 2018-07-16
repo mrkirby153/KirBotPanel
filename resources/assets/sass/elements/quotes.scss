@@ -1,0 +1,38 @@
+@import '~bootstrap/scss/variables';
+
+.quote-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  .quote-id::before {
+    content: '#';
+    font-weight: bold;
+  }
+
+  .quote-id {
+    font-weight: bold;
+  }
+
+  .quote-content {
+    padding: 10px 0 10px 0;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+  }
+
+  .quote {
+    padding: 5px;
+    margin-right: 15px;
+    margin-top: 15px;
+    border: 2px solid $gray-300;
+    border-radius: 5px;
+    display: flex;
+    max-width: 100%;
+    flex-flow: column;
+  }
+
+  .quote-footer {
+    margin-top: auto;
+    font-weight: bold;
+  }
+}
