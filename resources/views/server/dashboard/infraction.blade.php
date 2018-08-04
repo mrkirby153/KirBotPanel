@@ -16,7 +16,7 @@
                     <b>Reason: </b> {{$infraction->reason}}<br/>
                     <b>Active: </b> {{$infraction->active? 'yes' : 'no'}} <br/>
                     <b>Created At: </b> {{$infraction->created_at}} <br/>
-                    <b>Revoked At: </b> {{$infraction->revoked_at}}
+                    <b>Expires At: </b> {{$infraction->expires_at}}
                 </div>
             </div>
         </div>

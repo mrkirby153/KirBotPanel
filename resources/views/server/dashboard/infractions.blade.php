@@ -25,7 +25,7 @@
                     <th scope="col" style="width: 245px">Reason</th>
                     <th scope="col">Active</th>
                     <th scope="col" class="infraction-timestamp">Timestamp</th>
-                    <th scope="col" class="infraction-timestamp">Revoked At</th>
+                    <th scope="col" class="infraction-timestamp">Expires At</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -49,13 +49,15 @@
                     <td><a :href="getInfractionUrl(inf.id)" target="_blank">@{{ inf.id }}</a></td>
                     <td>@{{ inf.user.username+'#'+inf.user.discriminator }}</td>
                     <td>@{{ inf.user.id }}</td>
-                    <td>@{{ inf.moderator.username+'#'+inf.moderator.discriminator }}</td>
-                    <td>@{{ inf.moderator.id }}</td>
+                    <td v-if="inf.moderator">@{{ inf.moderator.username+'#'+inf.moderator.discriminator }}</td>
+                    <td v-else>Unknown</td>
+                    <td v-if="inf.moderator">@{{ inf.moderator.id }}</td>
+                    <td v-else>Unknown</td>
                     <td>@{{ inf.type }}</td>
                     <td><span class="infraction-reason">@{{ inf.reason }}</span></td>
                     <td>@{{ inf.active }}</td>
                     <td>@{{ inf.created_at }}</td>
-                    <td>@{{ inf.revoked_at }}</td>
+                    <td>@{{ inf.expires_at }}</td>
                 </tr>
                 </tbody>
                 <tfoot>
