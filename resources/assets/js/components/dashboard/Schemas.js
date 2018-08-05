@@ -9,7 +9,8 @@ export const SpamSchema = {
                 "TEMPMUTE",
                 "KICK",
                 "BAN",
-                "MUTE"
+                "MUTE",
+                "TEMPBAN"
             ]
         },
         "punishment_duration": {

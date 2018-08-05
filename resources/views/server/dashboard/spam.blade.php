@@ -21,6 +21,7 @@
                 <li><b>MUTE: </b>Permanently mute the user</li>
                 <li><b>KICK: </b>Kick the user from the server</li>
                 <li><b>BAN: </b>Ban the user from the server</li>
+                <li><b>TEMPBAN: </b>Temporarily ban the user from the server</li>
                 <li><b>TEMPMUTE: </b>Temporarily mute the user</li>
             </ul>
             <settings-spam inline-template>
