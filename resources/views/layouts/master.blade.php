@@ -21,7 +21,12 @@
 <body>
 <!-- The main app div -->
 <div id="app">
-    <!-- Begin Navbar -->
+    @if(env('APP_ENV') == 'local')
+        <div class="alert alert-warning mb-0 text-center" role="alert">
+            The panel is running in development mode.
+        </div>
+@endif
+<!-- Begin Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">{{config('app.name', 'Laravel')}}</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
