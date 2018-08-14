@@ -140,7 +140,7 @@
     </settings-logging>
     <hr/>
     <div class="row">
-        <div class="col-lg-6 col-md-12">
+        <div class="col-lg-4 col-md-12">
             <settings-bot-name inline-template>
                 <div>
                     <h2>Bot Nickname</h2>
@@ -155,7 +155,7 @@
             </settings-bot-name>
         </div>
         <settings-user-persistence inline-template>
-            <div class="col-lg-6 col-md-12">
+            <div class="col-lg-4 col-md-12">
                 <h2>User Persistence</h2>
                 <p>
                     When enabled, users' roles and nicknames will be restored when they rejoin. This does <b>NOT</b>
@@ -166,6 +166,26 @@
                               @change="save" :disabled="readonly"></input-switch>
             </div>
         </settings-user-persistence>
+        <settings-muted inline-template>
+            <div class="col-lg-4 col-md-12">
+                <h2>Muted Role</h2>
+                <p>
+                    Select the role that will be applied to the user when they are muted
+                </p>
+                <panel-form :form="forms.muted">
+                    <field :form="forms.muted" name="muted_role" show-success="true">
+                        <select class="form-control" v-model="forms.muted.muted_role" @change="save">
+                            <option value="">None</option>
+                            @foreach($roles as $role)
+                                <option value="{{$role->id}}">{{$role->name}}</option>
+                            @endforeach
+                        </select>
+                        <span slot="valid-feedback">Muted role updated!</span>
+                    </field>
+                </panel-form>
+
+            </div>
+        </settings-muted>
     </div>
     <hr/>
     <settings-channel-whitelist inline-template>

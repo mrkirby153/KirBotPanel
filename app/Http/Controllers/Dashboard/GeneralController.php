@@ -93,6 +93,14 @@ class GeneralController extends Controller
         return $server;
     }
 
+    public function updateMutedRole(Server $server, Request $request)
+    {
+        $this->authorize('update', $server);
+        $server->muted_role = $request->get('muted_role');
+        $server->save();
+        return $server;
+    }
+
     public function showCommandList(Server $server)
     {
         return view('server.commandlist')->with(['commands' => $server->commands, 'server' => $server]);

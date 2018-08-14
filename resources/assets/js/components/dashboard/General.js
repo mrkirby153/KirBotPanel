@@ -1,5 +1,6 @@
 import Form from "../../form/form2";
 import axios from 'axios';
+import Vue from 'vue';
 
 Vue.component('settings-realname', {
 
@@ -327,6 +328,24 @@ Vue.component('settings-user-persistence', {
     methods: {
         save() {
             this.forms.persist.save();
+        }
+    }
+});
+
+Vue.component('settings-muted', {
+    data(){
+        return {
+            forms: {
+                muted: new Form('patch', '/dashboard/'+Server.id+'/muted', {
+                    muted_role: Server.muted_role != null ? Server.muted_role : ""
+                })
+            }
+        }
+    },
+
+    methods: {
+        save(){
+            this.forms.muted.save();
         }
     }
 });
