@@ -53,7 +53,7 @@
                         <tfoot>
                         <tr v-if="!adding">
                             <th colspan="4">
-                                <button class="btn btn-success" @click="adding = true">Add</button>
+                                <button class="btn btn-success" @click="adding = true" :disabled="!owner && !admin">Add</button>
                             </th>
                         </tr>
                         <tr v-else>
