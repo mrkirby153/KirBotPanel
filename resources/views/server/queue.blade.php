@@ -13,7 +13,10 @@
                             <div class="col-12" v-if="nowPlaying">
                                 <h2>Now Playing</h2>
                                 <img :src="getYoutubeThumbnail(nowPlaying.url)" class="music-queue-image"/>
-                                <span class="music-queue-text"> @{{ nowPlaying.title }} (@{{ formatTime(nowPlaying.duration) }})</span>
+                                <span class="music-queue-text"> @{{ nowPlaying.title }}</span>
+                                <div class="progress mt-2">
+                                    <div class="progress-bar" :style="{'width': (nowPlaying.position / nowPlaying.duration)*100 + '%'}"></div>
+                                </div>@{{ formatTime(nowPlaying.position) }}/@{{ formatTime(nowPlaying.duration) }}
                             </div>
                             <div class="col-12" v-else>
                                 <h2>Nothing is playing</h2>

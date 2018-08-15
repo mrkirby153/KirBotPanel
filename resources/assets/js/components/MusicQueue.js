@@ -50,7 +50,7 @@ Vue.component('music-queue', {
                 let videoId = groups[4];
                 return "https://i.ytimg.com/vi/" + videoId + "/0.jpg"
             } else {
-                return null;
+                return window.location.origin+"/images/album-art-empty.png";
             }
         }
     },
