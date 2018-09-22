@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Server extends Model
 {
-    use DeletesRelations;
+    use DeletesRelations, SoftDeletes;
 
     public $table = "server_settings";
 
