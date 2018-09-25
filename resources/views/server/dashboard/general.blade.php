@@ -140,7 +140,7 @@
     </settings-logging>
     <hr/>
     <div class="row">
-        <div class="col-lg-4 col-md-12">
+        <div class="col-lg-6 col-md-12">
             <settings-bot-name inline-template>
                 <div>
                     <h2>Bot Nickname</h2>
@@ -154,20 +154,8 @@
                 </div>
             </settings-bot-name>
         </div>
-        <settings-user-persistence inline-template>
-            <div class="col-lg-4 col-md-12">
-                <h2>User Persistence</h2>
-                <p>
-                    When enabled, users' roles and nicknames will be restored when they rejoin. This does <b>NOT</b>
-                    affect
-                    per channel overrides
-                </p>
-                <input-switch label="Enable Persistence" v-model="forms.persist.persistence"
-                              @change="save" :disabled="readonly"></input-switch>
-            </div>
-        </settings-user-persistence>
         <settings-muted inline-template>
-            <div class="col-lg-4 col-md-12">
+            <div class="col-lg-6 col-md-12">
                 <h2>Muted Role</h2>
                 <p>
                     Select the role that will be applied to the user when they are muted
@@ -187,6 +175,59 @@
             </div>
         </settings-muted>
     </div>
+    <hr/>
+
+    <settings-user-persistence inline-template>
+        <div class="row">
+            <div class="col-lg-6 col-md-12">
+                <h2>User Persistence</h2>
+                <p>
+                    When enabled, users' roles and nicknames will be restored when they rejoin. This does <b>NOT</b>
+                    affect
+                    per channel overrides
+                </p>
+                <input-switch label="Enable Persistence" v-model="options.enabled"
+                              @change="save" :disabled="readonly"></input-switch>
+            </div>
+            <div class="col-lg-6">
+                <transition name="fade">
+                    <div class="form-group" v-if="options.enabled">
+                        <select class="form-control" @change="addRole" v-model="selected">
+                            <option value="" disabled selected>Select a role</option>
+                            <option v-for="role in availableRoles" :key="role.id" :value="role.id">@{{ role.name }}
+                            </option>
+                        </select>
+                    </div>
+                </transition>
+                <p>
+                    The following roles are persistent roles. These roles will be restored to the user when they
+                    re-join.
+                    <em>If none are selected, all roles will persist</em>
+                </p>
+                <div class="roles">
+                    <div class="role" v-if="options.enabled && (!localizedRoles || localizedRoles.length < 1)">All
+                        Roles
+                    </div>
+                    <div class="role" v-if="!options.enabled"><em>Persistence is disabled.</em></div>
+                    <div class="role" v-for="role in localizedRoles" :key="role.id">@{{ role.name }} <span
+                                @click="removeRole(role.id)" v-if="options.enabled && !readonly"><i
+                                    class="fas fa-times x-icon"></i></span></div>
+                </div>
+                <transition name="fade">
+                    <div v-if="options.enabled" class="role-options">
+                        <input-switch label="Persist Mute" class="switch-sm" v-model="options.mute"
+                                      @change="save"></input-switch>
+                        <input-switch label="Persist Roles" class="switch-sm" v-model="options.roles"
+                                      @change="save"></input-switch>
+                        <input-switch label="Persist Deafen" class="switch-sm" v-model="options.deafen"
+                                      @change="save"></input-switch>
+                        <input-switch label="Persist Nickanme" class="switch-sm" v-model="options.nick"
+                                      @change="save"></input-switch>
+                    </div>
+                </transition>
+            </div>
+        </div>
+    </settings-user-persistence>
     <hr/>
     <settings-channel-whitelist inline-template>
         <div class="row">

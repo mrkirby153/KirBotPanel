@@ -46,7 +46,7 @@ Vue.component('settings-logging', {
             },
             loading: false,
             forms: {
-                logTimezone: new Form('patch', '/dashboard/'+Server.id+'/logging', {
+                logTimezone: new Form('patch', '/dashboard/' + Server.id + '/logging', {
                     timezone: Server.log_timezone
                 })
             }
@@ -208,8 +208,8 @@ Vue.component('settings-logging', {
             });
             return el;
         },
-        select(mode){
-            switch(mode){
+        select(mode) {
+            switch (mode) {
                 case "all":
                     Object.keys(LogEvents).forEach(option => {
                         this.editing[this.editing.mode][option] = true;
@@ -265,10 +265,10 @@ Vue.component('settings-channel-whitelist', {
             });
             return arr;
         },
-        availableChannels(){
+        availableChannels() {
             let arr = [];
             Server.channels.forEach(c => {
-                if(!_.find(this.channels, ['id', c.id]) && c.type === "TEXT")
+                if (!_.find(this.channels, ['id', c.id]) && c.type === "TEXT")
                     arr.push(c);
             });
             return arr;
@@ -286,7 +286,7 @@ Vue.component('settings-channel-whitelist', {
             this.save()
         },
         removeChannel(id) {
-            if(this.readonly)
+            if (this.readonly)
                 return;
             this.forms.whitelist.channels = _.without(this.forms.whitelist.channels, id);
             this.save()
@@ -316,27 +316,98 @@ Vue.component('settings-bot-name', {
 Vue.component('settings-user-persistence', {
     data() {
         return {
-            forms: {
-                persist: new Form('patch', '/dashboard/' + Server.id + '/persistence', {
-                    persistence: Server.user_persistence
-                })
+            roles: Server.persist_roles,
+            selected: "",
+
+            options: {
+                enabled: (Server.user_persistence & 1) > 0,
+                mute: (Server.user_persistence & 2) > 0,
+                deafen: (Server.user_persistence & 4) > 0,
+                nick: (Server.user_persistence & 8) > 0,
+                roles: (Server.user_persistence & 16) > 0
+            },
+            values: {
+                enabled: 1,
+                mute: 2,
+                deafen: 4,
+                nick: 8,
+                roles: 16
             },
             readonly: App.readonly
         }
     },
 
+    computed: {
+        localizedRoles() {
+            let arr = [];
+            this.roles.forEach(id => {
+                arr.push(_.first(_.filter(Server.roles, c => {
+                    return c.id === id
+                })))
+            });
+            return arr;
+        },
+        availableRoles() {
+            let arr = [];
+            Server.roles.forEach(c => {
+                if (!this.roles.includes(c.id) && c.id !== Server.id)
+                    arr.push(c);
+            });
+            return arr;
+        },
+        rawMode() {
+            if (!this.options.enabled) {
+                return 0;
+            }
+            let num = 0;
+            Object.keys(this.options).forEach(key => {
+                if (this.options[key])
+                    num = num | this.values[key];
+            });
+            return num;
+        }
+    },
+
     methods: {
         save() {
-            this.forms.persist.save();
+            if(!this.options.enabled) {
+                this.roles = [];
+                this.options.mute = false;
+                this.options.deafen = false;
+                this.options.nick = false;
+            }
+            axios.patch('/dashboard/' + Server.id + '/persistence', {
+                mode: this.rawMode,
+                roles: this.roles
+            }).then(resp => {
+                this.selected = "";
+            });
+        },
+        removeRole(id) {
+            if(!this.options.enabled || this.readonly)
+                return;
+            console.log("Removing role " + id);
+            this.roles = _.remove(this.roles, n => {
+                return n !== id;
+            });
+            this.save();
+        },
+        addRole() {
+            if(!this.options.enabled || this.readonly)
+                return;
+            if (this.selected) {
+                this.roles.push(this.selected);
+                this.save();
+            }
         }
     }
 });
 
 Vue.component('settings-muted', {
-    data(){
+    data() {
         return {
             forms: {
-                muted: new Form('patch', '/dashboard/'+Server.id+'/muted', {
+                muted: new Form('patch', '/dashboard/' + Server.id + '/muted', {
                     muted_role: Server.muted_role != null ? Server.muted_role : ""
                 })
             }
@@ -344,7 +415,7 @@ Vue.component('settings-muted', {
     },
 
     methods: {
-        save(){
+        save() {
             this.forms.muted.save();
         }
     }

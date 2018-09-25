@@ -43,6 +43,7 @@ class GeneralController extends Controller
         $this->authorize('view', $server);
         $server->load('channels');
         $server->load('logSettings');
+        $server->load('roles');
         $events = Redis::get("log_events");
         if ($events == null) {
             $events = "{}";
@@ -121,7 +122,8 @@ class GeneralController extends Controller
     public function setPersistence(Server $server, Request $request)
     {
         $this->authorize('update', $server);
-        $server->user_persistence = $request->get('persistence') == true;
+        $server->user_persistence = $request->get('mode');
+        $server->persist_roles = $request->get('roles');
         $server->save();
     }
 

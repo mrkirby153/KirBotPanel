@@ -89,6 +89,30 @@ $server-image-base: 128px;
   }
 }
 
+.roles {
+  -webkit-padding-start: 0;
+  -moz-padding-start: 0;
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  .role {
+    padding: 5px;
+    border: 2px solid $gray-200;
+    border-radius: 5px;
+    list-style-type: none;
+    cursor: default;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    .x-icon {
+      margin-left: 5px;
+      cursor: pointer;
+    }
+  }
+}
+.role-options {
+  margin-top: 5px;
+}
+
 .custom-command-data {
   max-width: 500px;
   word-wrap: break-word;
@@ -120,6 +144,7 @@ $server-image-base: 128px;
     width: 73px;
   }
 }
+
 .settings-editor {
   height: 500px;
 }
