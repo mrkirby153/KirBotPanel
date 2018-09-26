@@ -144,7 +144,7 @@
                         <tfoot>
                         <tr>
                             <td colspan="4" v-if="!adding">
-                                <button class="btn btn-success" @click.prevent="adding = true">Add</button>
+                                <button class="btn btn-success" @click.prevent="adding = true" :disabled="readonly">Add</button>
                             </td>
                             <td colspan="4" v-else>
                                 <panel-form :form="permissionForm" @submit="addPermission">

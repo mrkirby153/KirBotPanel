@@ -11,7 +11,7 @@
                             <span slot="valid-feedback">Prefix saved!</span>
                             <label><b>Command Prefix</b></label>
                             <input type="text" class="form-control" v-model="forms.cmdDiscriminator.discriminator"
-                                   @change="saveDiscrim"/>
+                                   @change="saveDiscrim" :readonly="readonly"/>
                         </field>
                     </panel-form>
                     <h5>Example Command</h5>
@@ -46,10 +46,10 @@
                                 <td>@{{ command.clearance_level }}</td>
                                 <td>
                                     <div class="btn-group">
-                                        <button class="btn btn-info" @click="editCommand(command.id)"><i
+                                        <button class="btn btn-info" @click="editCommand(command.id)" :disabled="readonly"><i
                                                     class="fas fa-pen"></i> Edit
                                         </button>
-                                        <button class="btn btn-danger" @click="deleteCommand(command.id)"><i
+                                        <button class="btn btn-danger" @click="deleteCommand(command.id)" :disabled="readonly"><i
                                                     class="fas fa-times"></i>
                                             <span v-if="isConfirming(command.id)">Confirm?</span><span
                                                     v-else>Delete</span>
@@ -61,7 +61,7 @@
                             <tfoot>
                             <tr>
                                 <td colspan="5">
-                                    <button class="btn btn-success" @click="addCommand"><i class="fas fa-plus"></i> New
+                                    <button class="btn btn-success" @click="addCommand" :disabled="readonly"><i class="fas fa-plus"></i> New
                                         Command
                                     </button>
                                 </td>
@@ -135,7 +135,7 @@
                             <td v-else><i>Inherit</i></td>
                             <td>
                                 <div class="btn-group">
-                                    <button class="btn btn-danger" @click="deleteAlias(alias.id)"><i
+                                    <button class="btn btn-danger" @click="deleteAlias(alias.id)" :disabled="readonly"><i
                                                 class="fas fa-times"></i>
                                         <span v-if="isConfirming(alias.id)">Confirm?</span><span v-else>Delete</span>
                                     </button>
@@ -179,7 +179,7 @@
                                 </panel-form>
                             </th>
                             <th v-else colspan="4">
-                                <button class="btn btn-success" @click="adding = true"><i class="fas fa-plus"></i> New
+                                <button class="btn btn-success" @click="adding = true" :disabled="readonly"><i class="fas fa-plus"></i> New
                                     Alias
                                 </button>
                             </th>

@@ -12,7 +12,7 @@
                         If this is disabled,
                         the bot will ignore all music related commands, and they will not show up in help
                     </p>
-                    <input-switch label="Master Switch" v-model="music.enabled" @change="sendForm"></input-switch>
+                    <input-switch label="Master Switch" v-model="music.enabled" @change="sendForm" :disabled="readonly"></input-switch>
                 </div>
             </div>
             <transition name="fade">
@@ -25,7 +25,7 @@
                                 <div class="col-lg-6 col-md-12">
                                     <div class="form-group">
                                         <label><b>Mode</b></label>
-                                        <select class="form-control" v-model="music.whitelist_mode" @change="sendForm">
+                                        <select class="form-control" v-model="music.whitelist_mode" @change="sendForm" :disabled="readonly">
                                             <option value="OFF">Off</option>
                                             <option value="WHITELIST">Whitelist</option>
                                             <option value="BLACKLIST">Blacklist</option>
@@ -36,7 +36,7 @@
                                     <div class="col-lg-6 col-md-12" v-if="music.whitelist_mode !== 'OFF'">
                                         <div class="form-group">
                                             <label><b>Add Channel</b></label>
-                                            <select class="form-control" v-model="selecting" @change="addEntry">
+                                            <select class="form-control" v-model="selecting" @change="addEntry" :disabled="readonly">
                                                 <option value="" selected disabled>Select a channel</option>
                                                 <option v-for="channel in channels" :key="channel.id" :value="channel.id">
                                                     @{{ channel.channel_name }}
@@ -48,7 +48,7 @@
                             </div>
                             <transition-group name="scale-fast" class="channel-whitelist">
                                 <div class="channel" v-for="channel in selectedChannels" :key="channel.id" v-if="music.whitelist_mode !== 'OFF'">
-                                    @{{ channel.channel_name }} <span class="x-icon" @click="removeEntry(channel.id)"><i class="fas fa-times"></i></span>
+                                    @{{ channel.channel_name }} <span class="x-icon" @click="removeEntry(channel.id)" v-if="!readonly"><i class="fas fa-times"></i></span>
                                 </div>
                             </transition-group>
                         </div>
@@ -64,7 +64,7 @@
                                 <div class="col-lg-4 col-md-12">
                                     <div class="form-group">
                                         <label><b>Queue Length</b></label>
-                                        <input type="number" min="-1" class="form-control" v-model="music.max_queue_length" @change="sendForm"/>
+                                        <input type="number" min="-1" class="form-control" v-model="music.max_queue_length" @change="sendForm" :readonly="readonly"/>
                                         <small class="form-text text-muted">
                                             The max length in minutes the queue can be. -1 to disable
                                         </small>
@@ -73,7 +73,7 @@
                                 <div class="col-lg-4 col-md-12">
                                     <div class="form-group">
                                         <label><b>Max Song Length</b></label>
-                                        <input type="number" min="-1" class="form-control" v-model="music.max_song_length" @change="sendForm"/>
+                                        <input type="number" min="-1" class="form-control" v-model="music.max_song_length" @change="sendForm" :readonly="readonly"/>
                                         <small class="form-text text-muted">
                                             The max song length in minutes that can be queued. -1 to disable
                                         </small>
@@ -82,7 +82,7 @@
                                 <div class="col-lg-4 col-md-12">
                                     <div class="form-group">
                                         <label><b>Allow Playlists</b></label>
-                                        <select class="form-control" v-model="music.playlists" @change="sendForm">
+                                        <select class="form-control" v-model="music.playlists" @change="sendForm" :disabled="readonly">
                                             <option :value="false">No</option>
                                             <option :value="true">Yes</option>
                                         </select>
@@ -106,7 +106,7 @@
                                 <div class="col-lg-6 col-md-12">
                                     <div class="form-group">
                                         <label><b>Skip Cooldown</b></label>
-                                        <input type="number" min="0" class="form-control" v-model="music.skip_cooldown" @change="sendForm"/>
+                                        <input type="number" min="0" class="form-control" v-model="music.skip_cooldown" @change="sendForm" :readonly="readonly"/>
                                         <small class="form-text text-muted">The time in seconds a user has to wait
                                             between
                                             starting a skip vote
@@ -116,7 +116,7 @@
                                 <div class="col-lg-6 col-md-12">
                                     <div class="form-group">
                                         <label><b>Skip Timer</b></label>
-                                        <input type="number" min="0" class="form-control" v-model="music.skip_timer" @change="sendForm"/>
+                                        <input type="number" min="0" class="form-control" v-model="music.skip_timer" @change="sendForm" :readonly="readonly"/>
                                         <small class="form-text text-muted">How long the bot waits for votes</small>
                                     </div>
                                 </div>
