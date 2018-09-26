@@ -55,7 +55,7 @@
                             <field name="timezone" :form="forms.logTimezone" show-success="true">
                                 <label for="timezone"><b>Log Timezone</b></label>
                                 <input type="text" class="form-control" id="timezone"
-                                       v-model="forms.logTimezone.timezone" @change="updateTimezone"/>
+                                       v-model="forms.logTimezone.timezone" @change="updateTimezone" :readonly="readonly"/>
                                 <span slot="valid-feedback">Timezone has been updated</span>
                             </field>
                         </panel-form>
@@ -162,7 +162,7 @@
                 </p>
                 <panel-form :form="forms.muted">
                     <field :form="forms.muted" name="muted_role" show-success="true">
-                        <select class="form-control" v-model="forms.muted.muted_role" @change="save">
+                        <select class="form-control" v-model="forms.muted.muted_role" @change="save" :disabled="readonly">
                             <option value="">None</option>
                             @foreach($roles as $role)
                                 <option value="{{$role->id}}">{{$role->name}}</option>
@@ -192,7 +192,7 @@
             <div class="col-lg-6">
                 <transition name="fade">
                     <div class="form-group" v-if="options.enabled">
-                        <select class="form-control" @change="addRole" v-model="selected">
+                        <select class="form-control" @change="addRole" v-model="selected" :disabled="readonly">
                             <option value="" disabled selected>Select a role</option>
                             <option v-for="role in availableRoles" :key="role.id" :value="role.id">@{{ role.name }}
                             </option>
@@ -216,13 +216,13 @@
                 <transition name="fade">
                     <div v-if="options.enabled" class="role-options">
                         <input-switch label="Persist Mute" class="switch-sm" v-model="options.mute"
-                                      @change="save"></input-switch>
+                                      @change="save" :disabled="readonly"></input-switch>
                         <input-switch label="Persist Roles" class="switch-sm" v-model="options.roles"
-                                      @change="save"></input-switch>
+                                      @change="save" :disabled="readonly"></input-switch>
                         <input-switch label="Persist Deafen" class="switch-sm" v-model="options.deafen"
-                                      @change="save"></input-switch>
+                                      @change="save" :disabled="readonly"></input-switch>
                         <input-switch label="Persist Nickanme" class="switch-sm" v-model="options.nick"
-                                      @change="save"></input-switch>
+                                      @change="save" :disabled="readonly"></input-switch>
                     </div>
                 </transition>
             </div>

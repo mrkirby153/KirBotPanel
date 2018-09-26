@@ -410,7 +410,8 @@ Vue.component('settings-muted', {
                 muted: new Form('patch', '/dashboard/' + Server.id + '/muted', {
                     muted_role: Server.muted_role != null ? Server.muted_role : ""
                 })
-            }
+            },
+            readonly: App.readonly
         }
     },
 
