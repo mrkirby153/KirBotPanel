@@ -11,7 +11,7 @@
                 <div class="row justify-content-center server-select">
                     @foreach($onServers as $server)
                         @php
-                            $server_icon = $server->has_icon? "https://cdn.discordapp.com/icons/".$server->id."/".$server->icon.".webp"
+                            $server_icon = $server->has_icon? "https://cdn.discordapp.com/icons/".$server->id."/".$server->icon.".png"
                             : route('serverIcon').'?server_name='.urlencode($server->name);
                         @endphp
                         <div class="server col-md-4 col-sm-6 h-100">
@@ -33,7 +33,7 @@
             <div class="row justify-content-center server-select">
                 @foreach($notOnServers as $server)
                     @php
-                        $server_icon = $server->has_icon? "https://cdn.discordapp.com/icons/".$server->id."/".$server->icon.".webp"
+                        $server_icon = $server->has_icon? "https://cdn.discordapp.com/icons/".$server->id."/".$server->icon.".png"
                         : route('serverIcon').'?server_name='.urlencode($server->name);
                     @endphp
                     @if($server->manager)
