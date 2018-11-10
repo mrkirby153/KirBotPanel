@@ -48,11 +48,11 @@
 <!-- Scripts -->
 <script src="{{mix('js/app.js')}}"></script>
 <!-- Font Awesome -->
-<script defer src="https://use.fontawesome.com/releases/v5.1.0/js/solid.js"
-        integrity="sha384-Z7p3uC4xXkxbK7/4keZjny0hTCWPXWfXl/mJ36+pW7ffAGnXzO7P+iCZ0mZv5Zt0"
+<script defer src="https://use.fontawesome.com/releases/v5.5.0/js/solid.js"
+        integrity="sha384-Xgf/DMe1667bioB9X1UM5QX+EG6FolMT4K7G+6rqNZBSONbmPh/qZ62nBPfTx+xG"
         crossorigin="anonymous"></script>
-<script defer src="https://use.fontawesome.com/releases/v5.1.0/js/fontawesome.js"
-        integrity="sha384-juNb2Ils/YfoXkciRFz//Bi34FN+KKL2AN4R/COdBOMD9/sV/UsxI6++NqifNitM"
+<script defer src="https://use.fontawesome.com/releases/v5.5.0/js/fontawesome.js"
+        integrity="sha384-bNOdVeWbABef8Lh4uZ8c3lJXVlHdf8W5hh1OpJ4dGyqIEhMmcnJrosjQ36Kniaqm"
         crossorigin="anonymous"></script>
 </body>
 </html>
