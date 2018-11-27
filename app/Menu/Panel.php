@@ -16,7 +16,8 @@ class Panel
             new Tab('commands', 'dashboard.commands', 'sticky-note', 'Commands'),
             new Tab('music', 'dashboard.music', 'music', 'Music'),
             new Tab('infractions', 'dashboard.infractions', 'exclamation-triangle', 'Infractions'),
-            new Tab('spam', 'dashboard.spam', 'fire-extinguisher', 'Spam')
+            new Tab('spam', 'dashboard.spam', 'fire-extinguisher', 'Spam'),
+            new Tab('raid', 'dashboard.raid', 'shield-alt', 'Anti-Raid')
         ];
         return $tabs;
     }

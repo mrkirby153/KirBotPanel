@@ -78,6 +78,11 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
             Route::delete('/{server}/logSetting/{setting}', 'Dashboard\GeneralController@deleteLogSetting');
             Route::patch('/{server}/logSetting/{setting}', 'Dashboard\GeneralController@updateLogSetting');
         });
+
+        // Anti-Raid
+        Route::group(['middleware' => 'auth'], function() {
+            Route::get('/{server}/anti-raid', 'Dashboard\AntiRaid@index')->name('dashboard.raid');
+        });
     });
 });
 Route::post('/dashboard/{server}/channels/{channel}/visibility', 'Dashboard\ChannelController@visibility')->middleware('auth');
