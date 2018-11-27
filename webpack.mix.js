@@ -12,6 +12,9 @@ let mix = require('laravel-mix');
  */
 mix.js('resources/assets/js/app.js', 'public/js')
     .sass('resources/assets/sass/app.scss', 'public/css');
-if(process.env.NODE_ENV === "production"){
+if (process.env.NODE_ENV === "production") {
     mix.version();
 }
+
+if (process.env.MIX_BROWSERSYNC_ENABLED === "true")
+    mix.browserSync(process.env.MIX_BROWSERSYNC_PROXY);
