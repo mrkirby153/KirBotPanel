@@ -82,6 +82,7 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
         // Anti-Raid
         Route::group(['middleware' => 'auth'], function() {
             Route::get('/{server}/anti-raid', 'Dashboard\AntiRaid@index')->name('dashboard.raid');
+            Route::patch('/{server}/anti-raid', 'Dashboard\AntiRaid@update')->name('dashboard.raid.update');
         });
     });
 });

@@ -5,3 +5,4 @@ require("./dashboard/Channels");
 require("./dashboard/Permissions");
 require("./dashboard/Spam");
 require("./dashboard/Infractions");
+require("./dashboard/AntiRaid");

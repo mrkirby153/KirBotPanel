@@ -65,7 +65,6 @@ Vue.component('settings-spam', {
                     vm.success = false;
                 }, 10000);
             }).catch(resp => {
-                toastr["error"]("An unknown error occurred. Please try again");
                 this.loading = false;
             })
         }
@@ -135,7 +134,6 @@ Vue.component('settings-censor', {
                     vm.success = false;
                 }, 10000);
             }).catch(resp => {
-                toastr["error"]("An unknown error occurred. Please try again");
                 this.loading = false;
             })
         }
