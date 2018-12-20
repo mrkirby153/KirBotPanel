@@ -64,15 +64,14 @@
                                             <field name="userId" :form="addingUser">
                                                 <label for="userId">User ID</label>
                                                 <input type="text" name="userId" v-model="addingUser.userId"
-                                                       class="form-control" id="userId"/>
+                                                        class="form-control" id="userId" required/>
                                             </field>
                                         </div>
                                         <div class="col-md-3">
                                             <field name="permission" :form="addingUser">
                                                 <label for="permission">Permission</label>
                                                 <select v-model="addingUser.permission" class="form-control"
-                                                        id="permission"
-                                                        name="permission">
+                                                        id="permission" name="permission" required>
                                                     <option value="" disabled>Select an option</option>
                                                     <option value="VIEW">View</option>
                                                     <option value="EDIT">Edit</option>
@@ -81,20 +80,20 @@
                                             </field>
                                         </div>
                                     </div>
-                                </panel-form>
-                                <div class="form-row">
-                                    <div class="col-12">
-                                        <div class="btn-group">
-                                            <button class="btn btn-success" @click="sendForm"><i
-                                                        class="fas fa-check"></i>
-                                                Save
-                                            </button>
-                                            <button class="btn btn-warning" @click="adding = false"><i
-                                                        class="fas fa-times"></i> Cancel
-                                            </button>
+                                    <div class="form-row">
+                                        <div class="col-12">
+                                            <div class="btn-group">
+                                                <button class="btn btn-success" type="submit"><i
+                                                            class="fas fa-check"></i>
+                                                    Save
+                                                </button>
+                                                <button class="btn btn-warning" @click="adding = false"><i
+                                                            class="fas fa-times"></i> Cancel
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </panel-form>
                             </th>
                         </tr>
                         </tfoot>
@@ -127,10 +126,11 @@
                             <td>@{{ role.name }}</td>
                             <td>
                                 <form @submit.prevent="updatePermissionLevel(role.id)">
-                                    <div class="form-group">
+                                    <div class="form-group" :class="{'is-invalid': !inRange(role.permission_level, 0, 100)}">
                                         <input type="number" class="form-control" min="0" max="100"
-                                               v-model="role.permission_level"
-                                               @change="updatePermissionLevel(role.id)"/>
+                                                v-model="role.permission_level"
+                                                @change="updatePermissionLevel(role.id)"/>
+                                        <div class="invalid-feedback">Value must be between 0 and 100</div>
                                     </div>
                                 </form>
                             </td>
@@ -152,7 +152,7 @@
                                         <div class="col-3">
                                             <field name="roleId" :form="permissionForm">
                                                 <label>Role</label>
-                                                <select class="form-control" v-model="permissionForm.roleId">
+                                                <select class="form-control" v-model="permissionForm.roleId" required>
                                                     <option v-for="role in roles" :key="role.id" :value="role.id">@{{
                                                         role.name }}
                                                     </option>
@@ -163,23 +163,23 @@
                                             <field name="permissionLevel" :form="permissionForm">
                                                 <label>Clearance</label>
                                                 <input type="number" min="0" max="100" class="form-control"
-                                                       v-model="permissionForm.permissionLevel"/>
+                                                        v-model="permissionForm.permissionLevel" required/>
                                             </field>
                                         </div>
                                     </div>
-                                </panel-form>
-                                <div class="form-row">
-                                    <div class="col-12">
-                                        <div class="btn-group">
-                                            <button class="btn btn-success" @click.prevent="addPermission"><i
-                                                        class="fas fa-check"></i> Save
-                                            </button>
-                                            <button class="btn btn-danger" @click.prevent="adding = false"><i
-                                                        class="fas fa-times"></i> Cancel
-                                            </button>
+                                    <div class="form-row">
+                                        <div class="col-12">
+                                            <div class="btn-group">
+                                                <button class="btn btn-success" type="submit"><i
+                                                            class="fas fa-check"></i> Save
+                                                </button>
+                                                <button class="btn btn-danger" @click.prevent="adding = false"><i
+                                                            class="fas fa-times"></i> Cancel
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </panel-form>
                             </td>
                         </tr>
                         </tfoot>

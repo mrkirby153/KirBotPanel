@@ -64,7 +64,8 @@ Vue.component('settings-role-permissions', {
             }),
             adding: false,
             readonly: App.readonly,
-            roles: Roles
+            roles: Roles,
+            errors: {}
         }
     },
     mounted() {
@@ -81,8 +82,12 @@ Vue.component('settings-role-permissions', {
             let p = _.find(this.permissions, {
                 id: id
             });
+            if (!this.inRange(p.permission_level, 0, 100))
+                return;
             axios.patch('/dashboard/' + Server.id + '/rolePermissions/' + id, {
                 permissionLevel: p.permission_level
+            }).catch(e => {
+                this.errors[id] = e.response.data.errors.permissionLevel[0]
             })
         },
         deletePermission(id) {
@@ -97,6 +102,9 @@ Vue.component('settings-role-permissions', {
                 this.permissions.push(resp.data);
                 this.adding = false;
             })
+        },
+        inRange(value, min, max) {
+            return value >= min && value <= max;
         }
     },
     watch: {
