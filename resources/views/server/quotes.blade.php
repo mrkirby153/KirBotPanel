@@ -29,8 +29,9 @@
                         <div class="quote-content">
                             {!! $parsedown->text($quote->content) !!}
                         </div>
-                        <span class="quote-footer">By @if($quote->userData){{ $quote->userData->username }}
-                            #{{ $quote->userData->discriminator }}@else Unknown @endif on {{$quote->created_at}}</span>
+                        <span class="quote-footer">By @if($quote->userData)
+                                {{ $quote->userData->username }}#{{ $quote->userData->discriminator }}
+                            @else Unknown @endif on {{$quote->created_at}}</span>
                     </div>
                 @endforeach
             </div>
