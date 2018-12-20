@@ -427,7 +427,8 @@ Vue.component('settings-starboard', {
         return {
             forms: {
                 starboard: new Form('patch', '/dashboard/' + Server.id + '/starboard', Object.assign({}, Starboard))
-            }
+            },
+            readonly: App.readonly
         }
     },
     methods: {

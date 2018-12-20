@@ -266,10 +266,10 @@
                 <p>
                     If the starboard is enabled, reacting via &#x1f5e8; will no longer create new quotes
                 </p>
-                <input-switch label="Enable Starboard" v-model="forms.starboard.enabled" @change="save()"></input-switch>
+                <input-switch label="Enable Starboard" v-model="forms.starboard.enabled" @change="save()" :disabled="readonly"></input-switch>
                 <div class="form-group">
                     <label>Starboard Channel</label>
-                    <select class="form-control" v-model="forms.starboard.channel_id" @change="save()">
+                    <select class="form-control" v-model="forms.starboard.channel_id" @change="save()" :disabled="!forms.starboard.enabled || readonly">
                         <option disabled selected value="">Select a channel</option>
                         @foreach($textChannels as $channel)
                             <option value="{{$channel->id}}">#{{$channel->channel_name}}</option>
@@ -280,17 +280,17 @@
             <div class="col-4">
                 <div class="form-group">
                     <label>Star Count</label>
-                    <input type="number" min="0" class="form-control" v-model="forms.starboard.star_count" @change="save()"/>
+                    <input type="number" min="0" class="form-control" v-model="forms.starboard.star_count" @change="save()" :disabled="!forms.starboard.enabled || readonly"/>
                 </div>
             </div>
             <div class="col-4">
                 <div class="form-group">
                     <label>Gild Count</label>
-                    <input type="number" min="0" class="form-control" v-model="forms.starboard.gild_count" @change="save()"/>
+                    <input type="number" min="0" class="form-control" v-model="forms.starboard.gild_count" @change="save()" :disabled="!forms.starboard.enabled || readonly"/>
                 </div>
             </div>
             <div class="col-4">
-                <input-switch label="Self Star" v-model="forms.starboard.self_star" @change="save()"></input-switch>
+                <input-switch label="Self Star" v-model="forms.starboard.self_star" @change="save()" :disabled="!forms.starboard.enabled || readonly"></input-switch>
                 <p>
                     If self-staring is enabled, users can star their own messages
                 </p>
