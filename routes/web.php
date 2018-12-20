@@ -86,6 +86,8 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
         });
     });
 });
+// Starboard
+Route::patch('/dashboard/{starboard}/starboard', 'Dashboard\GeneralController@updateStarboard')->name('dashboard.starboard')->middleware('auth');
 Route::post('/dashboard/{server}/channels/{channel}/visibility', 'Dashboard\ChannelController@visibility')->middleware('auth');
 Route::get('/archive/{key}', 'Dashboard\GeneralController@showArchived');
 

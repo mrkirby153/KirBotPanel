@@ -7,8 +7,8 @@
             <div class="col-md-6 col-sm-12">
                 <div class="d-flex h-100 align-items-center">
                     <input-switch label="Require Real Names"
-                                  :disabled="readonly || forms.realName.realnameSetting == 'OFF'"
-                                  v-model="forms.realName.requireRealname" @change="sendForm"></input-switch>
+                            :disabled="readonly || forms.realName.realnameSetting == 'OFF'"
+                            v-model="forms.realName.requireRealname" @change="sendForm"></input-switch>
                 </div>
             </div>
             <div class="col-md-6 col-sm-12">
@@ -55,7 +55,7 @@
                             <field name="timezone" :form="forms.logTimezone" show-success="true">
                                 <label for="timezone"><b>Log Timezone</b></label>
                                 <input type="text" class="form-control" id="timezone"
-                                       v-model="forms.logTimezone.timezone" @change="updateTimezone" :readonly="readonly"/>
+                                        v-model="forms.logTimezone.timezone" @change="updateTimezone" :readonly="readonly"/>
                                 <span slot="valid-feedback">Timezone has been updated</span>
                             </field>
                         </panel-form>
@@ -113,7 +113,8 @@
                             </div>
                             <p class="mt-1">
                                 Below are log events that can be @{{ editing.mode }}ded from the log channel. Leave
-                                blank to <span v-if="editing.mode==='include'">include all events</span><span v-else>exclude no events</span>
+                                blank to
+                                <span v-if="editing.mode==='include'">include all events</span><span v-else>exclude no events</span>
                             </p>
                             <div class="btn-group btn-group-sm">
                                 <button class="btn btn-secondary" @click="select('all')">Select All</button>
@@ -121,11 +122,11 @@
                                 <button class="btn btn-secondary" @click="select('invert')">Invert</button>
                             </div>
                             <div class="custom-control custom-checkbox" v-for="option in Object.keys(logOptions)"
-                                 :key="option">
+                                    :key="option">
                                 <input type="checkbox" class="custom-control-input" :id="'include_'+logOptions[option]"
-                                       v-model="editing[editing.mode][option]"/>
+                                        v-model="editing[editing.mode][option]"/>
                                 <label class="custom-control-label"
-                                       :for="'include_'+logOptions[option]">@{{option}}</label>
+                                        :for="'include_'+logOptions[option]">@{{option}}</label>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -147,7 +148,7 @@
                     <panel-form :form="forms.name" @submit="save">
                         <field name="name" :form="forms.name" :class="{'is-valid': forms.name.successful}">
                             <input type="text" class="form-control" v-model="forms.name.name" @change="save"
-                                   :disabled="readonly"/>
+                                    :disabled="readonly"/>
                             <span slot="valid-feedback">Name has been updated!</span>
                         </field>
                     </panel-form>
@@ -187,7 +188,7 @@
                     per channel overrides
                 </p>
                 <input-switch label="Enable Persistence" v-model="options.enabled"
-                              @change="save" :disabled="readonly"></input-switch>
+                        @change="save" :disabled="readonly"></input-switch>
             </div>
             <div class="col-lg-6">
                 <transition name="fade">
@@ -216,13 +217,13 @@
                 <transition name="fade">
                     <div v-if="options.enabled" class="role-options">
                         <input-switch label="Persist Mute" class="switch-sm" v-model="options.mute"
-                                      @change="save" :disabled="readonly"></input-switch>
+                                @change="save" :disabled="readonly"></input-switch>
                         <input-switch label="Persist Roles" class="switch-sm" v-model="options.roles"
-                                      @change="save" :disabled="readonly"></input-switch>
+                                @change="save" :disabled="readonly"></input-switch>
                         <input-switch label="Persist Deafen" class="switch-sm" v-model="options.deafen"
-                                      @change="save" :disabled="readonly"></input-switch>
+                                @change="save" :disabled="readonly"></input-switch>
                         <input-switch label="Persist Nickanme" class="switch-sm" v-model="options.nick"
-                                      @change="save" :disabled="readonly"></input-switch>
+                                @change="save" :disabled="readonly"></input-switch>
                     </div>
                 </transition>
             </div>
@@ -242,7 +243,7 @@
                 <transition-group name="scale-fast" class="channel-whitelist" mode="out-in">
                     <div class="channel" v-for="channel in channels" :key="channel.id">
                         #@{{ channel.channel_name }} <span class="x-icon" @click="removeChannel(channel.id)"
-                                                           v-if="!readonly"><i
+                                v-if="!readonly"><i
                                     class="fas fa-times"></i></span>
                     </div>
                 </transition-group>
@@ -257,6 +258,44 @@
             </div>
         </div>
     </settings-channel-whitelist>
-
+    <hr/>
+    <settings-starboard inline-template>
+        <div class="row">
+            <div class="col-12">
+                <h2>Starboard</h2>
+                <p>
+                    If the starboard is enabled, reacting via &#x1f5e8; will no longer create new quotes
+                </p>
+                <input-switch label="Enable Starboard" v-model="forms.starboard.enabled" @change="save()"></input-switch>
+                <div class="form-group">
+                    <label>Starboard Channel</label>
+                    <select class="form-control" v-model="forms.starboard.channel_id" @change="save()">
+                        <option disabled selected value="">Select a channel</option>
+                        @foreach($textChannels as $channel)
+                            <option value="{{$channel->id}}">#{{$channel->channel_name}}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-group">
+                    <label>Star Count</label>
+                    <input type="number" min="0" class="form-control" v-model="forms.starboard.star_count" @change="save()"/>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-group">
+                    <label>Gild Count</label>
+                    <input type="number" min="0" class="form-control" v-model="forms.starboard.gild_count" @change="save()"/>
+                </div>
+            </div>
+            <div class="col-4">
+                <input-switch label="Self Star" v-model="forms.starboard.self_star" @change="save()"></input-switch>
+                <p>
+                    If self-staring is enabled, users can star their own messages
+                </p>
+            </div>
+        </div>
+    </settings-starboard>
 
 @endsection

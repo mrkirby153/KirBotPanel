@@ -8,6 +8,7 @@ use App\Models\Infraction;
 use App\Models\Log;
 use App\Models\LogSetting;
 use App\Models\Server;
+use App\Models\Starboard;
 use App\Utils\AuditLogger;
 use App\Utils\DiscordAPI;
 use App\Utils\PermissionHandler;
@@ -16,10 +17,8 @@ use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Response;
 use Intervention\Image\AbstractFont;
 
-class GeneralController extends Controller
-{
-    public function displayOverview(Request $request)
-    {
+class GeneralController extends Controller {
+    public function displayOverview(Request $request) {
         if (\Auth::guest() || \Auth::user()->token_type == 'NAME_ONLY') {
             return redirect(route('login') . '?returnUrl=' . urlencode($request->getRequestUri()) . '&requireGuilds=true');
         }
@@ -38,8 +37,7 @@ class GeneralController extends Controller
         return view('server.serverlist')->with(['onServers' => $onServers, 'notOnServers' => $notOnServers]);
     }
 
-    public function showDashboard(Server $server)
-    {
+    public function showDashboard(Server $server) {
         $this->authorize('view', $server);
         $server->load('channels');
         $server->load('logSettings');
@@ -50,7 +48,8 @@ class GeneralController extends Controller
         }
         \JavaScript::put([
             'Server' => $server,
-            'LogEvents' => json_decode($events)
+            'LogEvents' => json_decode($events),
+            'Starboard' => Starboard::whereId($server->id)->first()
         ]);
         return view('server.dashboard.general')->with([
             'tab' => 'general',
@@ -61,8 +60,7 @@ class GeneralController extends Controller
     }
 
 
-    public function setRealnameSettings(Server $server, Request $request)
-    {
+    public function setRealnameSettings(Server $server, Request $request) {
         $this->authorize('update', $server);
         $request->validate([
             'realnameSetting' => 'required',
@@ -74,8 +72,7 @@ class GeneralController extends Controller
         Redis::publish('kirbot:update-name', json_encode(['server' => $server->id]));
     }
 
-    public function updateLogging(Server $server, Request $request)
-    {
+    public function updateLogging(Server $server, Request $request) {
         $this->authorize('update', $server);
         $request->validate([
             'timezone' => 'required|timezone'
@@ -85,8 +82,7 @@ class GeneralController extends Controller
         return $server;
     }
 
-    public function updateChannelWhitelist(Server $server, Request $request)
-    {
+    public function updateChannelWhitelist(Server $server, Request $request) {
         $this->authorize('update', $server);
         $whitelist = $request->get('channels');
         $server->cmd_whitelist = $whitelist;
@@ -94,41 +90,35 @@ class GeneralController extends Controller
         return $server;
     }
 
-    public function updateMutedRole(Server $server, Request $request)
-    {
+    public function updateMutedRole(Server $server, Request $request) {
         $this->authorize('update', $server);
         $server->muted_role = $request->get('muted_role');
         $server->save();
         return $server;
     }
 
-    public function showCommandList(Server $server)
-    {
+    public function showCommandList(Server $server) {
         return view('server.commandlist')->with(['commands' => $server->commands, 'server' => $server]);
     }
 
-    public function showLog(Server $server)
-    {
+    public function showLog(Server $server) {
         $this->authorize('view', $server);
         $logData = Log::whereServerId($server->id)->orderBy('created_at', 'desc')->paginate(10);
         return view('server.dashboard.log')->with(['logData' => $logData, 'tab' => 'log', 'server' => $server]);
     }
 
-    public function showQuotes(Server $server)
-    {
+    public function showQuotes(Server $server) {
         return view('server.quotes')->with(['quotes' => $server->quotes, 'server' => $server]);
     }
 
-    public function setPersistence(Server $server, Request $request)
-    {
+    public function setPersistence(Server $server, Request $request) {
         $this->authorize('update', $server);
         $server->user_persistence = $request->get('mode');
         $server->persist_roles = $request->get('roles');
         $server->save();
     }
 
-    public function setUsername(Server $server, Request $request)
-    {
+    public function setUsername(Server $server, Request $request) {
         $this->authorize('update', $server);
         if ($request->has('name')) {
             $server->bot_nick = $request->get('name');
@@ -142,8 +132,7 @@ class GeneralController extends Controller
         ]));
     }
 
-    public function showInfractions(Server $server)
-    {
+    public function showInfractions(Server $server) {
         $this->authorize('view', $server);
         \JavaScript::put([
             'Server' => $server
@@ -154,8 +143,7 @@ class GeneralController extends Controller
         ]);
     }
 
-    public function retrieveInfractions(Request $request, Server $server)
-    {
+    public function retrieveInfractions(Request $request, Server $server) {
         $map = [
             'id' => 'id',
             'uid' => 'user_id',
@@ -170,8 +158,7 @@ class GeneralController extends Controller
         return $builder->paginate();
     }
 
-    public function showInfraction(Server $server, Infraction $infraction)
-    {
+    public function showInfraction(Server $server, Infraction $infraction) {
         if ($infraction->guild !== $server->id) {
             abort(404);
         }
@@ -182,8 +169,7 @@ class GeneralController extends Controller
         ]);
     }
 
-    public function makeIcon(Request $request)
-    {
+    public function makeIcon(Request $request) {
         $serverName = $request->get('server_name');
         $words = explode(" ", $serverName);
         $acronym = "";
@@ -202,8 +188,7 @@ class GeneralController extends Controller
         return $img->response();
     }
 
-    public function showArchived($key)
-    {
+    public function showArchived($key) {
         $data = Redis::get("archive:$key");
         if ($data == null) {
             return response('Archive not found or expired', 404);
@@ -217,8 +202,7 @@ class GeneralController extends Controller
         return $response;
     }
 
-    public function createLogSetting(Request $request, Server $server)
-    {
+    public function createLogSetting(Request $request, Server $server) {
         $this->authorize('update', $server);
         $request->validate([
             'channel' => 'required|exists:channels,id'
@@ -232,14 +216,12 @@ class GeneralController extends Controller
         return $settings;
     }
 
-    public function deleteLogSetting(Server $server, LogSetting $setting)
-    {
+    public function deleteLogSetting(Server $server, LogSetting $setting) {
         $this->authorize('update', $server);
         $setting->delete();
     }
 
-    public function updateLogSetting(Request $request, Server $server, LogSetting $setting)
-    {
+    public function updateLogSetting(Request $request, Server $server, LogSetting $setting) {
         $request->validate([
             'included' => 'array',
             'excluded' => 'array'
@@ -257,5 +239,12 @@ class GeneralController extends Controller
         $setting->excluded = $excluded;
         $setting->save();
         return $setting;
+    }
+
+    public function updateStarboard(Request $request, Starboard $starboard) {
+        $server = Server::whereId($starboard->id)->firstOrFail();
+        $this->authorize('update', $server);
+        $starboard->update($request->input());
+        syncServer($server->id);
     }
 }

@@ -370,7 +370,7 @@ Vue.component('settings-user-persistence', {
 
     methods: {
         save() {
-            if(!this.options.enabled) {
+            if (!this.options.enabled) {
                 this.roles = [];
                 this.options.mute = false;
                 this.options.deafen = false;
@@ -384,7 +384,7 @@ Vue.component('settings-user-persistence', {
             });
         },
         removeRole(id) {
-            if(!this.options.enabled || this.readonly)
+            if (!this.options.enabled || this.readonly)
                 return;
             console.log("Removing role " + id);
             this.roles = _.remove(this.roles, n => {
@@ -393,7 +393,7 @@ Vue.component('settings-user-persistence', {
             this.save();
         },
         addRole() {
-            if(!this.options.enabled || this.readonly)
+            if (!this.options.enabled || this.readonly)
                 return;
             if (this.selected) {
                 this.roles.push(this.selected);
@@ -418,6 +418,21 @@ Vue.component('settings-muted', {
     methods: {
         save() {
             this.forms.muted.save();
+        }
+    }
+});
+
+Vue.component('settings-starboard', {
+    data() {
+        return {
+            forms: {
+                starboard: new Form('patch', '/dashboard/' + Server.id + '/starboard', Object.assign({}, Starboard))
+            }
+        }
+    },
+    methods: {
+        save() {
+            this.forms.starboard.save();
         }
     }
 });
