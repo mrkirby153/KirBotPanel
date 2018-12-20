@@ -11,7 +11,7 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-12 table-responsive">
                             <h2>Server List</h2>
                             <table class="table text-center">
                                 <thead class="thead-light">
