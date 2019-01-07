@@ -4,38 +4,34 @@ export const SpamSchema = {
     "type": "object",
     "properties": {
         "punishment": {
-            "enum": [
-                "NONE",
-                "TEMPMUTE",
-                "KICK",
-                "BAN",
-                "MUTE",
-                "TEMPBAN"
-            ]
+           "$ref": "#/definitions/punishment"
         },
         "punishment_duration": {
-            "type": [
-                "integer",
-                "string"
-            ]
+            "$ref": "#/definitions/punishment_duration"
         },
         "clean_count": {
-            "type": [
-                "integer",
-                "string"
-            ]
+            "$ref": "#/definitions/clean_count"
         },
         "clean_duration": {
-            "type": [
-                "integer",
-                "string"
-            ]
+            "$ref": "#/definitions/clean_duration"
         }
     },
     "patternProperties": {
         "^[0-9]+$": {
             "type": "object",
             "properties": {
+                "punishment": {
+                    "$ref": "#/definitions/punishment"
+                },
+                "punishment_duration": {
+                    "$ref": "#/definitions/punishment_duration"
+                },
+                "clean_count": {
+                    "$ref": "#/definitions/clean_count"
+                },
+                "clean_duration": {
+                    "$ref": "#/definitions/clean_duration"
+                },
                 "max_links": {
                     "$ref": "#/definitions/rule"
                 },
@@ -87,6 +83,34 @@ export const SpamSchema = {
             "required": [
                 "count",
                 "period"
+            ]
+        },
+        "punishment": {
+            "enum": [
+                "NONE",
+                "TEMPMUTE",
+                "KICK",
+                "BAN",
+                "MUTE",
+                "TEMPBAN"
+            ]
+        },
+        "punishment_duration": {
+            "type": [
+                "integer",
+                "string"
+            ]
+        },
+        "clean_count": {
+            "type": [
+                "integer",
+                "string"
+            ]
+        },
+        "clean_duration": {
+            "type": [
+                "integer",
+                "string"
             ]
         }
     },
