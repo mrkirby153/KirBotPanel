@@ -1,9 +1,16 @@
+import axios from 'axios';
+import Vue from 'vue';
+import toastr from "toastr";
+
 Vue.component('music-queue', {
     data() {
         return {
             nowPlaying: {},
             queue: [],
-            timer: -1
+            timer: -1,
+            queueSong: "",
+            queueVisible: false,
+            loading: false,
         }
     },
 
@@ -43,6 +50,23 @@ Vue.component('music-queue', {
             s += minutes + ":" + seconds;
             return s;
         },
+        showQueue() {
+            this.queueSong = null;
+            this.queueVisible = true;
+        },
+        sendSong() {
+            this.loading = true;
+            axios.post('/server/' + Server.id + '/queue', {
+                song: this.queueSong
+            }).then(resp => {
+                this.queueSong = "";
+                this.queueVisible = false;
+                toastr["success"]("Song queued");
+                this.loading = false;
+            }).catch(resp => {
+                this.loading = false;
+            })
+        },
         getYoutubeThumbnail(url) {
             let regex = RegExp("(https?\\:\\/\\/)?(www\\.youtube\\.com|youtu\\.?be)\\/(watch\\?v=)?(.{11})");
             let groups = regex.exec(url);
@@ -50,7 +74,7 @@ Vue.component('music-queue', {
                 let videoId = groups[4];
                 return "https://i.ytimg.com/vi/" + videoId + "/0.jpg"
             } else {
-                return window.location.origin+"/images/album-art-empty.png";
+                return window.location.origin + "/images/album-art-empty.png";
             }
         }
     },

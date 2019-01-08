@@ -99,6 +99,7 @@ Route::group(['prefix' => 'admin'], function () {
 Route::group(['prefix' => 'server'], function(){
     Route::get('/{server}/commands', 'Dashboard\GeneralController@showCommandList');
     Route::get('/{server}/queue', 'Dashboard\MusicController@displayQueue');
+    Route::post('/{server}/queue', 'Dashboard\MusicController@webQueue');
     Route::get('/{server}/quotes', 'Dashboard\GeneralController@showQuotes');
 });
 

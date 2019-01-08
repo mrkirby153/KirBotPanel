@@ -16,13 +16,26 @@
                                 <span class="music-queue-text"> @{{ nowPlaying.title }}</span>
                                 <div class="progress mt-2">
                                     <div class="progress-bar" :style="{'width': (nowPlaying.position / nowPlaying.duration)*100 + '%'}"></div>
-                                </div>@{{ formatTime(nowPlaying.position) }}/@{{ formatTime(nowPlaying.duration) }}
+                                </div>
+                                @{{ formatTime(nowPlaying.position) }}/@{{ formatTime(nowPlaying.duration) }}
                             </div>
                             <div class="col-12" v-else>
                                 <h2>Nothing is playing</h2>
                                 Queue songs by typing <code>@{{ discrim }}play [Song Title/URL]</code>
                             </div>
                         </div>
+                        @if($in_channel)
+                            <button class="btn btn-success mb-2" :disabled="queueVisible" @click="showQueue">
+                                <i class="fas fa-play"></i> Queue a Song
+                            </button>
+                            <form v-if="queueVisible" @submit.prevent="sendSong">
+                                <div class="form-group">
+                                    <label class="sr-only">Song URL</label>
+                                    <input type="text" class="form-control" placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ" :disabled="loading" v-model="queueSong"/>
+                                </div>
+                                <button type="submit" class="btn btn-primary mb-2" :disabled="loading">Queue</button>
+                            </form>
+                        @endif
                         <hr v-if="nowPlaying"/>
                         <div class="row" v-if="nowPlaying">
                             <div class="col-12">

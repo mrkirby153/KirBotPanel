@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Server;
 use App\Utils\AuditLogger;
+use App\Utils\Redis\RedisMessage;
+use App\Utils\RedisMessenger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 
-class MusicController extends Controller
-{
-    public function index(Server $server)
-    {
+class MusicController extends Controller {
+    public function index(Server $server) {
         $this->authorize('view', $server);
         $server->load('channels');
         \JavaScript::put([
@@ -21,23 +21,30 @@ class MusicController extends Controller
         return view('server.dashboard.music')->with(['server' => $server, 'tab' => 'music', 'channels' => $this->getVoiceChannelsFromBot($server->id)]);
     }
 
-    public function displayQueue(Server $server)
-    {
+    public function displayQueue(Server $server) {
+        \JavaScript::put([
+            'Server' => $server
+        ]);
         $queue = $this->getQueue($server->id);
         $playing = $this->getNowPlaying($server->id);
-        return view('server.queue')->with(['queue' => $queue, 'server' => $server, 'playing'=>$playing]);
+        $in_channel = Redis::get("music:".$server->id.":channel:".\Auth::id());
+        return view('server.queue')->with(['queue' => $queue, 'server' => $server, 'playing' => $playing, 'in_channel' => (bool) $in_channel]);
     }
 
-    public function getQueueJson($server)
-    {
+    public function webQueue(Server $server, Request $request) {
+        RedisMessenger::dispatch(new RedisMessage("webqueue", $server, \Auth::user(), [
+            'query' => $request->input('song')
+        ]));
+    }
+
+    public function getQueueJson($server) {
         return response()->json([
             'nowPlaying' => $this->getNowPlaying($server),
             'queue' => $this->getQueue($server)
         ]);
     }
 
-    public function update(Request $request, Server $server)
-    {
+    public function update(Request $request, Server $server) {
         $this->authorize('update', $server);
         $this->validate($request, [
             'enabled' => 'required',
@@ -57,8 +64,7 @@ class MusicController extends Controller
         $musicSettings->save();
     }
 
-    private function getQueue($server)
-    {
+    private function getQueue($server) {
         $data = Redis::get("music.queue:$server");
         if ($data == null) {
             return json_decode("[]");
@@ -67,8 +73,7 @@ class MusicController extends Controller
         }
     }
 
-    private function getNowPlaying($server)
-    {
+    private function getNowPlaying($server) {
         $data = Redis::get("music.playing:$server");
         if ($data == null) {
             return null;
