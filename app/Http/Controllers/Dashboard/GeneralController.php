@@ -12,6 +12,8 @@ use App\Models\Starboard;
 use App\Utils\AuditLogger;
 use App\Utils\DiscordAPI;
 use App\Utils\PermissionHandler;
+use App\Utils\Redis\RedisMessage;
+use App\Utils\RedisMessenger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Response;
@@ -69,7 +71,8 @@ class GeneralController extends Controller {
         $server->realname = $request->get('realnameSetting');
         $server->require_realname = ($request->get('realnameSetting') == 'OFF') ? false : $request->get('requireRealname');
         $server->save();
-        Redis::publish('kirbot:update-name', json_encode(['server' => $server->id]));
+//        Redis::publish('kirbot:update-name', json_encode(['server' => $server->id]));
+        RedisMessenger::dispatch(new RedisMessage("update-name", $server->id));
     }
 
     public function updateLogging(Server $server, Request $request) {
@@ -126,9 +129,8 @@ class GeneralController extends Controller {
             $server->bot_nick = "";
         }
         $server->save();
-        Redis::publish('kirbot:nickname', \GuzzleHttp\json_encode([
-            'nickname' => !$request->has('name') ? null : $request->get('name'),
-            'server' => $server->id
+        RedisMessenger::dispatch(new RedisMessage("nickname", $server->id, null, [
+            'nickname' => !$request->has('name') ? null : $request->input('name')
         ]));
     }
 

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Server;
 use App\Models\UserInfo;
+use App\Utils\Redis\RedisMessage;
+use App\Utils\RedisMessenger;
 use Auth;
 use Illuminate\Http\Request;
 use Redis;
@@ -45,7 +47,7 @@ class UserController extends Controller
         $info->last_name = $request->lastname;
         $info->id = Auth::user()->id;
         $info->save();
-        Redis::publish('kirbot:update-names', json_encode((object)[]));
+        RedisMessenger::dispatch(new RedisMessage("update-names"));
         return response()->json(['changed'=>$info->changed]);
     }
 
