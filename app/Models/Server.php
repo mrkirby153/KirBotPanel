@@ -28,7 +28,8 @@ class Server extends Model
         'cmd_whitelist' => 'array',
         'bot_manager' => 'array',
         'require_realname' => 'boolean',
-        'persist_roles'=> 'array'
+        'persist_roles'=> 'array',
+        'command_silent_fail' => 'boolean'
     ];
 
     protected $deletableRelations = [

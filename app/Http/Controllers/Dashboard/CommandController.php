@@ -52,9 +52,20 @@ class CommandController extends Controller
     {
         $this->authorize('update', $server);
         $this->validate($request, [
-            'discriminator' => 'required'
+            'discriminator' => 'required',
+            'silent' => 'required|boolean'
         ]);
         $server->command_discriminator = $request->discriminator;
+        $server->command_silent_fail = $request->silent;
+        $server->save();
+    }
+
+    public function updateSilent(Server $server, Request $request) {
+        $this->authorize('update', $server);
+        $this->validate($request, [
+            'silent' => 'required|boolean'
+        ]);
+        $server->command_silent_fail = $request->silent;
         $server->save();
     }
 

@@ -6,7 +6,11 @@ Vue.component('settings-commands', {
         return {
             forms: {
                 cmdDiscriminator: new Form('patch', '/dashboard/' + Server.id + '/discriminator', {
-                    discriminator: Server.command_discriminator
+                    discriminator: Server.command_discriminator,
+                    silent: Server.command_silent_fail
+                }),
+                silentFail: new Form('patch', '/dashboard/'+Server.id+'/commandFail', {
+                    silent: Server.command_silent_fail
                 }),
                 editCommand: new Form("", "", {
                     name: '',
@@ -115,6 +119,10 @@ Vue.component('settings-commands', {
         saveDiscrim() {
             this.forms.cmdDiscriminator.save();
         },
+
+        saveSilent() {
+            this.forms.silentFail.save()
+        }
     }
 });
 

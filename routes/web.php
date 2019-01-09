@@ -41,6 +41,7 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
             Route::patch('/{server}/command/{command}', 'Dashboard\CommandController@updateCommand');
             Route::delete('/{server}/command/{command}', 'Dashboard\CommandController@deleteCommand');
             Route::patch('/{server}/discriminator', 'Dashboard\CommandController@updateDiscrim');
+            Route::patch('/{server}/commandFail', 'Dashboard\CommandController@updateSilent');
             Route::put('/{server}/commands', 'Dashboard\CommandController@createCommand');
 
             Route::put('/{server}/commands/alias', 'Dashboard\CommandController@createAlias');

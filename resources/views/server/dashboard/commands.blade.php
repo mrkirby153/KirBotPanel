@@ -7,12 +7,18 @@
                 <div class="col-12">
                     <panel-form :form="forms.cmdDiscriminator">
                         <field name="discriminator" :form="forms.cmdDiscriminator"
-                               help="The prefix which all commands on the server use" show-success="true">
+                                help="The prefix which all commands on the server use" show-success="true">
                             <span slot="valid-feedback">Prefix saved!</span>
                             <label><b>Command Prefix</b></label>
                             <input type="text" class="form-control" v-model="forms.cmdDiscriminator.discriminator"
-                                   @change="saveDiscrim" :readonly="readonly"/>
+                                    @change="saveDiscrim" :readonly="readonly"/>
                         </field>
+                        <div class="form-group">
+                            <input-switch label="Silent Fail" v-model="forms.silentFail.silent" @change="saveSilent"></input-switch>
+                            <p class="form-text text-muted">
+                                If KirBot should silently ignore commands if the executor doesn't have permissiom
+                            </p>
+                        </div>
                     </panel-form>
                     <h5>Example Command</h5>
                     <code>@{{ forms.cmdDiscriminator.discriminator }}play
@@ -46,10 +52,12 @@
                                 <td>@{{ command.clearance_level }}</td>
                                 <td>
                                     <div class="btn-group">
-                                        <button class="btn btn-info" @click="editCommand(command.id)" :disabled="readonly"><i
+                                        <button class="btn btn-info" @click="editCommand(command.id)" :disabled="readonly">
+                                            <i
                                                     class="fas fa-pen"></i> Edit
                                         </button>
-                                        <button class="btn btn-danger" @click="deleteCommand(command.id)" :disabled="readonly"><i
+                                        <button class="btn btn-danger" @click="deleteCommand(command.id)" :disabled="readonly">
+                                            <i
                                                     class="fas fa-times"></i>
                                             <span v-if="isConfirming(command.id)">Confirm?</span><span
                                                     v-else>Delete</span>
@@ -61,7 +69,8 @@
                             <tfoot>
                             <tr>
                                 <td colspan="5">
-                                    <button class="btn btn-success" @click="addCommand" :disabled="readonly"><i class="fas fa-plus"></i> New
+                                    <button class="btn btn-success" @click="addCommand" :disabled="readonly">
+                                        <i class="fas fa-plus"></i> New
                                         Command
                                     </button>
                                 </td>
@@ -86,7 +95,7 @@
                                     <input type="text" class="form-control" v-model="forms.editCommand.name"/>
                                 </field>
                                 <input-switch v-model="forms.editCommand.respect_whitelist"
-                                              label="Respect Whitelist"></input-switch>
+                                        label="Respect Whitelist"></input-switch>
                                 <field name="description" :form="forms.editCommand">
                                     <label>Command Response</label>
                                     <small class="form-text text-muted">What will be sent when the command is executed
@@ -96,7 +105,7 @@
                                 <field name="clearance" :form="forms.editCommand">
                                     <label>Clearance</label>
                                     <input type="number" v-model="forms.editCommand.clearance" min="0" max="100"
-                                           class="form-control"/>
+                                            class="form-control"/>
                                 </field>
                             </panel-form>
                         </div>
@@ -135,7 +144,8 @@
                             <td v-else><i>Inherit</i></td>
                             <td>
                                 <div class="btn-group">
-                                    <button class="btn btn-danger" @click="deleteAlias(alias.id)" :disabled="readonly"><i
+                                    <button class="btn btn-danger" @click="deleteAlias(alias.id)" :disabled="readonly">
+                                        <i
                                                 class="fas fa-times"></i>
                                         <span v-if="isConfirming(alias.id)">Confirm?</span><span v-else>Delete</span>
                                     </button>
@@ -152,21 +162,21 @@
                                             <field name="command" :form="forms.createAlias">
                                                 <label>Command</label>
                                                 <input type="text" class="form-control"
-                                                       v-model="forms.createAlias.command"/>
+                                                        v-model="forms.createAlias.command"/>
                                             </field>
                                         </div>
                                         <div class="col-md-3">
                                             <field name="alias" :form="forms.createAlias">
                                                 <label>Alias</label>
                                                 <input type="text" class="form-control"
-                                                       v-model="forms.createAlias.alias"/>
+                                                        v-model="forms.createAlias.alias"/>
                                             </field>
                                         </div>
                                         <div class="col-md-3">
                                             <field name="clearance" :form="forms.createAlias">
                                                 <label>Clearance</label>
                                                 <input type="number" min="-1" max="100" class="form-control"
-                                                       v-model="forms.createAlias.clearance"/>
+                                                        v-model="forms.createAlias.clearance"/>
                                             </field>
                                         </div>
                                     </div>
@@ -179,7 +189,8 @@
                                 </panel-form>
                             </th>
                             <th v-else colspan="4">
-                                <button class="btn btn-success" @click="adding = true" :disabled="readonly"><i class="fas fa-plus"></i> New
+                                <button class="btn btn-success" @click="adding = true" :disabled="readonly">
+                                    <i class="fas fa-plus"></i> New
                                     Alias
                                 </button>
                             </th>
