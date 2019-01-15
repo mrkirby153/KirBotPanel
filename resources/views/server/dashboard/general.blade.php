@@ -1,32 +1,6 @@
 @extends('layouts.dashboard')
 
 @section('panel')
-    <h2>Real Name Settings</h2>
-    <settings-realname inline-template>
-        <div class="row">
-            <div class="col-md-6 col-sm-12">
-                <div class="d-flex h-100 align-items-center">
-                    <input-switch label="Require Real Names"
-                            :disabled="readonly || forms.realName.realnameSetting == 'OFF'"
-                            v-model="forms.realName.requireRealname" @change="sendForm"></input-switch>
-                </div>
-            </div>
-            <div class="col-md-6 col-sm-12">
-                <div class="form-group">
-                    <label for="realname-settings"><b>Realname Settings</b></label>
-                    <select class="form-control" id="realname-settings" v-model="forms.realName.realnameSetting"
-                            :disabled="readonly"
-                            @change="sendForm">
-                        <option disabled selected>Select an option...</option>
-                        <option value="OFF">Disabled</option>
-                        <option value="FIRST_ONLY">Display first name only</option>
-                        <option value="FIRST_LAST">Display first and last name</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-    </settings-realname>
-    <hr/>
     <h2>Logging</h2>
     <settings-logging inline-template>
         <div class="row">

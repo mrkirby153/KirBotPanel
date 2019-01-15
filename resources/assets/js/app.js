@@ -27,7 +27,6 @@ Vue.component('dropdown', require('./components/Dropdown'));
 Vue.component('dropdown-menu', require('./components/DropdownMenu'));
 Vue.component('input-switch', require('./components/Switch'));
 
-require('./components/UserInfo');
 require('./components/ServerDashboard');
 require('./components/BotChat');
 require('./components/MusicQueue');

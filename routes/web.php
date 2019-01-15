@@ -26,7 +26,6 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
         Route::group(['middleware' => 'auth'], function () {
             Route::get('/{server}', 'Dashboard\GeneralController@showDashboard')->name('dashboard.general');
             Route::patch('/{server}/logging', 'Dashboard\GeneralController@updateLogging');
-            Route::post('/{server}/realname', 'Dashboard\GeneralController@setRealnameSettings');
             Route::post('/{server}/whitelist', 'Dashboard\GeneralController@updateChannelWhitelist');
             Route::post('/{server}/botName', 'Dashboard\GeneralController@setUsername');
             Route::patch('/{server}/persistence', 'Dashboard\GeneralController@setPersistence');

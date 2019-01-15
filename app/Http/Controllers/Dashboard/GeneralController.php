@@ -61,20 +61,6 @@ class GeneralController extends Controller {
         ]);
     }
 
-
-    public function setRealnameSettings(Server $server, Request $request) {
-        $this->authorize('update', $server);
-        $request->validate([
-            'realnameSetting' => 'required',
-            'requireRealname' => 'required|boolean'
-        ]);
-        $server->realname = $request->get('realnameSetting');
-        $server->require_realname = ($request->get('realnameSetting') == 'OFF') ? false : $request->get('requireRealname');
-        $server->save();
-//        Redis::publish('kirbot:update-name', json_encode(['server' => $server->id]));
-        RedisMessenger::dispatch(new RedisMessage("update-name", $server->id));
-    }
-
     public function updateLogging(Server $server, Request $request) {
         $this->authorize('update', $server);
         $request->validate([
