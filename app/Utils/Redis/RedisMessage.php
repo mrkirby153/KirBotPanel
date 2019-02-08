@@ -29,10 +29,9 @@ class RedisMessage {
      *
      * @param $key string The message key
      * @param $server string|null The server the message affects
-     * @param $user User|null The user sending the payload
      * @param $payload array|mixed The payload to send
      */
-    public function __construct($key, $server = null, $user = null, $payload = []) {
+    public function __construct($key, $server = null, $payload = []) {
         $this->key = $key;
         $this->server = $server;
         $this->payload = $payload;

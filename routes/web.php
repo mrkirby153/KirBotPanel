@@ -54,18 +54,22 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
         });
 
         Route::group(['middleware' => 'auth'], function () {
-            Route::get('/{server}/permissions', 'Dashboard\PermissionController@showPane')->name('dashboard.permissions');
+            Route::get('/{server}/permissions',
+                'Dashboard\PermissionController@showPane')->name('dashboard.permissions');
             Route::post('/{server}/permissions/{permission}', 'Dashboard\PermissionController@update');
             Route::put('/{server}/permissions', 'Dashboard\PermissionController@create');
             Route::delete('/{server}/permissions/{permission}', 'Dashboard\PermissionController@delete');
 
-            Route::get('/{server}/infractions', 'Dashboard\GeneralController@showInfractions')->name('dashboard.infractions');
+            Route::get('/{server}/infractions',
+                'Dashboard\GeneralController@showInfractions')->name('dashboard.infractions');
             Route::get('/{server}/infractions/{infraction}', 'Dashboard\GeneralController@showInfraction');
 
             Route::get('/{server}/rolePermissions', 'Dashboard\PermissionController@getRolePermissions');
             Route::put('/{server}/rolePermissions', 'Dashboard\PermissionController@createRolePermission');
-            Route::delete('/{server}/rolePermissions/{permission}', 'Dashboard\PermissionController@deleteRolePermission');
-            Route::patch('/{server}/rolePermissions/{permission}', 'Dashboard\PermissionController@updateRolePermission');
+            Route::delete('/{server}/rolePermissions/{permission}',
+                'Dashboard\PermissionController@deleteRolePermission');
+            Route::patch('/{server}/rolePermissions/{permission}',
+                'Dashboard\PermissionController@updateRolePermission');
         });
 
         Route::get('/{server}/spam', 'Dashboard\SpamController@index')->name('dashboard.spam');
@@ -73,22 +77,24 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
         Route::patch('/{server}/censor', 'Dashboard\SpamController@updateCensor')->name('dashboard.censorUpdate');
 
         // Logging
-        Route::group([], function(){
+        Route::group([], function () {
             Route::put('/{server}/logSetting', 'Dashboard\GeneralController@createLogSetting');
             Route::delete('/{server}/logSetting/{setting}', 'Dashboard\GeneralController@deleteLogSetting');
             Route::patch('/{server}/logSetting/{setting}', 'Dashboard\GeneralController@updateLogSetting');
         });
 
         // Anti-Raid
-        Route::group(['middleware' => 'auth'], function() {
+        Route::group(['middleware' => 'auth'], function () {
             Route::get('/{server}/anti-raid', 'Dashboard\AntiRaid@index')->name('dashboard.raid');
             Route::patch('/{server}/anti-raid', 'Dashboard\AntiRaid@update')->name('dashboard.raid.update');
         });
     });
 });
 // Starboard
-Route::patch('/dashboard/{starboard}/starboard', 'Dashboard\GeneralController@updateStarboard')->name('dashboard.starboard')->middleware('auth');
-Route::post('/dashboard/{server}/channels/{channel}/visibility', 'Dashboard\ChannelController@visibility')->middleware('auth');
+Route::patch('/dashboard/{starboard}/starboard',
+    'Dashboard\GeneralController@updateStarboard')->name('dashboard.starboard')->middleware('auth');
+Route::post('/dashboard/{server}/channels/{channel}/visibility',
+    'Dashboard\ChannelController@visibility')->middleware('auth');
 Route::get('/archive/{key}', 'Dashboard\GeneralController@showArchived');
 
 Route::group(['prefix' => 'admin'], function () {
@@ -96,7 +102,7 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('/', 'AdminController@show')->name('admin.main');
 });
 
-Route::group(['prefix' => 'server'], function(){
+Route::group(['prefix' => 'server'], function () {
     Route::get('/{server}/commands', 'Dashboard\GeneralController@showCommandList');
     Route::get('/{server}/queue', 'Dashboard\MusicController@displayQueue');
     Route::post('/{server}/queue', 'Dashboard\MusicController@webQueue');

@@ -16,9 +16,6 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\SomeEvent' => [
             'App\Listeners\EventListener',
         ],
-        \SocialiteProviders\Manager\SocialiteWasCalled::class => [
-            'SocialiteProviders\Discord\DiscordExtendSocialite@handle',
-        ]
     ];
 
     /**
