@@ -13,6 +13,6 @@ class Role extends Model
 
     public function server()
     {
-        return $this->belongsTo(Server::class, 'server_id');
+        return $this->belongsTo(Guild::class, 'server_id');
     }
 }

@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CustomCommand extends RandomIdModel
+class CustomCommand extends Model
 {
+    use HasRandomId;
+
     public $incrementing = false;
 
     protected $casts = [
@@ -14,7 +16,7 @@ class CustomCommand extends RandomIdModel
 
     public function guild()
     {
-        return $this->belongsTo(Server::class, 'server');
+        return $this->belongsTo(Guild::class, 'server');
     }
 
     public function save(array $options = [])

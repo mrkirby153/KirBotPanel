@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
-class RolePermission extends RandomIdModel
+use Illuminate\Database\Eloquent\Model;
+
+class RolePermission extends Model
 {
+    use HasRandomId;
+
     public $incrementing = false;
     protected $table = "role_permissions";
 

@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
-class LogSetting extends RandomIdModel
+use Illuminate\Database\Eloquent\Model;
+
+class LogSetting extends Model
 {
+    use HasRandomId;
     protected $table = "log_settings";
 
     public $incrementing = false;
@@ -21,7 +24,7 @@ class LogSetting extends RandomIdModel
 
     public function server()
     {
-        return $this->belongsTo(Server::class, 'server_id');
+        return $this->belongsTo(Guild::class, 'server_id');
     }
 
     public function channel()
