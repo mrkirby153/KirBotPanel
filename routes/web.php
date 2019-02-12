@@ -112,3 +112,4 @@ Route::group(['prefix' => 'server'], function () {
 Route::get('login', 'AuthController@doLogin')->name('login.do');
 Route::get('/auth/login', 'AuthController@showLogin')->name('login');
 Route::get('logout', 'AuthController@logout')->name('logout');
+Route::get('/add', 'Dashboard\GeneralController@redirectToAddUrl')->name('add');

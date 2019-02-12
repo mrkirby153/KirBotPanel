@@ -34,6 +34,11 @@ class GeneralController extends Controller
         return view('server.serverlist')->with(['servers' => $servers]);
     }
 
+    public function redirectToAddUrl()
+    {
+        return redirect('https://discordapp.com/oauth2/authorize?client_id=' . env('DISCORD_KEY') . '&permissions=' . env('DISCORD_PERMISSIONS', 8) . '&scope=bot');
+    }
+
     public function showDashboard(Server $server)
     {
         $this->authorize('view', $server);

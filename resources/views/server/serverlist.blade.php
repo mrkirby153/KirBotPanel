@@ -24,7 +24,7 @@
                     @endforeach
                     <div class="server add-bot">
                         <div class="server-icon">
-                            <a href="https://discordapp.com/oauth2/authorize?client_id=261292113046667276&permissions=485878983&scope=bot" target="_blank" class="d-flex">
+                            <a href="{{route('add')}}" target="_blank" class="d-flex">
                                 <div class="plus-icon">
                                     <i class="fas fa-plus plus-inner"></i>
                                 </div>
