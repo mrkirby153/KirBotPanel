@@ -118,6 +118,10 @@ class UpdateServerSettingsTable extends Migration
                         \Illuminate\Support\Facades\Log::info("Skipping $key");
                         continue;
                     }
+                    // Wrap numbers that are too large for JS in strings
+                    if(is_numeric($value) && ($value+0) > 9007199254740991) {
+                        $value = "\"$value\"";
+                    }
                     $id = \Keygen::alphanum(15)->generate();
                     $to_insert[] = [
                         'id' => $id,
