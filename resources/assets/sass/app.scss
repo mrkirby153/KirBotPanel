@@ -17,47 +17,13 @@
 @import 'elements/transitions';
 @import 'elements/queue';
 @import 'elements/quotes';
+@import 'elements/server_select';
 
 .fa-btn {
   margin-right: 10px;
 }
 
-.server-select {
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-  .server-icon {
-    margin: 10px;
-    img {
-      width: 128px;
-      height: 128px;
-      box-shadow: none;
-      -webkit-transition: box-shadow 0.25s ease-in-out;
-      -moz-transition: box-shadow 0.25s ease-in-out;
-      -ms-transition: box-shadow 0.25s ease-in-out;
-      -o-transition: box-shadow 0.25s ease-in-out;
-      transition: box-shadow 0.25s ease-in-out;
-    }
-  }
-  .server-icon:hover {
-    img {
-      box-shadow: 0 0 20px 5px #aaaaaa;
-    }
-    .server-name {
-      text-shadow: 0 0 10px #aaaaaa;
-    }
-  }
-  .server-name {
-    opacity: 1;
-    margin-left: 10px;
-    -webkit-transition: text-shadow 0.25s ease-in-out;
-    -moz-transition: text-shadow 0.25s ease-in-out;
-    -ms-transition: text-shadow 0.25s ease-in-out;
-    -o-transition: text-shadow 0.25s ease-in-out;
-    transition: text-shadow 0.25s ease-in-out;
-  }
-}
+
 
 .greyscale {
   filter: grayscale(100%);

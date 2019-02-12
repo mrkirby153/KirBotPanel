@@ -1,0 +1,62 @@
+@mixin box_shadow_transition($duration) {
+  box-shadow: none;
+  -webkit-transition: box-shadow $duration ease;
+  -moz-transition: box-shadow $duration ease;
+  -ms-transition: box-shadow $duration ease;
+  -o-transition: box-shadow $duration ease;
+  transition: box-shadow $duration ease;
+}
+
+.server-select {
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .server-icon {
+    margin: 10px;
+    img {
+      width: 128px;
+      height: 128px;
+      @include box_shadow_transition(0.25s)
+    }
+  }
+  .server-icon:hover {
+    img {
+      box-shadow: 0 0 20px 5px #aaaaaa;
+    }
+    .plus-icon {
+      box-shadow: 0 0 3px 5px #dddddd;
+    }
+    .server-name {
+      text-shadow: 0 0 10px #aaaaaa;
+    }
+  }
+  .server-name {
+    opacity: 1;
+    margin-left: 10px;
+    @include box_shadow_transition(0.25s)
+  }
+  .plus-icon {
+    width: 128px;
+    height: 128px;
+    border-style: dashed;
+    border-width: 1px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .plus-inner {
+      width: 50px;
+      height: 50px;
+      text-align: center;
+      font-size: 2.5em;
+    }
+
+    @include box_shadow_transition(0.25s)
+  }
+}
+.server-select .add-bot {
+  margin-left: 15px;
+  margin-right: 15px;
+}
