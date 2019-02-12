@@ -4,14 +4,18 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\CustomCommand;
+use App\Models\Guild;
 use App\Models\Infraction;
 use App\Models\Log;
 use App\Models\LogSetting;
+use App\Models\Quote;
 use App\Models\Server;
 use App\Models\Starboard;
 use App\Utils\AuditLogger;
 use App\Utils\Redis\RedisMessage;
 use App\Utils\RedisMessenger;
+use App\Utils\SettingsRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Response;
@@ -36,15 +40,15 @@ class GeneralController extends Controller
 
     public function redirectToAddUrl()
     {
-        return redirect('https://discordapp.com/oauth2/authorize?client_id=' . env('DISCORD_KEY') . '&permissions=' . env('DISCORD_PERMISSIONS', 8) . '&scope=bot');
+        return redirect('https://discordapp.com/oauth2/authorize?client_id=' . env('DISCORD_KEY') . '&permissions=' . env('DISCORD_PERMISSIONS',
+                8) . '&scope=bot');
     }
 
-    public function showDashboard(Server $server)
+    public function showDashboard(Guild $server)
     {
         $this->authorize('view', $server);
-        $server->load('channels');
-        $server->load('logSettings');
         $server->load('roles');
+        $server->load('channels');
         $events = Redis::get("log_events");
         if ($events == null) {
             $events = "{}";
@@ -52,7 +56,7 @@ class GeneralController extends Controller
         \JavaScript::put([
             'Server' => $server,
             'LogEvents' => json_decode($events),
-            'Starboard' => Starboard::whereId($server->id)->first()
+            'LogChannels' => LogSetting::whereServerId($server->id)->get()
         ]);
         return view('server.dashboard.general')->with([
             'tab' => 'general',
@@ -62,74 +66,60 @@ class GeneralController extends Controller
         ]);
     }
 
-    public function updateLogging(Server $server, Request $request)
+    public function updateLogging(Guild $server, Request $request)
     {
         $this->authorize('update', $server);
         $request->validate([
             'timezone' => 'required|timezone'
         ]);
-        $server->log_timezone = $request->get('timezone');
+        SettingsRepository::set($server, "log_timezone", $request->input('timezone'));
         $server->save();
         return $server;
     }
 
-    public function updateChannelWhitelist(Server $server, Request $request)
+    public function updateChannelWhitelist(Guild $server, Request $request)
     {
         $this->authorize('update', $server);
         $whitelist = $request->get('channels');
-        $server->cmd_whitelist = $whitelist;
-        $server->save();
+        SettingsRepository::set($server, "cmd_whitelist", $whitelist);
         return $server;
     }
 
-    public function updateMutedRole(Server $server, Request $request)
+    public function updateMutedRole(Guild $server, Request $request)
     {
         $this->authorize('update', $server);
-        $server->muted_role = $request->get('muted_role');
-        $server->save();
+        SettingsRepository::set($server, 'muted_role', $request->get('muted_role'));
         return $server;
     }
 
-    public function showCommandList(Server $server)
+    public function showCommandList(Guild $server)
     {
-        return view('server.commandlist')->with(['commands' => $server->commands, 'server' => $server]);
+        return view('server.commandlist')->with(['commands' => CustomCommand::whereServer($server->id)->get(), 'server' => $server]);
     }
 
-    public function showLog(Server $server)
+    public function showQuotes(Guild $server)
     {
-        $this->authorize('view', $server);
-        $logData = Log::whereServerId($server->id)->orderBy('created_at', 'desc')->paginate(10);
-        return view('server.dashboard.log')->with(['logData' => $logData, 'tab' => 'log', 'server' => $server]);
+        return view('server.quotes')->with(['quotes' => Quote::whereServerId($server->id)->get(), 'server' => $server]);
     }
 
-    public function showQuotes(Server $server)
-    {
-        return view('server.quotes')->with(['quotes' => $server->quotes, 'server' => $server]);
-    }
-
-    public function setPersistence(Server $server, Request $request)
+    public function setPersistence(Guild $server, Request $request)
     {
         $this->authorize('update', $server);
-        $server->user_persistence = $request->get('mode');
-        $server->persist_roles = $request->get('roles');
+        SettingsRepository::set($server, 'user_persistence', $request->get('mode'));
+        SettingsRepository::set($server, 'persist_roles', $request->get('roles'));
         $server->save();
     }
 
-    public function setUsername(Server $server, Request $request)
+    public function setUsername(Guild $server, Request $request)
     {
         $this->authorize('update', $server);
-        if ($request->has('name')) {
-            $server->bot_nick = $request->get('name');
-        } else {
-            $server->bot_nick = "";
-        }
-        $server->save();
-        RedisMessenger::dispatch(new RedisMessage("nickname", $server->id, null, [
+        SettingsRepository::set($server, 'bot_nick', $request->get('name'));
+        RedisMessenger::dispatch(new RedisMessage("nickname", $server->id, [
             'nickname' => !$request->has('name') ? null : $request->input('name')
         ]));
     }
 
-    public function showInfractions(Server $server)
+    public function showInfractions(Guild $server)
     {
         $this->authorize('view', $server);
         \JavaScript::put([
@@ -141,7 +131,7 @@ class GeneralController extends Controller
         ]);
     }
 
-    public function retrieveInfractions(Request $request, Server $server)
+    public function retrieveInfractions(Request $request, Guild $server)
     {
         $map = [
             'id' => 'id',
@@ -157,7 +147,7 @@ class GeneralController extends Controller
         return $builder->paginate();
     }
 
-    public function showInfraction(Server $server, Infraction $infraction)
+    public function showInfraction(Guild $server, Infraction $infraction)
     {
         if ($infraction->guild !== $server->id) {
             abort(404);
@@ -204,28 +194,29 @@ class GeneralController extends Controller
         return $response;
     }
 
-    public function createLogSetting(Request $request, Server $server)
+    public function createLogSetting(Request $request, Guild $server)
     {
         $this->authorize('update', $server);
         $request->validate([
             'channel' => 'required|exists:channels,id'
         ]);
-        $settings = $server->logSettings()->create([
-            'channel_id' => $request->get('channel'),
-            'included' => 0,
-            'excluded' => 0,
-        ]);
-        $settings->load('channel');
-        return $settings;
+        $ls = new LogSetting();
+        $ls->channel_id = $request->get('channel');
+        $ls->included = 0;
+        $ls->excluded = 0;
+        $ls->server_id = $server->id;
+        $ls->save();
+        $ls->load('channel');
+        return $ls;
     }
 
-    public function deleteLogSetting(Server $server, LogSetting $setting)
+    public function deleteLogSetting(Guild $server, LogSetting $setting)
     {
         $this->authorize('update', $server);
         $setting->delete();
     }
 
-    public function updateLogSetting(Request $request, Server $server, LogSetting $setting)
+    public function updateLogSetting(Request $request, Guild $server, LogSetting $setting)
     {
         $request->validate([
             'included' => 'array',
@@ -246,11 +237,21 @@ class GeneralController extends Controller
         return $setting;
     }
 
-    public function updateStarboard(Request $request, Starboard $starboard)
+    public function updateStarboard(Request $request, Guild $guild)
     {
-        $server = Server::whereId($starboard->id)->firstOrFail();
-        $this->authorize('update', $server);
-        $starboard->update($request->input());
-        syncServer($server->id);
+        $this->authorize('update', $guild);
+        $data = [];
+        foreach($request->all(['channel_id', 'gild_count', 'self_star', 'star_count', 'enabled']) as $k => $v) {
+            $data['starboard_'.$k] = $v;
+        }
+        if(!$data['starboard_enabled']) {
+            foreach($data as $k => $v) {
+                if($k != 'starboard_enabled') {
+                    $data[$k] = null;
+                }
+            }
+        }
+        SettingsRepository::setMultiple($guild, $data);
+        syncServer($guild->id);
     }
 }

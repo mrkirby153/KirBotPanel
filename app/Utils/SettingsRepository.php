@@ -42,6 +42,40 @@ class SettingsRepository
         }
     }
 
+
+    /**
+     * @param Guild|string $guild
+     * @param array $keys
+     * @return array
+     */
+    public static function getMultiple($guild, $keys)
+    {
+        $guild_id = ($guild instanceof Guild) ? $guild->id : $guild;
+        $settings = GuildSettings::whereGuild($guild_id)->whereIn('key', $keys)->get();
+        $values = [];
+        foreach ($settings as $setting) {
+            $values[$setting->key] = $setting->value;
+        }
+        foreach ($keys as $key) {
+            if (!isset($values[$key])) {
+                $values[$key] = null;
+            }
+        }
+        return $values;
+    }
+
+
+    /**
+     * @param Guild|string $guild
+     * @param array $keys
+     */
+    public static function setMultiple($guild, $keys)
+    {
+        foreach ($keys as $k => $v) {
+            self::set($guild, $k, $v);
+        }
+    }
+
     /**
      * @param Guild|string $guild
      * @param string $key
@@ -56,10 +90,9 @@ class SettingsRepository
             } catch (\Exception $exception) {
                 // Ignore
             }
+            return;
         }
-        if (is_object($value) || is_array($value)) {
-            $value = json_encode($value);
-        }
+        $value = self::encode($value);
         GuildSettings::updateOrCreate(['guild' => $guild_id, 'key' => $key], [
             'guild' => $guild_id,
             'key' => $key,
@@ -76,5 +109,21 @@ class SettingsRepository
     {
         $guild_id = ($guild instanceof Guild) ? $guild->id : $guild;
         GuildSettings::whereGuild($guild_id)->where('key', '=', $key)->delete();
+    }
+
+    /**
+     * @param $value
+     * @return false|string
+     */
+    public static function encode($value)
+    {
+        if (is_object($value) || is_array($value)) {
+            $value = json_encode($value);
+        } else {
+            if (is_numeric($value) && ($value + 0 > 9007199254740991)) {
+                $value = "\"$value\"";
+            }
+        }
+        return $value;
     }
 }

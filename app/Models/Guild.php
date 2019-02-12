@@ -31,4 +31,12 @@ class Guild extends Model
         }
     }
 
+    public function roles() {
+        return $this->hasMany(Role::class, 'server_id');
+    }
+
+    public function channels() {
+        return $this->hasMany(Channel::class, 'server');
+    }
+
 }

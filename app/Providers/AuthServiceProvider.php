@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Guild;
 use App\Models\Server;
 use App\Policies\ServerPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -15,7 +16,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         'App\Model' => 'App\Policies\ModelPolicy',
-        Server::class => ServerPolicy::class,
+        Guild::class => ServerPolicy::class,
     ];
 
     /**

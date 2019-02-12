@@ -3,6 +3,7 @@
 
 namespace App\Utils;
 
+use App\Models\Guild;
 use App\Models\ServerPermission;
 use App\User;
 
@@ -56,16 +57,15 @@ class PermissionHandler
      */
     private static function checkPermission(User $user, $serverId, $permission)
     {
-        $server = DiscordAPI::getServerById($user, $serverId);
-        if ($server->owner) {
+        $guild = Guild::whereId($serverId)->firstOrFail();
+        if($guild->owner == $user->id) {
             return true;
         } else {
             $perm = ServerPermission::whereServerId($serverId)->whereUserId($user->id)->first();
             if ($perm == null) {
                 return false;
             }
-            $b = $perm->permission == $permission;
-            return $b;
+            return $perm->permission == $permission;
         }
     }
 }

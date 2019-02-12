@@ -11,7 +11,9 @@ class GuildSettings extends Model
     protected $table = "guild_settings";
 
     protected $fillable = [
-        'guild', 'key', 'value'
+        'guild',
+        'key',
+        'value'
     ];
 
 
@@ -25,8 +27,14 @@ class GuildSettings extends Model
     public function getValueAttribute($value)
     {
         $json = json_decode($value);
+        if ($value == "[]") {
+            return array();
+        }
+        iF ($value == "true" || $value == "false") {
+            return $value == "true" ? true : false;
+        }
         if ($json != null) {
-            return (object)$json;
+            return $json;
         } else {
             return $value;
         }

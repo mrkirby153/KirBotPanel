@@ -1,31 +1,7 @@
 import Form from "../../form/form2";
 import axios from 'axios';
 import Vue from 'vue';
-
-Vue.component('settings-realname', {
-
-    data() {
-        return {
-            forms: {
-                realName: new Form('POST', '/dashboard/' + Server.id + '/realname', {
-                    requireRealname: Server.require_realname,
-                    realnameSetting: Server.realname
-                })
-            },
-            readonly: App.readonly
-        }
-    },
-
-    methods: {
-        sendForm() {
-            if (this.forms.realName.realnameSetting === "OFF") {
-                this.forms.realName.requireRealname = false;
-            }
-            // Panel.post('/dashboard/' + Server.id + '/realname', this.forms.realName);
-            this.forms.realName.save();
-        }
-    }
-});
+import SettingsRepository from '../../settings';
 
 Vue.component('settings-logging', {
 
@@ -47,7 +23,7 @@ Vue.component('settings-logging', {
             loading: false,
             forms: {
                 logTimezone: new Form('patch', '/dashboard/' + Server.id + '/logging', {
-                    timezone: Server.log_timezone
+                    timezone: SettingsRepository.getSettings("log_timezone")
                 })
             }
         }
@@ -65,7 +41,7 @@ Vue.component('settings-logging', {
 
     methods: {
         onMount() {
-            this.settings = Server.log_settings;
+            this.settings = LogChannels;
             this.settings.forEach(s => {
                 s.included = this.splitEvents(s.included);
                 s.excluded = this.splitEvents(s.excluded);
@@ -252,7 +228,7 @@ Vue.component('settings-channel-whitelist', {
     },
 
     mounted() {
-        this.forms.whitelist.channels = (Server.cmd_whitelist == null) ? [] : Server.cmd_whitelist;
+        this.forms.whitelist.channels = (SettingsRepository.getSettings("cmd_whitelist") == null) ? [] : SettingsRepository.getSettings("cmd_whitelist");
     },
 
     computed: {
@@ -299,7 +275,7 @@ Vue.component('settings-bot-name', {
         return {
             forms: {
                 name: new Form('post', '/dashboard/' + Server.id + '/botName', {
-                    name: Server.bot_nick
+                    name: SettingsRepository.getSettings("bot_nick")
                 })
             },
             readonly: App.readonly
@@ -315,16 +291,17 @@ Vue.component('settings-bot-name', {
 
 Vue.component('settings-user-persistence', {
     data() {
+        let userPersistence = SettingsRepository.getSettings("user_persistence");
         return {
-            roles: Server.persist_roles,
+            roles: SettingsRepository.getSettings("persist_roles"),
             selected: "",
 
             options: {
-                enabled: (Server.user_persistence & 1) > 0,
-                mute: (Server.user_persistence & 2) > 0,
-                deafen: (Server.user_persistence & 4) > 0,
-                nick: (Server.user_persistence & 8) > 0,
-                roles: (Server.user_persistence & 16) > 0
+                enabled: (userPersistence & 1) > 0,
+                mute: (userPersistence & 2) > 0,
+                deafen: (userPersistence & 4) > 0,
+                nick: (userPersistence & 8) > 0,
+                roles: (userPersistence & 16) > 0
             },
             values: {
                 enabled: 1,
@@ -408,7 +385,7 @@ Vue.component('settings-muted', {
         return {
             forms: {
                 muted: new Form('patch', '/dashboard/' + Server.id + '/muted', {
-                    muted_role: Server.muted_role != null ? Server.muted_role : ""
+                    muted_role: SettingsRepository.getSettings("muted_role") != null ? SettingsRepository.getSettings("muted_role") + "" : ""
                 })
             },
             readonly: App.readonly
@@ -426,7 +403,13 @@ Vue.component('settings-starboard', {
     data() {
         return {
             forms: {
-                starboard: new Form('patch', '/dashboard/' + Server.id + '/starboard', Object.assign({}, Starboard))
+                starboard: new Form('patch', '/dashboard/' + Server.id + '/starboard', {
+                    channel_id: SettingsRepository.getSettings("starboard_channel_id"),
+                    enabled: SettingsRepository.getSettings("starboard_enabled") === 1,
+                    gild_count: SettingsRepository.getSettings("starboard_gild_count"),
+                    self_star: SettingsRepository.getSettings("starboard_self_star"),
+                    star_count: SettingsRepository.getSettings("starboard_star_count")
+                })
             },
             readonly: App.readonly
         }
