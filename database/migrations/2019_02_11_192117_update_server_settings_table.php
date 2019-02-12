@@ -124,7 +124,7 @@ class UpdateServerSettingsTable extends Migration
                     }
                     $id = \Keygen::alphanum(15)->generate();
                     $to_insert[] = [
-                        'id' => $id,
+                        'id' => $row->{$settings['guild_field']}.'_'.$key,
                         'guild' => $row->{$settings['guild_field']},
                         'key' => $settings['prefix'] . (($settings['prefix'] != '') ? '_' : '') . $key,
                         'value' => $value,
