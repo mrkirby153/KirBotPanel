@@ -16,6 +16,8 @@ class GuildSettings extends Model
         'value'
     ];
 
+    public $incrementing = false;
+
 
     protected function performInsert(Builder $query)
     {

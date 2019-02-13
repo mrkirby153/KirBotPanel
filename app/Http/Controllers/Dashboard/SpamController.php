@@ -4,46 +4,38 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\CensorSettings;
+use App\Models\Guild;
 use App\Models\Server;
 use App\Models\SpamSettings;
+use App\Utils\SettingsRepository;
 use Illuminate\Http\Request;
 use JavaScript;
 
 class SpamController extends Controller
 {
-    public function index(Server $server)
+    public function index(Guild $server)
     {
-        $model = SpamSettings::whereId($server->id)->first();
-        $censor = CensorSettings::whereId($server->id)->first();
         Javascript::put([
-            'SpamSettings' => $model != null? json_encode($model) : json_encode(['settings'=>[]]),
-            'CensorSettings' => $censor != null? json_encode($censor) : json_encode(['settings'=>[]]),
             'Server' => $server
         ]);
         return view('server.dashboard.spam')->with(['tab' => 'spam', 'server' => $server]);
     }
 
-    public function updateSettings(Request $request, Server $server)
+    public function updateSettings(Request $request, Guild $server)
     {
         $this->authorize('update', $server);
         $request->validate([
             'settings' => 'required'
         ]);
-        SpamSettings::updateOrCreate(['id' => $server->id], [
-            'id' => $server->id,
-            'settings' => $request->get('settings')
-        ]);
+        SettingsRepository::set($server, 'spam_settings', $request->get('settings'));
     }
 
-    public function updateCensor(Request $request, Server $server)
+    public function updateCensor(Request $request, Guild $server)
     {
         $this->authorize('update', $server);
         $request->validate([
             'settings' => 'required'
         ]);
-        CensorSettings::updateOrCreate(['id' => $server->id], [
-            'id' => $server->id,
-            'settings' => $request->get('settings')
-        ]);
+        SettingsRepository::set($server, 'censor_settings', $request->get('settings'));
     }
 }

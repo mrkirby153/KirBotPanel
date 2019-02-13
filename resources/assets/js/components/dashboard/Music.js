@@ -1,18 +1,18 @@
 import Form from "../../form/form2";
+import SettingsRepository from "../../settings";
 
 Vue.component('settings-music', {
     data() {
         return {
             music: new Form('post', '/dashboard/' + Server.id + '/music', {
-                enabled: Music.enabled,
-                whitelist_mode: Music.mode,
-                channels: Music.mode !== 'OFF' ? Music.channels : [],
-                blacklisted_urls: '',
-                max_queue_length: Music.max_queue_length,
-                max_song_length: Music.max_song_length,
-                skip_cooldown: Music.skip_cooldown,
-                skip_timer: Music.skip_timer,
-                playlists: Music.playlists
+                enabled: SettingsRepository.getSettings("music_enabled"),
+                whitelist_mode: SettingsRepository.getSettings("music_mode"),
+                channels: SettingsRepository.getSettings("music_mode") !== 'OFF' ? SettingsRepository.getSettings("music_channels") : [],
+                max_queue_length: SettingsRepository.getSettings("music_max_queue_length"),
+                max_song_length: SettingsRepository.getSettings("music_max_song_length"),
+                skip_cooldown: SettingsRepository.getSettings("music_skip_cooldown"),
+                skip_timer: SettingsRepository.getSettings("music_skip_timer"),
+                playlists: SettingsRepository.getSettings("music_playlists") === 1
             }),
             readonly: App.readonly,
             selecting: "",
