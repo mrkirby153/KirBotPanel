@@ -114,9 +114,6 @@ class GeneralController extends Controller
     {
         $this->authorize('update', $server);
         SettingsRepository::set($server, 'bot_nick', $request->get('name'));
-        RedisMessenger::dispatch(new RedisMessage("nickname", $server->id, [
-            'nickname' => !$request->has('name') ? null : $request->input('name')
-        ]));
     }
 
     public function showInfractions(Guild $server)

@@ -105,8 +105,8 @@ class SettingsRepository
      */
     public static function delete($guild, $key)
     {
-        $guild_id = ($guild instanceof Guild) ? $guild->id : $guild;
-        GuildSettings::whereGuild($guild_id)->where('key', '=', $key)->delete();
+        $guild_id = ($guild instanceof Guild) ? $guild->id : $guild ;
+        GuildSettings::whereGuild($guild_id)->where('key', '=', $key)->first()->delete();
     }
 
     /**
