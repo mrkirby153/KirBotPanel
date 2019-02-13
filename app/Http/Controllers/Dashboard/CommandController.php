@@ -6,27 +6,30 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\CommandAlias;
 use App\Models\CustomCommand;
+use App\Models\Guild;
 use App\Models\Server;
 use App\Utils\AuditLogger;
+use App\Utils\SettingsRepository;
 use Illuminate\Http\Request;
 
 class CommandController extends Controller
 {
-    public function showCommands(Server $server, Request $request)
+    public function showCommands(Guild $server, Request $request)
     {
         $this->authorize('view', $server);
+        $commands = CustomCommand::whereServer($server->id)->get();
         if ($request->expectsJson()) {
-            return response()->json($server->commands);
+            return response()->json($commands);
         }
         \JavaScript::put([
             'Server' => $server,
-            'Commands' => $server->commands,
-            'CommandAliases' => $server->commandAliases
+            'Commands' => $commands,
+            'CommandAliases' => CommandAlias::whereServerId($server->id)->get()
         ]);
         return view('server.dashboard.commands')->with(['server' => $server, 'tab' => 'commands']);
     }
 
-    public function updateCommand(Server $server, CustomCommand $command, Request $request)
+    public function updateCommand(Guild $server, CustomCommand $command, Request $request)
     {
         $this->authorize('update', $server);
         $this->validate($request, [
@@ -48,29 +51,26 @@ class CommandController extends Controller
         return $command;
     }
 
-    public function updateDiscrim(Server $server, Request $request)
+    public function updateDiscrim(Guild $server, Request $request)
     {
         $this->authorize('update', $server);
         $this->validate($request, [
-            'discriminator' => 'required',
-            'silent' => 'required|boolean'
+            'discriminator' => 'required'
         ]);
-        $server->command_discriminator = $request->discriminator;
-        $server->command_silent_fail = $request->silent;
-        $server->save();
+        SettingsRepository::set($server, "command_discriminator", $request->input('discriminator'));
     }
 
-    public function updateSilent(Server $server, Request $request) {
+    public function updateSilent(Guild $server, Request $request) {
         $this->authorize('update', $server);
         $this->validate($request, [
             'silent' => 'required|boolean'
         ]);
-        $server->command_silent_fail = $request->silent;
+        SettingsRepository::set($server, "command_silent_fail", $request->input('silent'));
         $server->save();
     }
 
 
-    public function createCommand(Server $server, Request $request)
+    public function createCommand(Guild $server, Request $request)
     {
         $this->authorize('update', $server);
         $this->validate($request, [
@@ -92,14 +92,14 @@ class CommandController extends Controller
         return $cmd;
     }
 
-    public function deleteCommand(Server $server, $command)
+    public function deleteCommand(Guild $server, $command)
     {
         $this->authorize('update', $server);
         CustomCommand::destroy($command);
         syncServer($server->id);
     }
 
-    public function createAlias(Server $server, Request $request)
+    public function createAlias(Guild $server, Request $request)
     {
         $this->authorize('update', $server);
         $this->validate($request, [
@@ -121,10 +121,10 @@ class CommandController extends Controller
         return $command;
     }
 
-    public function deleteAlias(Server $server, $alias)
+    public function deleteAlias(Guild $server, $alias)
     {
         CommandAlias::destroy($alias);
         syncServer($server->id);
-        return $server->commandAliases;
+        return CommandAlias::whereServerId($server->id)->get();
     }
 }

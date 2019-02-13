@@ -1,16 +1,16 @@
 import Form from "../../form/form2";
 import axios from 'axios';
+import SettingsRepository from "../../settings";
 
 Vue.component('settings-commands', {
     data() {
         return {
             forms: {
                 cmdDiscriminator: new Form('patch', '/dashboard/' + Server.id + '/discriminator', {
-                    discriminator: Server.command_discriminator,
-                    silent: Server.command_silent_fail
+                    discriminator: SettingsRepository.getSettings("command_discriminator")
                 }),
                 silentFail: new Form('patch', '/dashboard/'+Server.id+'/commandFail', {
-                    silent: Server.command_silent_fail
+                    silent: SettingsRepository.getSettings("cmd_silent_fail")
                 }),
                 editCommand: new Form("", "", {
                     name: '',
@@ -87,7 +87,6 @@ Vue.component('settings-commands', {
         saveCommand() {
             let method = this.addingCommand ? "put" : "patch";
             let url = '/dashboard/' + Server.id + (this.addingCommand ? '/commands' : '/command/' + this.forms.editCommand.id);
-            console.log("Performing " + method + " to " + url);
             this.forms.editCommand[method](url).then(resp => {
                 if (this.addingCommand) {
                     this.commands.push(resp.data);
