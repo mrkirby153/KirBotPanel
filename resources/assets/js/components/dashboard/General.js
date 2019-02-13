@@ -293,7 +293,7 @@ Vue.component('settings-user-persistence', {
     data() {
         let userPersistence = SettingsRepository.getSettings("user_persistence");
         return {
-            roles: SettingsRepository.getSettings("persist_roles"),
+            roles: SettingsRepository.getSettings("persist_roles", []),
             selected: "",
 
             options: {

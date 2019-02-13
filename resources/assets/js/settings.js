@@ -1,9 +1,9 @@
 export default class SettingsRepository {
 
-    static getSettings(key) {
+    static getSettings(key, def = null) {
         let result =  _.find(Server.settings, {key: key});
         if(result === undefined) {
-            return null;
+            return def;
         }
         return result.value;
     }
