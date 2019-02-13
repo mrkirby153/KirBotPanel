@@ -26,9 +26,7 @@ class SettingsRepository
         if ($settings == null) {
             if ($create && $default != null) {
                 // Don't bother creating a null item
-                if (is_object($default) || is_array($default)) {
-                    $default = json_encode($default);
-                }
+                $default = self::encode($default);
                 return GuildSettings::create([
                     'guild' => $guild_id,
                     'key' => $key,

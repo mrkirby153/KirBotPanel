@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\Guild;
 use App\Models\Role;
 use App\Models\RolePermission;
 use App\Models\Server;
@@ -26,7 +27,7 @@ class PermissionController extends Controller
         $this->rolePerms = $rolePermission;
     }
 
-    public function showPane(Server $server)
+    public function showPane(Guild $server)
     {
         $this->authorize('view', $server);
         $results = $this->getPermissions($server);
@@ -41,7 +42,7 @@ class PermissionController extends Controller
         return view('server.dashboard.permissions')->with(['server' => $server, 'tab' => 'permissions']);
     }
 
-    private function getPermissions(Server $server)
+    private function getPermissions(Guild $server)
     {
         return \DB::table($this->permissions->getTable())->select([
             'server_permissions.id', 'server_permissions.user_id', 'server_permissions.permission',
@@ -50,7 +51,7 @@ class PermissionController extends Controller
             ->where('server_permissions.server_id', $server->id)->distinct()->orderBy('server_permissions.user_id', 'desc')->get();
     }
 
-    public function update(Request $request, Server $server, ServerPermission $permission)
+    public function update(Request $request, Guild $server, ServerPermission $permission)
     {
         $this->authorize('update', $server);
         $permission->permission = $request->get('permission', 'VIEW');
@@ -58,14 +59,14 @@ class PermissionController extends Controller
         return $this->getPermissions($server);
     }
 
-    public function delete(Server $server, ServerPermission $permission)
+    public function delete(Guild $server, ServerPermission $permission)
     {
         $this->authorize('update', $server);
         $permission->delete();
         return $this->getPermissions($server);
     }
 
-    public function create(Request $request, Server $server)
+    public function create(Request $request, Guild $server)
     {
         $this->authorize('update', $server);
         $request->validate([
@@ -81,7 +82,7 @@ class PermissionController extends Controller
         return $this->getPermissions($server);
     }
 
-    public function createRolePermission(Request $request, Server $server)
+    public function createRolePermission(Request $request, Guild $server)
     {
         $this->authorize('update', $server);
         $request->validate([
@@ -97,14 +98,14 @@ class PermissionController extends Controller
         return $model;
     }
 
-    public function deleteRolePermission(Server $server, RolePermission $permission)
+    public function deleteRolePermission(Guild $server, RolePermission $permission)
     {
         $this->authorize('update', $server);
         $permission->delete();
         syncServer($server->id);
     }
 
-    public function updateRolePermission(Request $request, Server $server, RolePermission $permission)
+    public function updateRolePermission(Request $request, Guild $server, RolePermission $permission)
     {
         $this->authorize('update', $server);
         $request->validate([
@@ -117,7 +118,7 @@ class PermissionController extends Controller
         return $permission;
     }
 
-    public function getRolePermissions(Server $server)
+    public function getRolePermissions(Guild $server)
     {
         $permissions = \DB::table($this->rolePerms->getTable())->select(['role_permissions.*', 'roles.name'])
             ->leftJoin('roles', 'role_permissions.role_id', '=', 'roles.id')
