@@ -51,6 +51,10 @@ export class Form {
 
     submit(method, uri) {
         let form = this;
+        if(this.busy) {
+            console.warn("Attempting to submit a form that's already submitting");
+            return;
+        }
         return new Promise((resolve, reject) => {
             form.start();
             axios[method](uri, form).then(resp => {
