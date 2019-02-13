@@ -98,7 +98,9 @@ Route::post('/dashboard/{server}/channels/{channel}/visibility',
 Route::get('/archive/{key}', 'Dashboard\GeneralController@showArchived');
 
 Route::group(['prefix' => 'admin'], function () {
-    Route::get('/chat', 'BotChatController@index')->middleware('global_admin');
+    Route::get('/settings', 'AdminController@settings')->name('admin.settings');
+    Route::post('/settings/{guild}/{key}', 'AdminController@updateSettings');
+    Route::delete('/settings/{guild}/{key}', 'AdminController@clearSettings');
     Route::get('/', 'AdminController@show')->name('admin.main');
 });
 

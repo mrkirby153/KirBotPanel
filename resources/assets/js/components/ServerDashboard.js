@@ -6,3 +6,4 @@ require("./dashboard/Permissions");
 require("./dashboard/Spam");
 require("./dashboard/Infractions");
 require("./dashboard/AntiRaid");
+require("./dashboard/AdminSettings");

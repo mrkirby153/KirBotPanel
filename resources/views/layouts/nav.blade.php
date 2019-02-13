@@ -10,6 +10,7 @@
             @if(Auth::user()->admin)
                 <a class="dropdown-item" href="{{route('admin.main')}}"><i class="fa-btn"><i
                                 class="fas fa-cogs"></i></i>Admin</a>
+                <a class="dropdown-item" href="{{route('admin.settings')}}"><i class="fa-btn"><i class="fas fa-wrench"></i></i>Settings</a>
             @endif
             <a class="dropdown-item" href="{{url('/logout')}}"><i class="fa-btn"><i
                             class="fas fa-sign-out-alt "></i></i>Logout</a>
