@@ -26,7 +26,6 @@ class GuildSettings extends Model
     {
         self::saving(function (GuildSettings $model) {
             if ($model->isDirty()) {
-                \Log::debug("Model is dirty, updating bot");
                 $msg = new RedisMessage("setting-update", $model->guild, [
                     'key' => $model->key,
                     'value' => $model->value
@@ -53,10 +52,7 @@ class GuildSettings extends Model
     public function getValueAttribute($value)
     {
         $json = json_decode($value);
-        if ($value == "[]") {
-            return array();
-        }
-        iF ($value == "true" || $value == "false") {
+        if ($value == "true" || $value == "false") {
             return $value == "true" ? true : false;
         }
         if ($json != null) {
