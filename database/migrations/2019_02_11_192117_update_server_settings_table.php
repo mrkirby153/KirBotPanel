@@ -1,11 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-class UpdateServerSettingsTable extends Migration
-{
+class UpdateServerSettingsTable extends Migration {
 
     private $relations = [
         'anti_raid_settings' => ['id'],
@@ -64,8 +63,7 @@ class UpdateServerSettingsTable extends Migration
      *
      * @return void
      */
-    public function up()
-    {
+    public function up() {
         Schema::disableForeignKeyConstraints();
         Schema::create('guild', function (Blueprint $table) {
             $table->string('id')->primary()->unique();
@@ -119,14 +117,15 @@ class UpdateServerSettingsTable extends Migration
                         continue;
                     }
                     // Wrap numbers that are too large for JS in strings
-                    if(is_numeric($value) && ($value+0) > 9007199254740991) {
+                    if (is_numeric($value) && ($value + 0) > 9007199254740991) {
                         $value = "\"$value\"";
                     }
                     $id = \Keygen::alphanum(15)->generate();
+                    $prefix = $settings['prefix'] . (($settings['prefix'] != '') ? '_' : '');
                     $to_insert[] = [
-                        'id' => $row->{$settings['guild_field']}.'_'.$key,
+                        'id' => $row->{$settings['guild_field']} . '_' . $prefix . $key,
                         'guild' => $row->{$settings['guild_field']},
-                        'key' => $settings['prefix'] . (($settings['prefix'] != '') ? '_' : '') . $key,
+                        'key' => $prefix . $key,
                         'value' => $value,
                         'created_at' => \Carbon\Carbon::now(),
                         'updated_at' => \Carbon\Carbon::now()
@@ -143,8 +142,7 @@ class UpdateServerSettingsTable extends Migration
      *
      * @return void
      */
-    public function down()
-    {
+    public function down() {
         Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('guild');
         foreach ($this->relations as $table => $keys) {
