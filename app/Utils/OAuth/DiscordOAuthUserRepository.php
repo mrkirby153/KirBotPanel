@@ -37,6 +37,7 @@ class DiscordOAuthUserRepository
         $raw_user = self::getRawUser($tokens->getAccessToken());
         $user = User::firstOrCreate(['id' => $raw_user->id], [
             'id' => $raw_user->id,
+            'username' => $raw_user->username,
             'token' => $tokens->getAccessToken(),
             'refresh_token' => $tokens->getExpiresAt(),
             'expires_in' => $tokens->getExpiresAt()
