@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Http\Composers\UserComposer;
 use Illuminate\Support\ServiceProvider;
 use Validator;
 
@@ -19,6 +20,7 @@ class AppServiceProvider extends ServiceProvider
         Validator::extend('without_spaces', function ($attr, $value) {
             return preg_match('/^\S*$/u', $value);
         });
+        \View::composer('layouts.master', UserComposer::class);
     }
 
     /**
