@@ -23,9 +23,13 @@
     "react": "^16.8.3",
     "resolve-url-loader": "2.3.1",
     "sass": "^1.17.2",
-    "sass-loader": "7.*"
+    "sass-loader": "7.*",
+    "ts-loader": "^5.3.3",
+    "typescript": "^3.3.3333"
   },
   "dependencies": {
+    "@types/react": "^16.8.5",
+    "@types/react-dom": "^16.8.2",
     "bootstrap-sass": "^3.3.7",
     "jsoneditor": "^5.19.0",
     "react-dom": "^16.8.3",

@@ -16,5 +16,20 @@ if (process.env.NODE_ENV === "production") {
     mix.version();
 }
 
+mix.webpackConfig({
+    module: {
+        rules: [
+            {
+                test: /\.tsx?$/,
+                loader: "ts-loader",
+                exclude: /node_modules/
+            }
+        ],
+    },
+    resolve: {
+        extensions: ["*", ".js", ".jsx", ".vue", ".ts", ".tsx"]
+    }
+});
+
 if (process.env.MIX_BROWSERSYNC_ENABLED === "true")
     mix.browserSync(process.env.MIX_BROWSERSYNC_PROXY);
