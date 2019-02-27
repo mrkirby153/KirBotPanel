@@ -12,6 +12,9 @@
 */
 
 Route::get('/', function () {
+    JavaScript::put([
+        'testing' => 4
+    ]);
     return view('home');
 });
 
