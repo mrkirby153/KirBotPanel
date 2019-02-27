@@ -47,23 +47,30 @@ class GeneralController extends Controller
     public function showDashboard(Guild $server)
     {
         $this->authorize('view', $server);
-        $server->load('roles');
-        $server->load('channels');
-        $events = Redis::get("log_events");
-        if ($events == null) {
-            $events = "{}";
-        }
         \JavaScript::put([
-            'Server' => $server,
-            'LogEvents' => json_decode($events),
-            'LogChannels' => LogSetting::whereServerId($server->id)->get()
+            'Server' => $server
         ]);
-        return view('server.dashboard.general')->with([
-            'tab' => 'general',
-            'server' => $server,
-            'textChannels' => $this->getTextChannelsFromBot($server->id),
-            'roles' => $server->roles
+        return view('layouts.dashboard')->with([
+            'server' => $server
         ]);
+//        $this->authorize('view', $server);
+//        $server->load('roles');
+//        $server->load('channels');
+//        $events = Redis::get("log_events");
+//        if ($events == null) {
+//            $events = "{}";
+//        }
+//        \JavaScript::put([
+//            'Server' => $server,
+//            'LogEvents' => json_decode($events),
+//            'LogChannels' => LogSetting::whereServerId($server->id)->get()
+//        ]);
+//        return view('server.dashboard.general')->with([
+//            'tab' => 'general',
+//            'server' => $server,
+//            'textChannels' => $this->getTextChannelsFromBot($server->id),
+//            'roles' => $server->roles
+//        ]);
     }
 
     public function updateLogging(Guild $server, Request $request)

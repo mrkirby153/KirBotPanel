@@ -1,4 +1,5 @@
 import NavBar from './components/NavBar';
+import Dashboard from './components/Dashboard';
 import ReactDOM from 'react-dom';
 import React from 'react';
 
@@ -20,6 +21,11 @@ require('bootstrap');
 let navMount = document.getElementById("nav-mount");
 if (navMount) {
     ReactDOM.render(<NavBar/>, navMount);
+}
+
+let dashMount = document.getElementById("dash-mount");
+if(dashMount) {
+    ReactDOM.render(<Dashboard/>, dashMount);
 }
 
 // Enable hot reload

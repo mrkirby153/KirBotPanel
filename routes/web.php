@@ -12,9 +12,6 @@
 */
 
 Route::get('/', function () {
-    JavaScript::put([
-        'testing' => 4
-    ]);
     return view('home');
 });
 
@@ -25,6 +22,8 @@ Route::get('/serverIcon', 'Dashboard\GeneralController@makeIcon')->name('serverI
 Route::get('/servers', 'Dashboard\GeneralController@displayOverview')->name('dashboard.all');
 Route::group(['middleware' => ['has_discord_token', 'can:view,server']], function () {
     Route::group(['prefix' => 'dashboard'], function () {
+
+        Route::get('/{server}/{any}', 'Dashboard\GeneralController@showDashboard')->where('any', '.*');
         // General
         Route::group(['middleware' => 'auth'], function () {
             Route::get('/{server}', 'Dashboard\GeneralController@showDashboard')->name('dashboard.general');
