@@ -22,6 +22,8 @@ public/css/app\.css
 public/fonts/vendor
 
 public/js/app\.js
+public/js/vendor\.js
+public/js/manifest\.js
 
 public/mix-manifest\.json
 
