@@ -1,13 +1,14 @@
 import React, {
-    Component,
+    Component, FunctionComponent,
     ReactElement,
 } from 'react';
 import {
     Route,
     NavLink,
-    BrowserRouter, Switch, RouteProps, NavLinkProps, LinkProps
+    BrowserRouter, Switch, RouteProps, NavLinkProps, withRouter
 } from 'react-router-dom';
 import declared_routes from '../dash_routes';
+import {encode} from "punycode";
 
 function DashLink(props: NavLinkProps) {
     let p = Object.assign({}, props);
@@ -15,35 +16,122 @@ function DashLink(props: NavLinkProps) {
     return (<NavLink {...p}>{props.children}</NavLink>)
 }
 
-export default class Dashboard extends Component {
+interface DashLinkProps {
+    name: string,
+    icon: string,
+    route: string,
+    exact?: boolean
+}
+
+const links: DashLinkProps[] = [
+    {
+        name: 'General',
+        icon: 'cog',
+        route: '/',
+        exact: true
+    },
+    {
+        name: 'Permissions',
+        icon: 'user-shield',
+        route: '/permissions'
+    }
+];
+
+
+export default class DashRouter extends Component {
+    render() {
+        const Dash = withRouter(props => <Dashboard {...props}/>);
+        return (<BrowserRouter>
+            <Dash/>
+        </BrowserRouter>)
+    }
+}
+
+class Dashboard extends Component<RouteProps, {}> {
 
     static generateRoutes(): ReactElement[] {
         let routes: ReactElement[] = [];
         declared_routes.forEach(route => {
             let props: RouteProps = Object.assign({}, route);
             props.path = '/dashboard/' + window.Server.id + props.path;
-            routes.push(<Route {...props}/>)
+            routes.push(<Route {...props} key={props.path}/>)
         });
         return routes;
     }
 
+    static getDashLinks(): ReactElement[] {
+        let dash_links: ReactElement[] = [];
+        links.forEach(link => {
+            dash_links.push(<li className="nav-item">
+                <DashLink to={link.route} key={link.name} exact={link.exact} className="nav-link text-left"><i
+                    className={"fas fa-" + link.icon + " menu-icon"}/>{link.name}</DashLink>
+            </li>)
+        });
+        return dash_links;
+    }
+
+    static getServerIcon(): string {
+        if (window.Server.icon_id != null) {
+            return 'https://cdn.discordapp.com/icons/' + window.Server.id + '/' + window.Server.icon_id + '.png';
+        } else {
+            return '/serverIcon?server_name=' + encodeURI(window.Server.name);
+        }
+    }
+
+    getRouteName(): string {
+        let location = this.props.location;
+        if (location) {
+            let pathName = location.pathname;
+            // Remove the trailing /
+            if (pathName.endsWith("/")) {
+                pathName = pathName.substr(0, pathName.length - 1);
+            }
+
+            let matches = declared_routes.filter(route => {
+                let routePath = '/dashboard/' + window.Server.id + (route.path as string);
+                if (routePath.endsWith("/")) {
+                    routePath = routePath.substr(0, routePath.length - 1);
+                }
+                console.log(pathName + "==" + routePath);
+                return pathName == routePath
+            });
+
+            if (matches.length > 0) {
+                return matches[0].name
+            }
+        }
+        return "???";
+    }
+
     render() {
         return (
-            <BrowserRouter>
-                <div>
-                    <h1>SPA</h1>
-                    <ul className="header">
-                        <li><DashLink to={"/"} exact={true}>Home</DashLink></li>
-                        <li><DashLink to={"/permissions"}>Permissions</DashLink></li>
-                    </ul>
-
-                    <div className="content">
-                        <Switch>
-                            {Dashboard.generateRoutes()}
-                        </Switch>
+            <div className="row mt-2">
+                <div className="col-lg-2 col-md-2">
+                    <div className="mb-3 pb-2 card">
+                        <div className="card-header">
+                            {window.Server.name}
+                        </div>
+                        <div className="card-body d-flex flex-column">
+                            <img className="m-auto server-image" src={Dashboard.getServerIcon()} alt={window.Server.name}/>
+                            <ul className="nav nav-pills nav-fill flex-column mt-3 dashboard-sidebar">
+                                {Dashboard.getDashLinks()}
+                            </ul>
+                        </div>
                     </div>
                 </div>
-            </BrowserRouter>
+                <div className="col-lg-10 col-md-12 pb-sm-2">
+                    <div className="card">
+                        <div className="card-header">
+                            {this.getRouteName()}
+                        </div>
+                        <div className="card-body">
+                            <Switch>
+                                {Dashboard.generateRoutes()}
+                            </Switch>
+                        </div>
+                    </div>
+                </div>
+            </div>
         );
     }
 }
