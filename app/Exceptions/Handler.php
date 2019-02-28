@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 class Handler extends ExceptionHandler
 {
@@ -66,7 +67,7 @@ class Handler extends ExceptionHandler
                     $status = 404;
                 }
                 if ($this->isHttpException($exception)) {
-                    $status = $exception->getCode();
+                    $status = $exception->getStatusCode();
                 }
                 if ($status == 0) {
                     $status = 400;

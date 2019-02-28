@@ -32,6 +32,11 @@ if (token) {
     console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
+let apiToken = document.head.querySelector('meta[name="api-token"]');
+if (apiToken) {
+    window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + apiToken.content;
+}
+
 window.axios.interceptors.response.use(null, function (error) {
     if (error.response.status !== 422) {
         toastr["error"]("An unknown error occurred. Please try again");

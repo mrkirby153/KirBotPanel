@@ -4,6 +4,9 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <meta name="csrf-token" content="{{csrf_token()}}"/>
+    @if(!\Auth::guest())
+        <meta name="api-token" content="{{Auth::user()->api_token}}"/>
+    @endif
     <title>{{ config('app.name', 'Laravel') }} - @yield('title')</title>
     <link rel="stylesheet" href="{{mix('css/app.css')}}"/>
 
