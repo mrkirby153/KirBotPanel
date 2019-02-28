@@ -1,5 +1,5 @@
 import React, {
-    Component, FunctionComponent,
+    Component,
     ReactElement,
 } from 'react';
 import {
@@ -8,7 +8,6 @@ import {
     BrowserRouter, Switch, RouteProps, NavLinkProps, withRouter
 } from 'react-router-dom';
 import declared_routes from '../dash_routes';
-import {encode} from "punycode";
 
 function DashLink(props: NavLinkProps) {
     let p = Object.assign({}, props);
@@ -52,9 +51,7 @@ class Dashboard extends Component<RouteProps, {}> {
     static generateRoutes(): ReactElement[] {
         let routes: ReactElement[] = [];
         declared_routes.forEach(route => {
-            let props: RouteProps = Object.assign({}, route);
-            props.path = '/dashboard/' + window.Server.id + props.path;
-            routes.push(<Route {...props} key={props.path}/>)
+            routes.push(<Route {...route} key={route.path as string} path={'/dashboard/' + window.Server.id + route.path}/>)
         });
         return routes;
     }
@@ -62,8 +59,8 @@ class Dashboard extends Component<RouteProps, {}> {
     static getDashLinks(): ReactElement[] {
         let dash_links: ReactElement[] = [];
         links.forEach(link => {
-            dash_links.push(<li className="nav-item">
-                <DashLink to={link.route} key={link.name} exact={link.exact} className="nav-link text-left"><i
+            dash_links.push(<li className="nav-item"key={link.name} >
+                <DashLink to={link.route} exact={link.exact} className="nav-link text-left"><i
                     className={"fas fa-" + link.icon + " menu-icon"}/>{link.name}</DashLink>
             </li>)
         });
@@ -92,7 +89,6 @@ class Dashboard extends Component<RouteProps, {}> {
                 if (routePath.endsWith("/")) {
                     routePath = routePath.substr(0, routePath.length - 1);
                 }
-                console.log(pathName + "==" + routePath);
                 return pathName == routePath
             });
 

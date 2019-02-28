@@ -17,3 +17,4 @@ Route::get('/{server}/queue', 'Dashboard\MusicController@getQueueJson');
 
 // Authenticated routes
 Route::get('/user', 'ApiController@getCurrentUser');
+Route::get('/log-events', 'ApiController@getLogEvents');
