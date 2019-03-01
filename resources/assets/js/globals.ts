@@ -1,18 +1,19 @@
 // Interface for global data
-interface ServerSetting {
+declare interface ServerSetting {
     id: string,
     guild: string,
     key: string,
     value: string
 }
-interface Channel {
+declare interface Channel {
     id: string,
     server: string,
     channel_name: string,
     type: 'TEXT' | 'VOICE',
     hidden: number
 }
-interface Window {
+
+declare interface Panel {
     user?: {
         id: string,
         username: string,
@@ -27,4 +28,8 @@ interface Window {
         settings: ServerSetting[],
         channels: Channel[]
     }
+}
+
+declare interface Window {
+    Panel: Panel
 }

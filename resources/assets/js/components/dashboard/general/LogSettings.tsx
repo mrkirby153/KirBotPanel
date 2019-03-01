@@ -1,6 +1,5 @@
 import React, {ChangeEvent, Component, ReactElement} from 'react';
 import axios from 'axios';
-import {Channel} from '../../../types/ApiTypes';
 import Modal from "../../Modal";
 import _ from 'lodash';
 import {string} from "prop-types";
@@ -252,7 +251,7 @@ export default class LoggingSettings extends Component<{}, LoggingSettingsState>
                 log_events: resp.data
             })
         });
-        axios.get('/api/guild/' + window.Server.id + '/log-settings').then(resp => {
+        axios.get('/api/guild/' + window.Panel.Server.id + '/log-settings').then(resp => {
             this.setState({
                 log_settings: resp.data
             });
@@ -303,7 +302,7 @@ export default class LoggingSettings extends Component<{}, LoggingSettingsState>
     saveLogSettings(id: string) {
         let object = _.find(this.state.log_settings, f => f.id == id);
         if (object != null) {
-            axios.patch('/api/guild/' + window.Server.id + '/log-settings/' + id, {
+            axios.patch('/api/guild/' + window.Panel.Server.id + '/log-settings/' + id, {
                 include: object.included,
                 exclude: object.excluded
             })
@@ -320,7 +319,7 @@ export default class LoggingSettings extends Component<{}, LoggingSettingsState>
     render() {
         let textChannelElements: ReactElement[] = [];
         let existingIds = this.state.log_settings.map(s => s.channel_id);
-        window.Server.channels.filter(chan => chan.type == 'TEXT').filter(chan => _.indexOf(existingIds, chan.id) == -1).forEach(channel => {
+        window.Panel.Server.channels.filter(chan => chan.type == 'TEXT').filter(chan => _.indexOf(existingIds, chan.id) == -1).forEach(channel => {
             textChannelElements.push(<option key={channel.id} value={channel.id}>#{channel.channel_name}</option>);
         });
 

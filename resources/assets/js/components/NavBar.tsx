@@ -61,8 +61,8 @@ function NavBarLeft(props: any) {
 }
 
 function NavBarRight(props: any) {
-    let guest = window.user == null;
-    let admin = window.user != null ? window.user.admin == 1 : false;
+    let guest = window.Panel.user == null;
+    let admin = window.Panel.user != null ? window.Panel.user.admin == 1 : false;
     let parts: any[] = [];
     if (guest) {
         return (<ul className="navbar-nav">
@@ -80,7 +80,7 @@ function NavBarRight(props: any) {
     }
     return (
         <ul className="navbar-nav">
-            <NavBarDropdown name={window.user == null ? 'Unknown' : window.user.username} direction="right">
+            <NavBarDropdown name={window.Panel.user == null ? 'Unknown' : window.Panel.user.username} direction="right">
                 {parts}
             </NavBarDropdown>
         </ul>

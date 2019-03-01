@@ -11,7 +11,7 @@ import declared_routes from '../dash_routes';
 
 function DashLink(props: NavLinkProps) {
     let p = Object.assign({}, props);
-    p.to = '/dashboard/' + window.Server.id + props.to;
+    p.to = '/dashboard/' + window.Panel.Server.id + props.to;
     return (<NavLink {...p}>{props.children}</NavLink>)
 }
 
@@ -51,7 +51,7 @@ class Dashboard extends Component<RouteProps, {}> {
     static generateRoutes(): ReactElement[] {
         let routes: ReactElement[] = [];
         declared_routes.forEach(route => {
-            routes.push(<Route {...route} key={route.path as string} path={'/dashboard/' + window.Server.id + route.path}/>)
+            routes.push(<Route {...route} key={route.path as string} path={'/dashboard/' + window.Panel.Server.id + route.path}/>)
         });
         return routes;
     }
@@ -68,10 +68,10 @@ class Dashboard extends Component<RouteProps, {}> {
     }
 
     static getServerIcon(): string {
-        if (window.Server.icon_id != null) {
-            return 'https://cdn.discordapp.com/icons/' + window.Server.id + '/' + window.Server.icon_id + '.png';
+        if (window.Panel.Server.icon_id != null) {
+            return 'https://cdn.discordapp.com/icons/' + window.Panel.Server.id + '/' + window.Panel.Server.icon_id + '.png';
         } else {
-            return '/serverIcon?server_name=' + encodeURI(window.Server.name);
+            return '/serverIcon?server_name=' + encodeURI(window.Panel.Server.name);
         }
     }
 
@@ -85,7 +85,7 @@ class Dashboard extends Component<RouteProps, {}> {
             }
 
             let matches = declared_routes.filter(route => {
-                let routePath = '/dashboard/' + window.Server.id + (route.path as string);
+                let routePath = '/dashboard/' + window.Panel.Server.id + (route.path as string);
                 if (routePath.endsWith("/")) {
                     routePath = routePath.substr(0, routePath.length - 1);
                 }
@@ -105,10 +105,10 @@ class Dashboard extends Component<RouteProps, {}> {
                 <div className="col-lg-2 col-md-2">
                     <div className="mb-3 pb-2 card">
                         <div className="card-header">
-                            {window.Server.name}
+                            {window.Panel.Server.name}
                         </div>
                         <div className="card-body d-flex flex-column">
-                            <img className="m-auto server-image" src={Dashboard.getServerIcon()} alt={window.Server.name}/>
+                            <img className="m-auto server-image" src={Dashboard.getServerIcon()} alt={window.Panel.Server.name}/>
                             <ul className="nav nav-pills nav-fill flex-column mt-3 dashboard-sidebar">
                                 {Dashboard.getDashLinks()}
                             </ul>
