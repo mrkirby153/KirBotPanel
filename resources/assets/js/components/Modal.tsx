@@ -1,4 +1,4 @@
-import {Component} from 'react';
+import {Component, FunctionComponent, ReactElement} from 'react';
 import * as React from "react";
 import {isObject} from "util";
 
@@ -31,6 +31,15 @@ export default class Modal extends Component<ModalProps, ModalState> {
         } else {
             this.hideModal();
         }
+    }
+
+    componentWillUnmount(): void {
+        this.destroy();
+    }
+
+    destroy() {
+        document.body.removeChild(document.getElementsByClassName('modal-backdrop')[0]);
+        document.body.classList.remove('modal-open');
     }
 
     showModal() {
