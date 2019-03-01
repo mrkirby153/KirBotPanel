@@ -238,6 +238,13 @@ export default class LoggingSettings extends Component<{}, LoggingSettingsState>
         this.updateLogSettings = this.updateLogSettings.bind(this);
         this.saveLogSettings = this.saveLogSettings.bind(this);
         this.delete = this.delete.bind(this);
+        this.onChange = this.onChange.bind(this);
+    }
+
+    onChange(event) {
+        const {name, value, type, checked} = event.target;
+        // @ts-ignore
+        type === "checkbox" ? this.setState({[name]: checked}) : this.setState({[name]: value});
     }
 
 
@@ -254,6 +261,11 @@ export default class LoggingSettings extends Component<{}, LoggingSettingsState>
         axios.get('/api/guild/' + window.Panel.Server.id + '/log-settings').then(resp => {
             this.setState({
                 log_settings: resp.data
+            });
+        });
+        axios.get('/api/guild/' + window.Panel.Server.id + '/log-timezone').then(resp => {
+            this.setState({
+                log_timezone: resp.data
             });
         })
     }
@@ -356,8 +368,9 @@ export default class LoggingSettings extends Component<{}, LoggingSettingsState>
                         </div>
                         <div className="col-6">
                             <div className="form-group">
-                                <label htmlFor="logTimezone"><b>Log Timezone</b></label>
-                                <input type="text" className="form-control" name="logTimezone" id="logTimezone"/>
+                                <label htmlFor="log_timezone"><b>Log Timezone</b></label>
+                                <input type="text" className="form-control" name="log_timezone" id="log_timezone"
+                                       value={this.state.log_timezone} onChange={this.onChange}/>
                             </div>
                         </div>
                     </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Guild;
 use App\Models\LogSetting;
+use App\Utils\SettingsRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 
@@ -30,6 +31,11 @@ class ApiController extends Controller
     {
         $this->authorize('view', $guild);
         return LogSetting::whereServerId($guild->id)->get();
+    }
+
+    public function getLogTimezone(Guild $guild) {
+        $this->authorize('view', $guild);
+        return SettingsRepository::get($guild, 'log_timezone', 'UTC', true);
     }
 
     public function updateLogSettings(Request $request, Guild $guild, LogSetting $settings) {
