@@ -15,8 +15,6 @@ Route::get('/', function () {
     return view('home');
 });
 
-Route::get('/name', 'UserController@displaySettings');
-Route::post('/name', 'UserController@updateName')->middleware('auth');
 Route::get('/serverIcon', 'Dashboard\GeneralController@makeIcon')->name('serverIcon');
 
 Route::get('/servers', 'Dashboard\GeneralController@displayOverview')->name('dashboard.all');
@@ -95,8 +93,7 @@ Route::group(['middleware' => ['has_discord_token', 'can:view,server']], functio
 // Starboard
 Route::patch('/dashboard/{guild}/starboard',
     'Dashboard\GeneralController@updateStarboard')->name('dashboard.starboard')->middleware('auth');
-Route::post('/dashboard/{server}/channels/{channel}/visibility',
-    'Dashboard\ChannelController@visibility')->middleware('auth');
+
 Route::get('/archive/{key}', 'Dashboard\GeneralController@showArchived');
 
 Route::group(['prefix' => 'admin'], function () {
