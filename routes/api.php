@@ -21,4 +21,5 @@ Route::get('/log-events', 'ApiController@getLogEvents');
 
 Route::group(['prefix' => '/guild/{guild}'], function () {
     Route::get('/log-settings', 'ApiController@getLogSettings');
+    Route::patch('/log-settings/{settings}', 'ApiController@updateLogSettings');
 });

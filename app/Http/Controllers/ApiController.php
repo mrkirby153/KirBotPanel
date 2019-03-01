@@ -28,6 +28,15 @@ class ApiController extends Controller
 
     public function getLogSettings(Guild $guild)
     {
+        $this->authorize('view', $guild);
         return LogSetting::whereServerId($guild->id)->get();
+    }
+
+    public function updateLogSettings(Request $request, Guild $guild, LogSetting $settings) {
+        $this->authorize('update', $guild);
+        $settings->included = $request->input('include');
+        $settings->excluded = $request->input('exclude');
+        $settings->save();
+        return $settings;
     }
 }

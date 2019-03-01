@@ -16,7 +16,8 @@ interface LoggingSettingsState {
         created_at: string,
         updated_at: string,
         channel: Channel
-    }[]
+    }[],
+    log_timezone: string
 }
 
 interface LogChannelProps {
@@ -27,6 +28,9 @@ interface LogChannelProps {
     onDelete?: Function
     onCheck?: Function
     onSave?: Function
+    selectAll?: Function,
+    invertSelection?: Function,
+    selectNone?: Function
 }
 
 interface LogChannelState {
@@ -58,6 +62,10 @@ class LogChannel extends Component<LogChannelProps, LogChannelState> {
         this.edit = this.edit.bind(this);
         this.onCheck = this.onCheck.bind(this);
         this.onClose = this.onClose.bind(this);
+        this.setMode = this.setMode.bind(this);
+        this.selectAll = this.selectAll.bind(this);
+        this.selectNone = this.selectNone.bind(this);
+        this.invertSelection = this.invertSelection.bind(this);
     }
 
 
@@ -124,6 +132,38 @@ class LogChannel extends Component<LogChannelProps, LogChannelState> {
         }
     }
 
+    setMode(mode: 'include' | 'exclude') {
+        this.setState({
+            settings: {
+                mode: mode
+            }
+        });
+    }
+
+    selectAll() {
+        if (this.props.selectAll) {
+            this.props.selectAll({
+                mode: this.state.settings.mode
+            })
+        }
+    }
+
+    selectNone() {
+        if (this.props.selectNone) {
+            this.props.selectNone({
+                mode: this.state.settings.mode
+            })
+        }
+    }
+
+    invertSelection() {
+        if (this.props.invertSelection) {
+            this.props.invertSelection({
+                mode: this.state.settings.mode
+            })
+        }
+    }
+
     render() {
         let elementCheckboxes: ReactElement[] = [];
         let mode = (this.state.settings.mode) ? this.state.settings.mode : 'include';
@@ -163,10 +203,12 @@ class LogChannel extends Component<LogChannelProps, LogChannelState> {
                        onClose={this.onClose}>
                     <div className="btn-group">
                         <button
-                            className={"btn btn-primary" + (mode === 'include' ? ' active' : '')}>Include
+                            className={"btn btn-primary" + (mode === 'include' ? ' active' : '')}
+                            onClick={(e => this.setMode('include'))}>Include
                         </button>
                         <button
-                            className={'btn btn-primary' + (mode === 'exclude' ? ' active' : '')}>Exclude
+                            className={'btn btn-primary' + (mode === 'exclude' ? ' active' : '')}
+                            onClick={(e => this.setMode('exclude'))}>Exclude
                         </button>
                     </div>
                     <p className="mt-1">
@@ -174,9 +216,9 @@ class LogChannel extends Component<LogChannelProps, LogChannelState> {
                         all elements
                     </p>
                     <div className="btn-group btn-group-sm">
-                        <button className="btn btn-secondary">Select All</button>
-                        <button className="btn btn-secondary">Select None</button>
-                        <button className="btn btn-secondary">Invert Selection</button>
+                        <button className="btn btn-secondary" onClick={this.selectAll}>Select All</button>
+                        <button className="btn btn-secondary" onClick={this.selectNone}>Select None</button>
+                        <button className="btn btn-secondary" onClick={this.invertSelection}>Invert Selection</button>
                     </div>
                     {elementCheckboxes}
                 </Modal>
@@ -191,10 +233,12 @@ export default class LoggingSettings extends Component<{}, LoggingSettingsState>
         super(props);
         this.state = {
             log_events: [],
-            log_settings: []
+            log_settings: [],
+            log_timezone: 'UTC'
         };
         this.updateLogSettings = this.updateLogSettings.bind(this);
         this.saveLogSettings = this.saveLogSettings.bind(this);
+        this.delete = this.delete.bind(this);
     }
 
 
@@ -222,25 +266,61 @@ export default class LoggingSettings extends Component<{}, LoggingSettingsState>
             let clone = Object.assign({}, oldState);
             let mode = (data.mode == 'include') ? 'included' : 'excluded';
             if (data.checked) {
-                // @ts-ignore
                 clone.log_settings[index][mode] |= data.number;
             } else {
-                // @ts-ignore
                 clone.log_settings[index][mode] &= ~data.number;
             }
             return clone;
         });
     }
 
+    massSelect(id: string, type: 'exclude' | 'include', mode: 'all' | 'none' | 'invert') {
+        this.setState((oldState, props) => {
+            let index = _.findIndex(oldState.log_settings, f => f.id == id);
+
+            let clone = Object.assign({}, oldState);
+            let ty = (type == 'include') ? 'included' : 'excluded';
+
+            let val = clone.log_settings[index][ty];
+            switch (mode) {
+                case 'all':
+                    Object.keys(this.state.log_events).forEach(key => {
+                        val |= this.state.log_events[key];
+                    });
+                    break;
+                case 'none':
+                    val = 0;
+                    break;
+                case 'invert':
+                    val = ~val;
+                    break;
+            }
+            clone.log_settings[index][ty] = val;
+            return clone;
+        });
+    }
+
     saveLogSettings(id: string) {
         let object = _.find(this.state.log_settings, f => f.id == id);
-        console.log("saving");
-        console.log(object);
+        if (object != null) {
+            axios.patch('/api/guild/' + window.Server.id + '/log-settings/' + id, {
+                include: object.included,
+                exclude: object.excluded
+            })
+        }
+    }
+
+    delete(id: string) {
+        let arr = _.filter(this.state.log_settings, f => f.id != id);
+        this.setState({
+            log_settings: arr
+        })
     }
 
     render() {
         let textChannelElements: ReactElement[] = [];
-        window.Server.channels.filter(chan => chan.type == 'TEXT').forEach(channel => {
+        let existingIds = this.state.log_settings.map(s => s.channel_id);
+        window.Server.channels.filter(chan => chan.type == 'TEXT').filter(chan => _.indexOf(existingIds, chan.id) == -1).forEach(channel => {
             textChannelElements.push(<option key={channel.id} value={channel.id}>#{channel.channel_name}</option>);
         });
 
@@ -248,7 +328,12 @@ export default class LoggingSettings extends Component<{}, LoggingSettingsState>
             <LogChannel channel={fn.channel} excluded={fn.excluded} included={fn.included}
                         logEvents={this.state.log_events} key={fn.id}
                         onCheck={(e: any) => this.updateLogSettings(fn.id, e)}
-                        onSave={() => this.saveLogSettings(fn.id)}/>));
+                        onSave={() => this.saveLogSettings(fn.id)}
+                        invertSelection={e => this.massSelect(fn.id, e.mode, 'invert')}
+                        selectAll={e => this.massSelect(fn.id, e.mode, 'all')}
+                        selectNone={e => this.massSelect(fn.id, e.mode, 'none')}
+                        onDelete={e => this.delete(fn.id)}/>
+        ));
 
         return (
             <div className="row">

@@ -1,3 +1,4 @@
+import '../../../globals';
 export interface Channel {
     id: string,
     server: string,

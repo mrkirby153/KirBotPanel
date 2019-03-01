@@ -63,7 +63,7 @@ function NavBarLeft(props: any) {
 function NavBarRight(props: any) {
     let guest = window.user == null;
     let admin = window.user != null ? window.user.admin == 1 : false;
-    let parts = [];
+    let parts: any[] = [];
     if (guest) {
         return (<ul className="navbar-nav">
             <NavBarLink href="/login" title="Log In"/>

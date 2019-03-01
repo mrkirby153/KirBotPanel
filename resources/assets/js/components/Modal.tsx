@@ -38,8 +38,10 @@ export default class Modal extends Component<ModalProps, ModalState> {
     }
 
     destroy() {
-        document.body.removeChild(document.getElementsByClassName('modal-backdrop')[0]);
-        document.body.classList.remove('modal-open');
+        if(this.state.shown) {
+            document.body.removeChild(document.getElementsByClassName('modal-backdrop')[0]);
+            document.body.classList.remove('modal-open');
+        }
     }
 
     showModal() {
