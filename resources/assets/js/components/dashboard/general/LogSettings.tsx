@@ -2,6 +2,7 @@ import React, {ChangeEvent, Component, ReactElement} from 'react';
 import axios from 'axios';
 import Modal from "../../Modal";
 import _ from 'lodash';
+import toastr from 'toastr';
 import {string} from "prop-types";
 
 interface LoggingSettingsState {
@@ -20,6 +21,7 @@ interface LoggingSettingsState {
 }
 
 interface LogChannelProps {
+    id: string,
     channel: any,
     included: number,
     excluded: number,
@@ -112,7 +114,7 @@ class LogChannel extends Component<LogChannelProps, LogChannelState> {
 
     onCheck(event: any) {
         let target = event.target;
-        let event_name = target.id.substring("option_".length);
+        let event_name = target.id.substring(`option_${this.props.id}_`.length);
         if (this.props.onCheck) {
             this.props.onCheck({
                 mode: this.state.settings.mode,
@@ -174,10 +176,10 @@ class LogChannel extends Component<LogChannelProps, LogChannelState> {
             if (this.props.logEvents.hasOwnProperty(key)) {
                 let checked = _.indexOf(this.state.settings.mode == 'include' ? explodedIn : explodedEx, key) != -1;
                 elementCheckboxes.push(<div className="custom-control custom-checkbox" key={key}>
-                    <input type="checkbox" className="custom-control-input" id={"option_" + key}
+                    <input type="checkbox" className="custom-control-input" id={"option_" + this.props.id + "_" + key}
                            checked={checked} onChange={this.onCheck}/>
                     <label className="custom-control-label"
-                           htmlFor={"option_" + key}>{key}</label>
+                           htmlFor={"option_" + this.props.id + '_' + key}>{key}</label>
                 </div>);
             }
         }
@@ -239,6 +241,7 @@ export default class LoggingSettings extends Component<{}, LoggingSettingsState>
         this.saveLogSettings = this.saveLogSettings.bind(this);
         this.delete = this.delete.bind(this);
         this.onChange = this.onChange.bind(this);
+        this.createNewLogSettings = this.createNewLogSettings.bind(this);
     }
 
     onChange(event) {
@@ -321,11 +324,48 @@ export default class LoggingSettings extends Component<{}, LoggingSettingsState>
         }
     }
 
+    createNewLogSettings(channel: string) {
+        let prev_settings = [...this.state.log_settings];
+        let c = _.find(window.Panel.Server.channels, f => f.id == channel);
+        if (c == undefined) {
+            toastr.error('Channel not found');
+            return;
+        }
+        prev_settings.push({
+            id: "",
+            server_id: window.Panel.Server.id,
+            channel_id: channel,
+            included: 0,
+            excluded: 0,
+            created_at: "",
+            updated_at: "",
+            channel: c
+        });
+        this.setState({
+            log_settings: prev_settings
+        });
+        axios.put('/api/guild/' + window.Panel.Server.id + '/log-settings', {
+            channel: channel
+        }).then(resp => {
+            // Replace the existing settings with the one from the API
+            console.log(resp.data);
+            let prev_settings = [...this.state.log_settings];
+            console.log(prev_settings);
+            let index = _.findIndex(prev_settings, {channel_id: channel});
+            prev_settings[index] = resp.data;
+            console.log(prev_settings);
+            this.setState({
+                log_settings: prev_settings
+            })
+        })
+    }
+
     delete(id: string) {
         let arr = _.filter(this.state.log_settings, f => f.id != id);
         this.setState({
             log_settings: arr
-        })
+        });
+        axios.delete('/api/guild/' + window.Panel.Server.id + /log-settings/ + id)
     }
 
     render() {
@@ -336,7 +376,7 @@ export default class LoggingSettings extends Component<{}, LoggingSettingsState>
         });
 
         let logChannels = this.state.log_settings.map(fn => (
-            <LogChannel channel={fn.channel} excluded={fn.excluded} included={fn.included}
+            <LogChannel id={fn.id} channel={fn.channel} excluded={fn.excluded} included={fn.included}
                         logEvents={this.state.log_events} key={fn.id}
                         onCheck={(e: any) => this.updateLogSettings(fn.id, e)}
                         onSave={() => this.saveLogSettings(fn.id)}
@@ -360,7 +400,8 @@ export default class LoggingSettings extends Component<{}, LoggingSettingsState>
                         <div className="col-6">
                             <div className="form-group">
                                 <label htmlFor="channelAdd"><b>Add a channel</b></label>
-                                <select className="form-control" name="channelAdd" id="channelAdd" defaultValue={""}>
+                                <select className="form-control" name="channelAdd" id="channelAdd" defaultValue={""}
+                                        onChange={e => this.createNewLogSettings(e.target.value)}>
                                     <option value={""} disabled>Add a channel...</option>
                                     {textChannelElements}
                                 </select>

@@ -45,4 +45,19 @@ class ApiController extends Controller
         $settings->save();
         return $settings;
     }
+
+    public function deleteLogSettings(Guild $guild, LogSetting $settings) {
+        $this->authorize('update', $guild);
+        return $settings->delete() ? "true" : "false";
+    }
+
+    public function createLogSettings(Request $request, Guild $guild) {
+        $this->authorize('update', $guild);
+        return LogSetting::create([
+            'server_id' => $guild->id,
+            'channel_id' => $request->input('channel'),
+            'included' => 0,
+            'excluded' => 0
+        ])->load('channel');
+    }
 }
