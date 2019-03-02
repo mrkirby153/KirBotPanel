@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 
 interface FieldProps {
     help?: string,
-    errors?: string,
-    success?: string
+    errors?: string|null,
+    success?: string|null
 }
 export default class Field extends Component<FieldProps, {}> {
     constructor(props) {
