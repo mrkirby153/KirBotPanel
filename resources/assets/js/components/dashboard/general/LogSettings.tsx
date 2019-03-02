@@ -1,9 +1,11 @@
 import React, {ChangeEvent, Component, ReactElement} from 'react';
 import axios from 'axios';
 import Modal from "../../Modal";
+import SettingsRepository from '../../../settings_repository'
 import _ from 'lodash';
 import toastr from 'toastr';
 import {string} from "prop-types";
+import {Settings} from "http2";
 
 interface LoggingSettingsState {
     log_events: any[],
@@ -266,10 +268,8 @@ export default class LoggingSettings extends Component<{}, LoggingSettingsState>
                 log_settings: resp.data
             });
         });
-        axios.get('/api/guild/' + window.Panel.Server.id + '/log-timezone').then(resp => {
-            this.setState({
-                log_timezone: resp.data
-            });
+        this.setState({
+            log_timezone: SettingsRepository.getSetting('log_timezone')
         })
     }
 

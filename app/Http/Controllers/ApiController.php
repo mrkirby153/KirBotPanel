@@ -33,11 +33,6 @@ class ApiController extends Controller
         return LogSetting::whereServerId($guild->id)->get();
     }
 
-    public function getLogTimezone(Guild $guild) {
-        $this->authorize('view', $guild);
-        return SettingsRepository::get($guild, 'log_timezone', 'UTC', true);
-    }
-
     public function updateLogSettings(Request $request, Guild $guild, LogSetting $settings) {
         $this->authorize('update', $guild);
         $settings->included = $request->input('include');
@@ -59,5 +54,13 @@ class ApiController extends Controller
             'included' => 0,
             'excluded' => 0
         ])->load('channel');
+    }
+
+    public function setBotNick(Request $request, Guild $guild) {
+        $this->authorize('update', $guild);
+        $request->validate([
+           'nick' => 'max:32'
+        ]);
+        SettingsRepository::set($guild, 'bot_nick', $request->input('nick'));
     }
 }
