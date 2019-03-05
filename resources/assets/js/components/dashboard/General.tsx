@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import LoggingSettings from './general/LogSettings';
 import Field from "../Field";
 import BotNick from "./general/BotNick";
+import MutedRole from "./general/MutedRole";
 
 export default class General extends Component {
 
@@ -13,6 +14,9 @@ export default class General extends Component {
                 <div className="row">
                     <div className="col-lg-6 col-md-12">
                         <BotNick/>
+                    </div>
+                    <div className="col-lg-6 col-md-12">
+                        <MutedRole/>
                     </div>
                 </div>
             </div>

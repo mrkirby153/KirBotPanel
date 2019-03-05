@@ -25,4 +25,5 @@ Route::group(['prefix' => '/guild/{guild}'], function () {
     Route::patch('/log-settings/{settings}', 'ApiController@updateLogSettings');
     Route::delete('/log-settings/{settings}', 'ApiController@deleteLogSettings');
     Route::post('/bot-nick', 'ApiController@setBotNick');
+    Route::post('/muted-role', 'ApiController@setMutedRole');
 });

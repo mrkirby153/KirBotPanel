@@ -13,6 +13,16 @@ declare interface Channel {
     hidden: number
 }
 
+declare interface Role {
+    id: string,
+    name: string,
+    order: number,
+    permissions: number,
+    server_id: string,
+    created_at: string,
+    updated_at: string
+}
+
 declare interface Panel {
     user?: {
         id: string,
@@ -26,7 +36,8 @@ declare interface Panel {
         name: string,
         icon_id: string|null,
         settings: ServerSetting[],
-        channels: Channel[]
+        channels: Channel[],
+        roles: Role[]
     }
 }
 

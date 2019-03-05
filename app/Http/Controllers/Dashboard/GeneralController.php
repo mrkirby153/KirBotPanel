@@ -48,6 +48,7 @@ class GeneralController extends Controller
     {
         $this->authorize('view', $server);
         $server->load('channels');
+        $server->load('roles');
         \JavaScript::put([
             'Server' => $server
         ]);

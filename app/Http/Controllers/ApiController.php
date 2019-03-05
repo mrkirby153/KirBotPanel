@@ -63,4 +63,9 @@ class ApiController extends Controller
         ]);
         SettingsRepository::set($guild, 'bot_nick', $request->input('nick'));
     }
+
+    public function setMutedRole(Request $request, Guild $guild){
+        $this->authorize('update', $guild);
+        SettingsRepository::set($guild, 'muted_role', $request->input('role'));
+    }
 }
