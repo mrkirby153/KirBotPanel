@@ -32,7 +32,7 @@ class Guild extends Model
     }
 
     public function roles() {
-        return $this->hasMany(Role::class, 'server_id');
+        return $this->hasMany(Role::class, 'server_id')->orderBy('order', 'desc');
     }
 
     public function channels() {
