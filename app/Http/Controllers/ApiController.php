@@ -7,9 +7,14 @@ use App\Models\LogSetting;
 use App\Utils\SettingsRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Validation\Rule;
 
 class ApiController extends Controller
 {
+
+    public static $valid_settings = [
+
+    ];
 
     public function __construct()
     {
@@ -67,5 +72,16 @@ class ApiController extends Controller
     public function setMutedRole(Request $request, Guild $guild){
         $this->authorize('update', $guild);
         SettingsRepository::set($guild, 'muted_role', $request->input('role'));
+    }
+
+    public function apiSetting(Request $request, Guild $guild) {
+        $this->authorize('update', $guild);
+        $request->validate([
+            'key' => [
+                'required',
+                Rule::in(static::$valid_settings)
+            ],
+        ]);
+        SettingsRepository::set($guild, $request->input('key'), $request->input('value'));
     }
 }

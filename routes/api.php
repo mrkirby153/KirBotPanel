@@ -20,6 +20,7 @@ Route::get('/user', 'ApiController@getCurrentUser');
 Route::get('/log-events', 'ApiController@getLogEvents');
 
 Route::group(['prefix' => '/guild/{guild}'], function () {
+    Route::patch('/setting', 'ApiController@apiSetting');
     Route::get('/log-settings', 'ApiController@getLogSettings');
     Route::put('/log-settings', 'ApiController@createLogSettings');
     Route::patch('/log-settings/{settings}', 'ApiController@updateLogSettings');

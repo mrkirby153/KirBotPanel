@@ -1,4 +1,6 @@
 import _ from 'lodash';
+import axios from 'axios';
+import toastr from 'toastr';
 
 export default class SettingsRepository {
 
@@ -10,7 +12,7 @@ export default class SettingsRepository {
         return result['value'];
     }
 
-    static setSetting(key: string, value: any) {
+    static setSetting(key: string, value: any, persist?: boolean) {
         let result = _.find(window.Panel.Server.settings, {key: key});
         if (result == null) {
             window.Panel.Server.settings.push({
@@ -22,5 +24,17 @@ export default class SettingsRepository {
             return;
         }
         result.value = value;
+
+        if (persist) {
+            axios.patch('/api/guild/' + window.Panel.Server.id + '/setting', {
+                key: key,
+                value: value
+            }).catch(e => {
+                if (e.response.status == 422) {
+                    console.warn("Received 422 when attempting to save key " + key);
+                    toastr.warning('Key ' + key + ' is not whitelisted for saving');
+                }
+            });
+        }
     }
 }
