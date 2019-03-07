@@ -13,7 +13,7 @@ class ApiController extends Controller
 {
 
     public static $valid_settings = [
-
+        'persist_roles', 'user_persistence'
     ];
 
     public function __construct()

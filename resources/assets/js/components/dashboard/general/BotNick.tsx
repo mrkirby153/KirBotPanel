@@ -80,6 +80,9 @@ export default class BotNick extends Component<{}, BotNickState> {
                 <h2>
                     Bot Nickname
                 </h2>
+                <p>
+                    Sets the bot's nickname
+                </p>
                 <Form busy={this.state.busy} onSubmit={this.save}>
                     <Field success={this.state.success ? "Name has been updated" : null}
                            errors={this.state.errors['nick']}>
