@@ -4,6 +4,7 @@ import Field from "../Field";
 import BotNick from "./general/BotNick";
 import MutedRole from "./general/MutedRole";
 import UserPersistence from "./general/UserPersistence";
+import ChannelWhitelist from "./general/ChannelWhitelist";
 
 export default class General extends Component {
 
@@ -22,6 +23,8 @@ export default class General extends Component {
                 </div>
                 <hr/>
                 <UserPersistence/>
+                <hr/>
+                <ChannelWhitelist/>
             </div>
         )
     }
