@@ -13,7 +13,16 @@ class ApiController extends Controller
 {
 
     public static $valid_settings = [
-        'persist_roles', 'user_persistence', 'cmd_whitelist'
+        'persist_roles',
+        'user_persistence',
+        'cmd_whitelist',
+        'starboard_enabled',
+        'starboard_channel_id',
+        'starboard_enabled',
+        'starboard_gild_count',
+        'starboard_self_star',
+        'starboard_star_count',
+        'quotes_enabled'
     ];
 
     public function __construct()
@@ -38,7 +47,8 @@ class ApiController extends Controller
         return LogSetting::whereServerId($guild->id)->get();
     }
 
-    public function updateLogSettings(Request $request, Guild $guild, LogSetting $settings) {
+    public function updateLogSettings(Request $request, Guild $guild, LogSetting $settings)
+    {
         $this->authorize('update', $guild);
         $settings->included = $request->input('include');
         $settings->excluded = $request->input('exclude');
@@ -46,12 +56,14 @@ class ApiController extends Controller
         return $settings;
     }
 
-    public function deleteLogSettings(Guild $guild, LogSetting $settings) {
+    public function deleteLogSettings(Guild $guild, LogSetting $settings)
+    {
         $this->authorize('update', $guild);
         return $settings->delete() ? "true" : "false";
     }
 
-    public function createLogSettings(Request $request, Guild $guild) {
+    public function createLogSettings(Request $request, Guild $guild)
+    {
         $this->authorize('update', $guild);
         return LogSetting::create([
             'server_id' => $guild->id,
@@ -61,20 +73,23 @@ class ApiController extends Controller
         ])->load('channel');
     }
 
-    public function setBotNick(Request $request, Guild $guild) {
+    public function setBotNick(Request $request, Guild $guild)
+    {
         $this->authorize('update', $guild);
         $request->validate([
-           'nick' => 'max:32'
+            'nick' => 'max:32'
         ]);
         SettingsRepository::set($guild, 'bot_nick', $request->input('nick'));
     }
 
-    public function setMutedRole(Request $request, Guild $guild){
+    public function setMutedRole(Request $request, Guild $guild)
+    {
         $this->authorize('update', $guild);
         SettingsRepository::set($guild, 'muted_role', $request->input('role'));
     }
 
-    public function apiSetting(Request $request, Guild $guild) {
+    public function apiSetting(Request $request, Guild $guild)
+    {
         $this->authorize('update', $guild);
         $request->validate([
             'key' => [

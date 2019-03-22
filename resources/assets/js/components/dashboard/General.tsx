@@ -5,6 +5,7 @@ import BotNick from "./general/BotNick";
 import MutedRole from "./general/MutedRole";
 import UserPersistence from "./general/UserPersistence";
 import ChannelWhitelist from "./general/ChannelWhitelist";
+import Starboard from './general/Starboard';
 
 export default class General extends Component {
 
@@ -25,6 +26,8 @@ export default class General extends Component {
                 <UserPersistence/>
                 <hr/>
                 <ChannelWhitelist/>
+                <hr/>
+                <Starboard/>
             </div>
         )
     }
