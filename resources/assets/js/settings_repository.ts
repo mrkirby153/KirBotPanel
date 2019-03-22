@@ -21,9 +21,9 @@ export default class SettingsRepository {
                 key: key,
                 value: value
             });
-            return;
+        } else {
+            result.value = value;
         }
-        result.value = value;
 
         if (persist) {
             axios.patch('/api/guild/' + window.Panel.Server.id + '/setting', {
