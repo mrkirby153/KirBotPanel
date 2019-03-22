@@ -244,12 +244,19 @@ export default class LoggingSettings extends Component<{}, LoggingSettingsState>
         this.delete = this.delete.bind(this);
         this.onChange = this.onChange.bind(this);
         this.createNewLogSettings = this.createNewLogSettings.bind(this);
+
+        this.saveSettings = _.debounce(this.saveSettings, 300);
     }
 
     onChange(event) {
         const {name, value, type, checked} = event.target;
         // @ts-ignore
         type === "checkbox" ? this.setState({[name]: checked}) : this.setState({[name]: value});
+        type === "checkbox" ? this.saveSettings(name, checked) : this.saveSettings(name, value);
+    }
+
+    saveSettings(key, value) {
+        SettingsRepository.setSetting(key, value, true);
     }
 
 
