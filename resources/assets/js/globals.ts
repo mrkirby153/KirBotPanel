@@ -23,6 +23,13 @@ declare interface Role {
     updated_at: string
 }
 
+declare interface PanelPermission {
+    id: string,
+    user_id: string,
+    permission: "VIEW" | "ADMIN" | "EDIT",
+    user: null | string,
+}
+
 declare interface Panel {
     user?: {
         id: string,

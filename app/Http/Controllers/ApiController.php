@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Guild;
 use App\Models\LogSetting;
+use App\Models\ServerPermission;
 use App\Utils\SettingsRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
@@ -98,5 +99,55 @@ class ApiController extends Controller
             ],
         ]);
         SettingsRepository::set($guild, $request->input('key'), $request->input('value'));
+    }
+
+    public function updatePanelPermission(Request $request, Guild $guild, ServerPermission $permission) {
+        $this->authorize('update', $guild);
+        $request->validate([
+            'permission' => Rule::in('VIEW', 'EDIT', 'ADMIN')
+        ]);
+        $permission->permission = $request->input('permission');
+        $permission->save();
+        return $permission;
+    }
+
+    public function deletePanelPermission(Guild $guild, ServerPermission $permission) {
+        $this->authorize('update', $guild);
+        $permission->delete();
+    }
+
+    public function createPanelPermission(Request $request, Guild $guild) {
+        $this->authorize('update', $guild);
+        $request->validate([
+            'id' => 'required|numeric',
+            'permission' => ['required', Rule::in('VIEW', 'EDIT', 'ADMIN')]
+        ]);
+        $p = new ServerPermission();
+        $p->server_id = $guild->id;
+        $p->permission = $request->input('permission');
+        $p->user_id = $request->input('id');
+        $p->save();
+
+        $seen_user = \DB::table('seen_users')->where('id', $request->input('id'))->first();
+
+        $user = $seen_user != null? $seen_user->username .'#' . $seen_user->discriminator : null;
+        return response()->json([
+            'id' => $p->id,
+            'user_id' => $p->user_id,
+            'permission' => $p->permission,
+            'user' => $user
+        ]);
+    }
+
+    public function getPanelPermissions(Guild $guild)
+    {
+        $this->authorize('view', $guild);
+        return \DB::table('server_permissions')->select([
+            'server_permissions.id',
+            'server_permissions.user_id',
+            'server_permissions.permission'
+        ])->selectRaw('CONCAT(`seen_users`.`username`, \'#\', `seen_users`.`discriminator`) AS `user`')->leftJoin('seen_users',
+            'server_permissions.user_id', '=', 'seen_users.id')->where('server_permissions.server_id',
+            $guild->id)->orderBy('server_permissions.created_at')->get();
     }
 }

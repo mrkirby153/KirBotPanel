@@ -13,4 +13,6 @@ class ServerPermission extends Model
     protected $fillable = [
         'user_id', 'server_id', 'permission'
     ];
+
+    public $incrementing = false;
 }

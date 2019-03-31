@@ -1,8 +1,13 @@
 import React, {Component} from 'react';
+import PanelPermissions from "./permissions/PanelPermissions";
 
 export default class Permissions extends Component {
 
     render() {
-        return (<h1>Permissions Page</h1>)
+        return (
+            <div className="col-12">
+                <PanelPermissions/>
+            </div>
+        )
     }
 }

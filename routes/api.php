@@ -27,4 +27,9 @@ Route::group(['prefix' => '/guild/{guild}'], function () {
     Route::delete('/log-settings/{settings}', 'ApiController@deleteLogSettings');
     Route::post('/bot-nick', 'ApiController@setBotNick');
     Route::post('/muted-role', 'ApiController@setMutedRole');
+
+    Route::get('/permissions/panel', 'ApiController@getPanelPermissions');
+    Route::patch('/permissions/panel/{permission}', 'ApiController@updatePanelPermission');
+    Route::put('/permissions/panel', 'ApiController@createPanelPermission');
+    Route::delete('/permissions/panel/{permission}', 'ApiController@deletePanelPermission');
 });
