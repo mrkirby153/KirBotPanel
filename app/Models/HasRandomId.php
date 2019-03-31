@@ -12,7 +12,8 @@ trait HasRandomId
     public static function bootHasRandomId()
     {
         static::creating(function ($item) {
-            $item->setAttribute($item->getRandomKeyName(), \Keygen::alphanum($item->keySize)->generate());
+            if(!$item->isDirty($item->getRandomkeyName()))
+                $item->setAttribute($item->getRandomKeyName(), \Keygen::alphanum($item->keySize)->generate());
         });
     }
 
