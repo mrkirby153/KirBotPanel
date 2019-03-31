@@ -30,6 +30,14 @@ declare interface PanelPermission {
     user: null | string,
 }
 
+declare interface RoleClearance {
+    id: string,
+    name: string,
+    permission_level: string,
+    role_id: string,
+    server_id: string
+}
+
 declare interface Panel {
     user?: {
         id: string,

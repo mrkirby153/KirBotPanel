@@ -32,4 +32,9 @@ Route::group(['prefix' => '/guild/{guild}'], function () {
     Route::patch('/permissions/panel/{permission}', 'ApiController@updatePanelPermission');
     Route::put('/permissions/panel', 'ApiController@createPanelPermission');
     Route::delete('/permissions/panel/{permission}', 'ApiController@deletePanelPermission');
+
+    Route::get('/permissions/role', 'ApiController@getRolePermissions');
+    Route::patch('/permissions/role/{permission}', 'ApiController@updateRolePermissions');
+    Route::put('/permissions/role', 'ApiController@createRolePermissions');
+    Route::delete('/permissions/role/{permission}', 'ApiController@deleteRolePermissions');
 });

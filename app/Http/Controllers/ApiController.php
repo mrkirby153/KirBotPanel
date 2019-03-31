@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Guild;
 use App\Models\LogSetting;
+use App\Models\Role;
+use App\Models\RolePermission;
 use App\Models\ServerPermission;
 use App\Utils\SettingsRepository;
 use Illuminate\Http\Request;
@@ -101,7 +103,8 @@ class ApiController extends Controller
         SettingsRepository::set($guild, $request->input('key'), $request->input('value'));
     }
 
-    public function updatePanelPermission(Request $request, Guild $guild, ServerPermission $permission) {
+    public function updatePanelPermission(Request $request, Guild $guild, ServerPermission $permission)
+    {
         $this->authorize('update', $guild);
         $request->validate([
             'permission' => Rule::in('VIEW', 'EDIT', 'ADMIN')
@@ -111,12 +114,14 @@ class ApiController extends Controller
         return $permission;
     }
 
-    public function deletePanelPermission(Guild $guild, ServerPermission $permission) {
+    public function deletePanelPermission(Guild $guild, ServerPermission $permission)
+    {
         $this->authorize('update', $guild);
         $permission->delete();
     }
 
-    public function createPanelPermission(Request $request, Guild $guild) {
+    public function createPanelPermission(Request $request, Guild $guild)
+    {
         $this->authorize('update', $guild);
         $request->validate([
             'id' => 'required|numeric',
@@ -130,7 +135,7 @@ class ApiController extends Controller
 
         $seen_user = \DB::table('seen_users')->where('id', $request->input('id'))->first();
 
-        $user = $seen_user != null? $seen_user->username .'#' . $seen_user->discriminator : null;
+        $user = $seen_user != null ? $seen_user->username . '#' . $seen_user->discriminator : null;
         return response()->json([
             'id' => $p->id,
             'user_id' => $p->user_id,
@@ -149,5 +154,61 @@ class ApiController extends Controller
         ])->selectRaw('CONCAT(`seen_users`.`username`, \'#\', `seen_users`.`discriminator`) AS `user`')->leftJoin('seen_users',
             'server_permissions.user_id', '=', 'seen_users.id')->where('server_permissions.server_id',
             $guild->id)->orderBy('server_permissions.created_at')->get();
+    }
+
+    public function updateRolePermissions(Request $request, Guild $guild, RolePermission $permission)
+    {
+        $this->authorize('update', $guild);
+        $request->validate([
+            'permission' => 'required|numeric'
+        ]);
+
+        $permission->permission_level = $request->input('permission');
+        $permission->save();
+        return $permission;
+    }
+
+    public function deleteRolePermissions(Guild $guild, RolePermission $permission)
+    {
+        $this->authorize('update', $guild);
+        $permission->delete();
+    }
+
+    public function createRolePermissions(Request $request, Guild $guild)
+    {
+        $this->authorize('update', $guild);
+        $request->validate([
+            'server' => 'required|exists:guild,id',
+            'role_id' => 'required|exists:roles,id',
+            'permission_level' => 'required|numeric'
+        ]);
+
+        $perm = new RolePermission();
+        $perm->server_id = $request->input('server');
+        $perm->role_id = $request->input('role_id');
+        $perm->permission_level = $request->input('permission_level');
+        $perm->save();
+
+        $role = Role::whereId($request->input('role_id'))->first();
+
+        return response()->json([
+            'id' => $perm->id,
+            'name' => $role->name,
+            'permission_level' => $perm->permission_level,
+            'role_id' => $perm->role_id,
+            'server_id' => $perm->server_id
+        ]);
+    }
+
+    public function getRolePermissions(Guild $guild)
+    {
+        return \DB::table('role_permissions')->select([
+            'role_permissions.id',
+            'role_permissions.server_id',
+            'role_permissions.role_id',
+            'role_permissions.permission_level',
+            'roles.name'
+        ])->leftJoin('roles', 'role_permissions.role_id', '=', 'roles.id')->where('role_permissions.server_id',
+            $guild->id)->get();
     }
 }
