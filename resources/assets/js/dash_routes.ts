@@ -15,6 +15,11 @@ const routes: Route[] = [
         path: '/permissions',
         component: require('./components/dashboard/Permissions').default,
         name: 'Permissions'
+    },
+    {
+        path: '/commands',
+        component: require('./components/dashboard/Commands').default,
+        name: 'Custom Commands'
     }
 ];
 

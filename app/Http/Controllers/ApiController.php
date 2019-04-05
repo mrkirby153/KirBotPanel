@@ -25,7 +25,8 @@ class ApiController extends Controller
         'starboard_gild_count',
         'starboard_self_star',
         'starboard_star_count',
-        'quotes_enabled'
+        'quotes_enabled',
+        'command_prefix'
     ];
 
     public function __construct()

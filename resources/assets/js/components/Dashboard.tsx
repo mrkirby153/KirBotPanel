@@ -33,6 +33,11 @@ const links: DashLinkProps[] = [
         name: 'Permissions',
         icon: 'user-shield',
         route: '/permissions'
+    },
+    {
+        name: 'Commands',
+        icon: 'sticky-note',
+        route: '/commands'
     }
 ];
 
@@ -102,7 +107,7 @@ class Dashboard extends Component<RouteProps, {}> {
     render() {
         return (
             <div className="row mt-2">
-                <div className="col-lg-2 col-md-2">
+                <div className="col-lg-2 col-md-12">
                     <div className="mb-3 pb-2 card">
                         <div className="card-header">
                             {window.Panel.Server.name}
