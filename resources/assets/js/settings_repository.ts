@@ -12,29 +12,36 @@ export default class SettingsRepository {
         return result['value'];
     }
 
-    static setSetting(key: string, value: any, persist?: boolean) {
-        let result = _.find(window.Panel.Server.settings, {key: key});
-        if (result == null) {
-            window.Panel.Server.settings.push({
-                id: window.Panel.Server.id + '_' + key,
-                guild: window.Panel.Server.id,
-                key: key,
-                value: value
-            });
-        } else {
-            result.value = value;
-        }
+    static setSetting(key: string, value: any, persist?: boolean): Promise<any> {
+        return new Promise((resolve, reject) => {
+            let result = _.find(window.Panel.Server.settings, {key: key});
+            if (result == null) {
+                window.Panel.Server.settings.push({
+                    id: window.Panel.Server.id + '_' + key,
+                    guild: window.Panel.Server.id,
+                    key: key,
+                    value: value
+                });
+            } else {
+                result.value = value;
+            }
 
-        if (persist) {
-            axios.patch('/api/guild/' + window.Panel.Server.id + '/setting', {
-                key: key,
-                value: value
-            }).catch(e => {
-                if (e.response.status == 422) {
-                    console.warn("Received 422 when attempting to save key " + key);
-                    toastr.warning('Key ' + key + ' is not whitelisted for saving');
-                }
-            });
-        }
+            if (persist) {
+                axios.patch('/api/guild/' + window.Panel.Server.id + '/setting', {
+                    key: key,
+                    value: value
+                }).catch(e => {
+                    if (e.response.status == 422) {
+                        console.warn("Received 422 when attempting to save key " + key);
+                        toastr.warning('Key ' + key + ' is not whitelisted for saving');
+                    }
+                    reject(e)
+                }).then(resp => {
+                    resolve(resp)
+                });
+            } else {
+                resolve()
+            }
+        });
     }
 }
