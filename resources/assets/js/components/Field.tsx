@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 
 interface FieldProps {
     help?: string,
-    errors?: string|null,
+    errors?: string|null|any[],
     success?: string|null
 }
 export default class Field extends Component<FieldProps, {}> {
@@ -18,12 +18,16 @@ export default class Field extends Component<FieldProps, {}> {
         if(this.props.success) {
             formClass += " is-valid";
         }
+        let errors = this.props.errors;
+        if(Array.isArray(errors)) {
+            errors = errors.join(', ')
+        }
         return (
             <div>
                 <div className={formClass}>
                     {this.props.children}
                     {this.props.help && <small className="form-text text-muted">{this.props.help}</small>}
-                    {this.props.errors && <div className="invalid-feedback">{this.props.errors}</div> }
+                    {this.props.errors && <div className="invalid-feedback">{errors}</div> }
                     {this.props.success && <div className="valid-feedback">{this.props.success}</div>}
                 </div>
             </div>
