@@ -38,6 +38,16 @@ declare interface RoleClearance {
     server_id: string
 }
 
+declare interface CustomCommand {
+    id: string,
+    server: string,
+    name: string,
+    data: string,
+    clearance_level: number,
+    type: 'TEXT' | 'JAVASCRIPT',
+    respect_whitelist: boolean
+}
+
 declare interface Panel {
     user?: {
         id: string,
