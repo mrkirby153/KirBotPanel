@@ -20,6 +20,11 @@ const routes: Route[] = [
         path: '/commands',
         component: require('./components/dashboard/Commands').default,
         name: 'Custom Commands'
+    },
+    {
+        path: '/music',
+        component: require('./components/dashboard/Music').default,
+        name: 'Music'
     }
 ];
 

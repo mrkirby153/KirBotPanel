@@ -28,7 +28,9 @@ class ApiController extends Controller
         'starboard_self_star',
         'starboard_star_count',
         'quotes_enabled',
-        'command_prefix'
+        'command_prefix',
+        'music_channels',
+        'music_enabled'
     ];
 
     public function __construct()

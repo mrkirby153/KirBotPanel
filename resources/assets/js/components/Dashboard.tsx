@@ -39,6 +39,11 @@ const links: DashLinkProps[] = [
         name: 'Commands',
         icon: 'sticky-note',
         route: '/commands'
+    },
+    {
+        name: 'Music',
+        icon: 'music',
+        route: '/music'
     }
 ];
 
