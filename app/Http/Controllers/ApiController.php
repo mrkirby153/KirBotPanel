@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CommandAlias;
 use App\Models\CustomCommand;
 use App\Models\Guild;
 use App\Models\LogSetting;
@@ -264,8 +265,49 @@ class ApiController extends Controller
         return $cmd;
     }
 
-    public function deleteCustomCommand(Guild $guild, CustomCommand $command) {
+    public function deleteCustomCommand(Guild $guild, CustomCommand $command)
+    {
         $this->authorize('update', $guild);
         $command->delete();
+    }
+
+    public function createCommandAlias(Guild $guild, Request $request)
+    {
+        $this->authorize('update', $guild);
+        $this->validate($request, [
+            'command' => 'required|max:255|without_spaces',
+            'alias' => 'without_spaces',
+            'clearance' => 'required|numeric'
+        ], [
+            'validation.without_spaces' => 'Spaces are not allowed in command names'
+        ]);
+
+        $existing = CommandAlias::whereCommand($request->get('command'))->whereServerId($guild->id)->first();
+        if($existing != null) {
+            return response() ->json(['errors' => [
+                'command' => ['This alias already exists on the server']
+            ]], 422);
+        }
+
+        $command = new CommandAlias();
+        $command->command = $request->get('command');
+        $command->alias = $request->get('alias');
+        $command->clearance = $request->get('clearance');
+        $command->server_id = $guild->id;
+        $command->save();
+        syncServer($guild->id);
+        return $command;
+    }
+
+    public function deleteCommandAlias(Guild $guild, CommandAlias $alias)
+    {
+        $this->authorize('update', $guild);
+        $alias->delete();
+        syncServer($guild->id);
+    }
+
+    public function getCommandAliases(Guild $guild)
+    {
+        return CommandAlias::whereServerId($guild->id)->get();
     }
 }

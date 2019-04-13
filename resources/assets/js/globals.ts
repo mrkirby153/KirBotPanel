@@ -48,6 +48,14 @@ declare interface CustomCommand {
     respect_whitelist: boolean
 }
 
+declare interface CommandAlias {
+    id:string,
+    server_id: string,
+    command: string,
+    alias: null|string,
+    clearance: number
+}
+
 declare interface Panel {
     user?: {
         id: string,
