@@ -8,6 +8,7 @@ import {
     BrowserRouter, Switch, RouteProps, NavLinkProps, withRouter
 } from 'react-router-dom';
 import declared_routes from '../dash_routes';
+import ErrorBoundary from "./ErrorBoundary";
 
 function DashLink(props: NavLinkProps) {
     let p = Object.assign({}, props);
@@ -56,7 +57,8 @@ class Dashboard extends Component<RouteProps, {}> {
     static generateRoutes(): ReactElement[] {
         let routes: ReactElement[] = [];
         declared_routes.forEach(route => {
-            routes.push(<Route {...route} key={route.path as string} path={'/dashboard/' + window.Panel.Server.id + route.path}/>)
+            routes.push(<Route {...route} key={route.path as string}
+                               path={'/dashboard/' + window.Panel.Server.id + route.path}/>)
         });
         return routes;
     }
@@ -64,7 +66,7 @@ class Dashboard extends Component<RouteProps, {}> {
     static getDashLinks(): ReactElement[] {
         let dash_links: ReactElement[] = [];
         links.forEach(link => {
-            dash_links.push(<li className="nav-item"key={link.name} >
+            dash_links.push(<li className="nav-item" key={link.name}>
                 <DashLink to={link.route} exact={link.exact} className="nav-link text-left"><i
                     className={"fas fa-" + link.icon + " menu-icon"}/>{link.name}</DashLink>
             </li>)
@@ -106,33 +108,36 @@ class Dashboard extends Component<RouteProps, {}> {
 
     render() {
         return (
-            <div className="row mt-2">
-                <div className="col-lg-2 col-md-12">
-                    <div className="mb-3 pb-2 card">
-                        <div className="card-header">
-                            {window.Panel.Server.name}
+            <ErrorBoundary>
+                <div className="row mt-2">
+                    <div className="col-lg-2 col-md-12">
+                        <div className="mb-3 pb-2 card">
+                            <div className="card-header">
+                                {window.Panel.Server.name}
+                            </div>
+                            <div className="card-body d-flex flex-column">
+                                <img className="m-auto server-image" src={Dashboard.getServerIcon()}
+                                     alt={window.Panel.Server.name}/>
+                                <ul className="nav nav-pills nav-fill flex-column mt-3 dashboard-sidebar">
+                                    {Dashboard.getDashLinks()}
+                                </ul>
+                            </div>
                         </div>
-                        <div className="card-body d-flex flex-column">
-                            <img className="m-auto server-image" src={Dashboard.getServerIcon()} alt={window.Panel.Server.name}/>
-                            <ul className="nav nav-pills nav-fill flex-column mt-3 dashboard-sidebar">
-                                {Dashboard.getDashLinks()}
-                            </ul>
+                    </div>
+                    <div className="col-lg-10 col-md-12 pb-sm-2">
+                        <div className="card">
+                            <div className="card-header">
+                                {this.getRouteName()}
+                            </div>
+                            <div className="card-body">
+                                <Switch>
+                                    {Dashboard.generateRoutes()}
+                                </Switch>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div className="col-lg-10 col-md-12 pb-sm-2">
-                    <div className="card">
-                        <div className="card-header">
-                            {this.getRouteName()}
-                        </div>
-                        <div className="card-body">
-                            <Switch>
-                                {Dashboard.generateRoutes()}
-                            </Switch>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </ErrorBoundary>
         );
     }
 }
