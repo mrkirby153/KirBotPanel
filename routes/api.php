@@ -39,4 +39,7 @@ Route::group(['prefix' => '/guild/{guild}'], function () {
     Route::delete('/permissions/role/{permission}', 'ApiController@deleteRolePermissions');
 
     Route::get('/commands', 'ApiController@getCustomCommands');
+    Route::put('/commands', 'ApiController@createCustomCommand');
+    Route::delete('/commands/{command}', 'ApiController@deleteCustomCommand');
+    Route::patch('/commands/{command}', 'ApiController@updateCustomCommand');
 });

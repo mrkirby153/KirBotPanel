@@ -222,7 +222,7 @@ class ApiController extends Controller
     public function updateCustomCommand(Request $request, Guild $guild, CustomCommand $command)
     {
         $this->authorize('update', $guild);
-        $request->validate([
+        $this->validate($request, [
             'name' => 'required|max:255|without_spaces',
             'description' => 'required|max:2000',
             'clearance' => 'required|min:0|numeric',
@@ -241,7 +241,7 @@ class ApiController extends Controller
     public function createCustomCommand(Request $request, Guild $guild)
     {
         $this->authorize('update', $guild);
-        $request->validate([
+        $this->validate($request, [
             'name' => 'required|max:255|without_spaces',
             'description' => 'required|max:2000',
             'clearance' => 'required|min:0|numeric',
@@ -251,15 +251,21 @@ class ApiController extends Controller
         ]);
 
         if (CustomCommand::whereName(strtolower($request->input('name')))->whereServer($guild->id)->exists()) {
-            return response()->json(['name' => ['A command already exists with that name on this server']]);
+            return response()->json(['name' => ['A command already exists with that name on this server']], 422);
         }
 
         $cmd = new CustomCommand();
         $cmd->name = strtolower($request->input('name'));
         $cmd->data = $request->input('description');
+        $cmd->server = $guild->id;
         $cmd->clearance_level = $request->input('clearance');
         $cmd->respect_whitelist = $request->input('respect_whitelist');
         $cmd->save();
         return $cmd;
+    }
+
+    public function deleteCustomCommand(Guild $guild, CustomCommand $command) {
+        $this->authorize('update', $guild);
+        $command->delete();
     }
 }
