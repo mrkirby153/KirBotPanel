@@ -89,30 +89,48 @@ class ChannelWhitelistChannels extends Component<{}, ChannelWhitelistChannelProp
 
 }
 
-export default class ChannelWhitelist extends Component {
+interface ChannelWhitelistState {
+    mode: 'OFF' | 'WHITELIST' | 'BLACKLIST'
+}
+export default class ChannelWhitelist extends Component<{}, ChannelWhitelistState> {
     constructor(props) {
         super(props);
+        this.state = {
+            mode: SettingsRepository.getSetting('music_mode', 'OFF')
+        };
+
+        this.change = this.change.bind(this);
+    }
+
+    change(e) {
+        let {value} = e.target;
+
+        this.setState({
+            mode: value
+        });
+        SettingsRepository.setSetting('music_mode', value, true)
     }
 
     render() {
+        let col_name = this.state.mode != 'OFF'? 'col-lg-6 col-md-12' : 'col-12'
         return (
             <div className="row">
                 <div className="col-12">
                     <h2>Channel Whitelist/Blacklist</h2>
                     <div className="form-row">
-                        <div className="col-lg-6 col-md-12">
+                        <div className={col_name}>
                             <div className="form-group">
                                 <label><b>Mode</b></label>
-                                <select className="form-control">
+                                <select className="form-control" value={this.state.mode} onChange={this.change}>
                                     <option value={'OFF'}>Off</option>
                                     <option value={'WHITELIST'}>Whitelist</option>
-                                    <option value={'Blacklist'}>Blacklist</option>
+                                    <option value={'BLACKLIST'}>Blacklist</option>
                                 </select>
                             </div>
                         </div>
-                        <div className="col-lg-6 col-md-12">
+                        {this.state.mode != 'OFF'? <div className="col-lg-6 col-md-12">
                             <ChannelWhitelistChannels/>
-                        </div>
+                        </div> : null}
                     </div>
                 </div>
             </div>
