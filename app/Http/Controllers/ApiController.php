@@ -32,6 +32,9 @@ class ApiController extends Controller
         'music_channels',
         'music_enabled',
         'music_mode',
+        'music_max_song_length',
+        'music_playlists',
+        'music_max_queue_length',
     ];
 
     public function __construct()

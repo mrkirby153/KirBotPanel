@@ -2,6 +2,7 @@ import React, {Component, FunctionComponent} from 'react';
 import Switch from "../Switch";
 import SettingsRepository from "../../settings_repository";
 import ChannelWhitelist from "./music/ChannelWhitelist";
+import QueueSettings from "./music/QueueSettings";
 
 
 interface MusicWrapperProps {
@@ -54,6 +55,12 @@ export default class Music extends Component<{}, MusicState> {
                     <div className="row">
                         <div className="col-12">
                             <ChannelWhitelist/>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div className="row">
+                        <div className="col-12">
+                            <QueueSettings/>
                         </div>
                     </div>
                 </MusicWrapper>
