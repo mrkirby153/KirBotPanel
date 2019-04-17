@@ -35,6 +35,8 @@ class ApiController extends Controller
         'music_max_song_length',
         'music_playlists',
         'music_max_queue_length',
+        'music_skip_cooldown',
+        'music_skip_timer',
     ];
 
     public function __construct()

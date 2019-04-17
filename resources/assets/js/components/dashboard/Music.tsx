@@ -3,6 +3,7 @@ import Switch from "../Switch";
 import SettingsRepository from "../../settings_repository";
 import ChannelWhitelist from "./music/ChannelWhitelist";
 import QueueSettings from "./music/QueueSettings";
+import SkipSettings from "./music/SkipSettings";
 
 
 interface MusicWrapperProps {
@@ -61,6 +62,12 @@ export default class Music extends Component<{}, MusicState> {
                     <div className="row">
                         <div className="col-12">
                             <QueueSettings/>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div className="row">
+                        <div className="col-12">
+                            <SkipSettings/>
                         </div>
                     </div>
                 </MusicWrapper>
