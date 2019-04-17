@@ -39,6 +39,7 @@ export default class Music extends Component<{}, MusicState> {
         this.setState({
             enabled: checked
         })
+        SettingsRepository.setSetting('music_enabled', checked, true)
     }
 
     render() {

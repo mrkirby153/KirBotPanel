@@ -30,7 +30,8 @@ class ApiController extends Controller
         'quotes_enabled',
         'command_prefix',
         'music_channels',
-        'music_enabled'
+        'music_enabled',
+        'music_mode',
     ];
 
     public function __construct()
