@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CommandAlias;
 use App\Models\CustomCommand;
 use App\Models\Guild;
+use App\Models\Infraction;
 use App\Models\LogSetting;
 use App\Models\Role;
 use App\Models\RolePermission;
@@ -291,10 +292,12 @@ class ApiController extends Controller
         ]);
 
         $existing = CommandAlias::whereCommand($request->get('command'))->whereServerId($guild->id)->first();
-        if($existing != null) {
-            return response() ->json(['errors' => [
-                'command' => ['This alias already exists on the server']
-            ]], 422);
+        if ($existing != null) {
+            return response()->json([
+                'errors' => [
+                    'command' => ['This alias already exists on the server']
+                ]
+            ], 422);
         }
 
         $command = new CommandAlias();
@@ -317,5 +320,11 @@ class ApiController extends Controller
     public function getCommandAliases(Guild $guild)
     {
         return CommandAlias::whereServerId($guild->id)->get();
+    }
+
+    public function getInfractions(Guild $guild)
+    {
+        $this->authorize('view', $guild);
+        return Infraction::whereGuild($guild->id)->get();
     }
 }

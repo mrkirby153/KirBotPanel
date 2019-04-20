@@ -25,6 +25,11 @@ const routes: Route[] = [
         path: '/music',
         component: require('./components/dashboard/Music').default,
         name: 'Music'
+    },
+    {
+        path: '/infractions',
+        component: require('./components/dashboard/Infractions').default,
+        name: 'Infractions'
     }
 ];
 

@@ -44,6 +44,11 @@ const links: DashLinkProps[] = [
         name: 'Music',
         icon: 'music',
         route: '/music'
+    },
+    {
+        name: 'Infractions',
+        icon: 'exclamation-triangle',
+        route: '/infractions'
     }
 ];
 
