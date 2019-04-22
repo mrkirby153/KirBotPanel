@@ -30,6 +30,11 @@ const routes: Route[] = [
         path: '/infractions',
         component: require('./components/dashboard/Infractions').default,
         name: 'Infractions'
+    },
+    {
+        path: '/spam',
+        component: require('./components/dashboard/Spam').default,
+        name: 'Spam'
     }
 ];
 

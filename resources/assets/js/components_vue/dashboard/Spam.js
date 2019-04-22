@@ -1,6 +1,6 @@
 import JSONEditor from 'jsoneditor'
 import axios from 'axios'
-import {CensorSchema, SpamSchema} from "./Schemas";
+import {CensorSchema, SpamSchema} from "../../components/dashboard/spam/Schemas";
 import SettingsRepository from "../../settings";
 
 Vue.component('settings-spam', {
