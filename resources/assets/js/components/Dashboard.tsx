@@ -54,6 +54,11 @@ const links: DashLinkProps[] = [
         name: 'Spam',
         icon: 'fire-extinguisher',
         route: '/spam'
+    },
+    {
+        name: 'Anti-Raid',
+        icon: 'shield-alt',
+        route: '/raid'
     }
 
 ];

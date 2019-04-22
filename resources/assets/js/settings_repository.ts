@@ -12,6 +12,15 @@ export default class SettingsRepository {
         return result['value'];
     }
 
+    static getMultiple(keys: string[], def: any = null): any {
+        let result = {};
+        keys.forEach(key => {
+            let d = def != null? def[key] : null;
+            result[key] = this.getSetting(key, d)
+        });
+        return result;
+    }
+
     static setSetting(key: string, value: any, persist?: boolean): Promise<any> {
         return new Promise((resolve, reject) => {
             let result = _.find(window.Panel.Server.settings, {key: key});

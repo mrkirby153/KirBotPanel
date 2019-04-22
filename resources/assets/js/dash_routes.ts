@@ -35,6 +35,11 @@ const routes: Route[] = [
         path: '/spam',
         component: require('./components/dashboard/Spam').default,
         name: 'Spam'
+    },
+    {
+        path: '/raid',
+        component: require('./components/Dashboard/AntiRaid').default,
+        name: 'Anti-Raid'
     }
 ];
 

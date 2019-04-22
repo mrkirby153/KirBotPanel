@@ -40,6 +40,13 @@ class ApiController extends Controller
         'music_skip_timer',
         'spam_settings',
         'censor_settings',
+        'anti_raid_alert_role',
+        'anti_raid_alert_channel',
+        'anti_raid_action',
+        'anti_raid_period',
+        'anti_raid_quiet_period',
+        'anti_raid_count',
+        'anti_raid_enabled',
     ];
 
     public function __construct()
