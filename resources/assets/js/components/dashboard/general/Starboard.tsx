@@ -1,8 +1,8 @@
 import React, {Component, ReactElement} from 'react';
-import Switch from "../../Switch";
 import Field from "../../Field";
 import SettingsRepository from "../../../settings_repository";
 import _ from 'lodash';
+import {DashboardInput, DashboardSelect, DashboardSwitch} from "../../DashboardInput";
 
 
 interface StarboardState {
@@ -52,30 +52,30 @@ class Starboard extends Component<{}, StarboardState> {
                 <div className="col-12">
                     <Field>
                         <label>Starboard Channel</label>
-                        <select className="form-control" name="channel_id" onChange={this.onChange}
+                        <DashboardSelect className="form-control" name="channel_id" onChange={this.onChange}
                                 value={this.state.channel_id}>
                             <option disabled={true} value={""}>Select a channel</option>
                             {starboardChannelSelectors}
-                        </select>
+                        </DashboardSelect>
                     </Field>
                 </div>
                 <div className="col-4">
                     <Field help="The amount of stars for a post to show up on the starboard">
                         <label>Star Count</label>
-                        <input type="number" min={0} className="form-control" name="star_count" onChange={this.onChange}
+                        <DashboardInput type="number" min={0} className="form-control" name="star_count" onChange={this.onChange}
                                value={this.state.star_count}/>
                     </Field>
                 </div>
                 <div className="col-4">
                     <Field help="The amount of stars required to gild the post">
                         <label>Gild Count</label>
-                        <input type="number" min={0} className="form-control" name="gild_account"
+                        <DashboardInput type="number" min={0} className="form-control" name="gild_account"
                                onChange={this.onChange} value={this.state.gild_count}/>
                     </Field>
                 </div>
                 <div className="col-4">
                     <Field help="If self staring is enabled, users can star their own messages">
-                        <Switch label="Self Star" id="self-star" name="self_star" onChange={this.onChange}
+                        <DashboardSwitch label="Self Star" id="self-star" name="self_star" onChange={this.onChange}
                                 checked={this.state.self_star}/>
                     </Field>
                 </div>
@@ -115,7 +115,7 @@ class Quotes extends Component<{}, QuotesState> {
                     <p>Quotes can be retrieved with the command <code>{quoteCmd}</code></p>
                 </div>
                 <div className="col-12">
-                    <Switch label="Enable Quoting" id="enable-quotes" checked={this.state.enabled}
+                    <DashboardSwitch label="Enable Quoting" id="enable-quotes" checked={this.state.enabled}
                             onChange={this.updateQuotesEnabled}/>
                 </div>
             </div>
@@ -156,7 +156,7 @@ export default class StarboardWrapper extends Component<{}, StarboardWrapperStat
                         <p>
                             If the starboard is enabled, reacting via 🗨️ will no longer create new quotes.
                         </p>
-                        <Switch label="Enable Starboard" id="enable-starboard" onChange={this.changeStarboard}
+                        <DashboardSwitch label="Enable Starboard" id="enable-starboard" onChange={this.changeStarboard}
                                 checked={this.state.enabled}/>
                     </div>
                 </div>

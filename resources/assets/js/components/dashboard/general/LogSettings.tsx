@@ -1,11 +1,10 @@
-import React, {ChangeEvent, Component, ReactElement} from 'react';
+import React, {Component, ReactElement} from 'react';
 import axios from 'axios';
 import Modal from "../../Modal";
 import SettingsRepository from '../../../settings_repository'
 import _ from 'lodash';
 import toastr from 'toastr';
-import {string} from "prop-types";
-import {Settings} from "http2";
+import {DashboardInput, DashboardSelect} from "../../DashboardInput";
 
 interface LoggingSettingsState {
     log_events: any[],
@@ -197,8 +196,8 @@ class LogChannel extends Component<LogChannelProps, LogChannelState> {
                 </div>
 
                 <div className="btn-group mt-2">
-                    <button className="btn btn-info" onClick={this.edit}><i className="fas fa-edit"/> Edit</button>
-                    <button className="btn btn-danger" onClick={this.delete}><i
+                    <button className="btn btn-info" onClick={this.edit} disabled={window.Panel.Server.readonly}><i className="fas fa-edit"/> Edit</button>
+                    <button className="btn btn-danger" onClick={this.delete} disabled={window.Panel.Server.readonly}><i
                         className="fas fa-times"/> {this.state.deleting ? 'Confirm?' : 'Delete'}</button>
                 </div>
 
@@ -407,18 +406,19 @@ export default class LoggingSettings extends Component<{}, LoggingSettingsState>
                         <div className="col-6">
                             <div className="form-group">
                                 <label htmlFor="channelAdd"><b>Add a channel</b></label>
-                                <select className="form-control" name="channelAdd" id="channelAdd" defaultValue={""}
+                                <DashboardSelect className="form-control" name="channelAdd" id="channelAdd" defaultValue={""}
                                         onChange={e => this.createNewLogSettings(e.target.value)}>
                                     <option value={""} disabled>Add a channel...</option>
                                     {textChannelElements}
-                                </select>
+                                </DashboardSelect>
                             </div>
                         </div>
                         <div className="col-6">
                             <div className="form-group">
                                 <label htmlFor="log_timezone"><b>Log Timezone</b></label>
-                                <input type="text" className="form-control" name="log_timezone" id="log_timezone"
-                                       value={this.state.log_timezone} onChange={this.onChange}/>
+                                <DashboardInput type="text" className="form-control" name="log_timezone"
+                                                id="log_timezone" value={this.state.log_timezone}
+                                                onChange={this.onChange}/>
                             </div>
                         </div>
                     </div>

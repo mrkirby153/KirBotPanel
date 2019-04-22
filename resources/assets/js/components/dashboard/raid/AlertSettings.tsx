@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Field from "../../Field";
 import SettingsRepository from "../../../settings_repository";
+import {DashboardSelect} from "../../DashboardInput";
 
 interface AlertSettingsState {
     anti_raid_alert_role: string,
@@ -44,20 +45,20 @@ export default class AlertSettings extends Component<AlertSettingsProps, AlertSe
                             <div className="col-6">
                                 <Field help="The role to ping when a potential raid is detected">
                                     <label htmlFor="anti_raid_alert_role"><b>Alert Role</b></label>
-                                    <select name="anti_raid_alert_role" className="form-control" value={this.state.anti_raid_alert_role} onChange={this.onChange} disabled={!this.props.enabled}>
+                                    <DashboardSelect name="anti_raid_alert_role" className="form-control" value={this.state.anti_raid_alert_role} onChange={this.onChange} disabled={!this.props.enabled}>
                                         <option value={''}>None</option>
                                         {roles}
                                         <option value={'@here'}>@here</option>
                                         <option value={'@everyone'}>@everyone</option>
-                                    </select>
+                                    </DashboardSelect>
                                 </Field>
                             </div>
                             <div className="col-6">
                                 <Field help="The channel where the raid alert will be sent">
                                     <label htmlFor="anti_raid_alert_channel"><b>Alert Channel</b></label>
-                                    <select name="anti_raid_alert_channel" className="form-control" value={this.state.anti_raid_alert_channel} onChange={this.onChange} disabled={!this.props.enabled}>
+                                    <DashboardSelect name="anti_raid_alert_channel" className="form-control" value={this.state.anti_raid_alert_channel} onChange={this.onChange} disabled={!this.props.enabled}>
                                         {channels}
-                                    </select>
+                                    </DashboardSelect>
                                 </Field>
                             </div>
                         </div>

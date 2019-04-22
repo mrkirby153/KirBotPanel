@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import SettingsRepository from "../../../settings_repository";
 import _ from 'lodash';
+import {DashboardInput} from "../../DashboardInput";
 
 
 interface SkipSettingsState {
@@ -49,7 +50,7 @@ export default class SkipSettings extends Component<{}, SkipSettingsState> {
                     <div className="col-6">
                         <div className="form-group">
                             <label><b>Skip Cooldown</b></label>
-                            <input type="number" min={0} className="form-control" value={this.state.music_skip_cooldown}
+                            <DashboardInput type="number" min={0} className="form-control" value={this.state.music_skip_cooldown}
                                    onChange={this.change} name="music_skip_cooldown"/>
                             <small className="form-text text-muted">
                                 The time in seconds a user has to wait between starting a skip vote
@@ -59,7 +60,7 @@ export default class SkipSettings extends Component<{}, SkipSettingsState> {
                     <div className="col-6">
                         <div className="form-group">
                             <label><b>Skip Timer</b></label>
-                            <input type="number" min={0} className="form-control" value={this.state.music_skip_timer}
+                            <DashboardInput type="number" min={0} className="form-control" value={this.state.music_skip_timer}
                                    onChange={this.change} name="music_skip_timer"/>
                             <small className="form-text text-muted">
                                 How long the bot waits for votes

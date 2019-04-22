@@ -2,6 +2,7 @@ import React, {Component, ReactElement} from 'react';
 import axios from 'axios';
 import _ from 'lodash';
 import Field from "../../Field";
+import {DashboardInput, DashboardSelect} from "../../DashboardInput";
 
 
 interface RolePermissionState {
@@ -55,18 +56,18 @@ class AddingComponent extends Component<AddingComponentProps, AddingComponentSta
                         <div className="col-md-3">
                             <Field>
                                 <label htmlFor="roleId">Role</label>
-                                <select className="form-control" value={this.state.role} name="role"
-                                        onChange={this.onChange}>
+                                <DashboardSelect className="form-control" value={this.state.role} name="role"
+                                                 onChange={this.onChange}>
                                     <option value={""} disabled>Select a role</option>
                                     {roles}
-                                </select>
+                                </DashboardSelect>
                             </Field>
                         </div>
                         <div className="col-md-3">
                             <Field>
                                 <label htmlFor="clearance">Clearance</label>
-                                <input type="number" className="form-control" value={this.state.clearance}
-                                       name="clearance" onChange={this.onChange}/>
+                                <DashboardInput type="number" className="form-control" value={this.state.clearance}
+                                                name="clearance" onChange={this.onChange}/>
                             </Field>
                         </div>
                     </div>
@@ -181,14 +182,15 @@ export default class RolePermissions extends Component<{}, RolePermissionState> 
                     <td>
                         <form onSubmit={e => e.preventDefault()}>
                             <Field>
-                                <input type="number" className="form-control" name={perm.id}
-                                       value={perm.permission_level} onChange={this.modifyRolePermissions}
-                                       onBlur={() => this.saveRolePermissions(perm.id)}/>
+                                <DashboardInput type="number" className="form-control" name={perm.id}
+                                                value={perm.permission_level} onChange={this.modifyRolePermissions}
+                                                onBlur={() => this.saveRolePermissions(perm.id)}/>
                             </Field>
                         </form>
                     </td>
                     <td>
-                        <button className="btn btn-danger" onClick={() => this.deleteRolePermissions(perm.id)}><i
+                        <button className="btn btn-danger" onClick={() => this.deleteRolePermissions(perm.id)}
+                                disabled={window.Panel.Server.readonly}><i
                             className="fas fa-times"/> Delete
                         </button>
                     </td>
@@ -220,7 +222,7 @@ export default class RolePermissions extends Component<{}, RolePermissionState> 
                                 this.setAdding(false);
                             }} onCancel={() => {
                                 this.setAdding(false);
-                            }} toExclude={this.state.permissions.map(p => p.role_id)}/> : <th colSpan={3}>
+                            }} toExclude={this.state.permissions.map(p => p.role_id)}/> : !window.Panel.Server.readonly && <th colSpan={3}>
                                 <button className="btn btn-success" onClick={() => this.setAdding(true)}><i
                                     className="fas fa-plus"/> Add
                                 </button>

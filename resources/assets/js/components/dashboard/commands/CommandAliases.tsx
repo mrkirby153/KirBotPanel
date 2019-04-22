@@ -172,7 +172,7 @@ export default class CommandAliases extends Component<{}, CommandAliasState> {
                     <td>{alias.clearance != -1 ? alias.clearance : <i>Inherit</i>}</td>
                     <td>
                         <div className="btn-group">
-                            <button className="btn btn-danger" onClick={() => this.delete(alias.id)}>
+                            <button className="btn btn-danger" onClick={() => this.delete(alias.id)} disabled={window.Panel.Server.readonly}>
                                 <i className="fas fa-times"/> {this.isConfirming(alias.id) ? 'Confirm?' : 'Delete'}
                             </button>
                         </div>
@@ -208,6 +208,7 @@ export default class CommandAliases extends Component<{}, CommandAliasState> {
                                             creating: false
                                         })
                                     }}/> :
+                                    !window.Panel.Server.readonly &&
                                     <tr>
                                         <th colSpan={4}>
                                             <button className="btn btn-success" onClick={() => {

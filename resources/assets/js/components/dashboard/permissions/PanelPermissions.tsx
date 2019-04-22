@@ -1,8 +1,8 @@
 import React, {Component, ReactElement} from 'react';
 import axios from 'axios';
 import _ from 'lodash';
-import {isNull} from "util";
 import Field from "../../Field";
+import {DashboardInput, DashboardSelect} from "../../DashboardInput";
 
 
 interface PanelPermissionState {
@@ -82,20 +82,22 @@ class AddingComponent extends Component<AddingComponentProps, AddingComponentSta
                             <div className="col-md-3">
                                 <Field errors={this.state.id_error}>
                                     <label htmlFor="userId">User ID</label>
-                                    <input type="text" name="userId" className="form-control" id="userId" required
-                                           onChange={this.updateId} value={this.state.id}/>
+                                    <DashboardInput type="text" name="userId" className="form-control" id="userId"
+                                                    required
+                                                    onChange={this.updateId} value={this.state.id}/>
                                 </Field>
                             </div>
                             <div className="col-md-3">
                                 <Field>
                                     <label htmlFor="permissions">Permission</label>
-                                    <select className="form-control" id="permissions" name="permissions" required
-                                            onChange={this.updatePermission} value={this.state.permission}>
+                                    <DashboardSelect className="form-control" id="permissions" name="permissions"
+                                                     required
+                                                     onChange={this.updatePermission} value={this.state.permission}>
                                         <option value={''} disabled>Select an Option</option>
                                         <option value={"VIEW"}>View</option>
                                         <option value={"EDIT"}>Edit</option>
                                         <option value={"ADMIN"}>Admin</option>
-                                    </select>
+                                    </DashboardSelect>
                                 </Field>
                             </div>
                         </div>
@@ -210,15 +212,16 @@ export default class PanelPermissions extends Component<{}, PanelPermissionState
                 <tr key={perm.id}>
                     <td>{userString}</td>
                     <td>
-                        <select className="form-control" value={perm.permission}
-                                onChange={e => this.changePanelPermissions(perm.id, e)}>
+                        <DashboardSelect className="form-control" value={perm.permission}
+                                         onChange={e => this.changePanelPermissions(perm.id, e)}>
                             <option value={"VIEW"}>View</option>
                             <option value={"EDIT"}>Edit</option>
                             <option value={"ADMIN"}>Admin</option>
-                        </select>
+                        </DashboardSelect>
                     </td>
                     <td>
-                        <button className="btn btn-danger" onClick={() => this.deletePanelPermission(perm.id)}><i
+                        <button className="btn btn-danger" onClick={() => this.deletePanelPermission(perm.id)}
+                                disabled={window.Panel.Server.readonly}><i
                             className="fas fa-times"/> Delete
                         </button>
                     </td>
@@ -256,7 +259,8 @@ export default class PanelPermissions extends Component<{}, PanelPermissionState
                             }} onCancel={() => {
                                 this.toggleAdding(false)
                             }}/> :
-                           <tr> <th colSpan={3}><button className="btn btn-success" onClick={e => this.toggleAdding(true)}><i
+                            !window.Panel.Server.readonly &&
+                           <tr><th colSpan={3}><button className="btn btn-success" onClick={e => this.toggleAdding(true)}><i
                                 className="fas fa-plus"/> Add
                            </button></th></tr>
                         }

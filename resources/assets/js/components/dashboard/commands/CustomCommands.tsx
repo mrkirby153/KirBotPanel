@@ -177,7 +177,7 @@ export default class CustomCommands extends Component<{}, CustomCommandsState> {
                     <td>{command.clearance_level}</td>
                     <td>
                         <div className="btn-group">
-                            <button className="btn btn-info" onClick={() => this.edit(command)}><i
+                            <button className="btn btn-info" onClick={() => this.edit(command)} disabled={window.Panel.Server.readonly}><i
                                 className="fas fa-pen"/></button>
                         </div>
                     </td>
@@ -205,7 +205,7 @@ export default class CustomCommands extends Component<{}, CustomCommandsState> {
                                 <tbody>
                                 {commands}
                                 </tbody>
-                                <tfoot>
+                                {!window.Panel.Server.readonly && <tfoot>
                                 <tr>
                                     <td colSpan={4}>
                                         <button className="btn btn-success" onClick={this.createButton}><i
@@ -213,7 +213,7 @@ export default class CustomCommands extends Component<{}, CustomCommandsState> {
                                         </button>
                                     </td>
                                 </tr>
-                                </tfoot>
+                                </tfoot>}
                             </table>
                         </div>
                     </div>

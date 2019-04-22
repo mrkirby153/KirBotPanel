@@ -2,6 +2,7 @@ import React, {Component, ReactElement} from 'react';
 import Field from "../../Field";
 import SettingsRepository from "../../../settings_repository";
 import _ from 'lodash';
+import {DashboardSelect} from "../../DashboardInput";
 
 
 interface WhitelistState {
@@ -55,7 +56,7 @@ export default class ChannelWhitelist extends Component<{}, WhitelistState> {
         this.localizeChannels().forEach(c => {
             whitelistChannels.push(
                 <div className="channel" key={c.id}>
-                    #{c.channel_name} <span className="x-icon" onClick={_ => this.removeChannel(c.id)}><i className="fas fa-times"/></span>
+                    #{c.channel_name} {!window.Panel.Server.readonly && <span className="x-icon" onClick={_ => this.removeChannel(c.id)}><i className="fas fa-times"/></span>}
                 </div>
             )
         });
@@ -76,10 +77,10 @@ export default class ChannelWhitelist extends Component<{}, WhitelistState> {
                 </div>
                 <div className="col-6">
                     <Field>
-                        <select className="form-control" value={""} onChange={this.addChannel}>
+                        <DashboardSelect className="form-control" value={""} onChange={this.addChannel}>
                             <option disabled value={""}>Add a channel</option>
                             {channelSelect}
-                        </select>
+                        </DashboardSelect>
                     </Field>
                 </div>
             </div>

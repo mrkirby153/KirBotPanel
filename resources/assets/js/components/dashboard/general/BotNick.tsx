@@ -4,6 +4,7 @@ import Field from "../../Field";
 import axios from 'axios';
 import SettingsRepository from "../../../settings_repository";
 import Timeout = NodeJS.Timeout;
+import {DashboardInput} from "../../DashboardInput";
 
 
 interface BotNickState {
@@ -86,8 +87,8 @@ export default class BotNick extends Component<{}, BotNickState> {
                 <Form busy={this.state.busy} onSubmit={this.save}>
                     <Field success={this.state.success ? "Name has been updated" : null}
                            errors={this.state.errors['nick']}>
-                        <input type="text" name="nick" className="form-control" value={this.state.nick}
-                               onChange={this.handleChange} onBlur={this.save}/>
+                        <DashboardInput type="text" name="nick" className="form-control" value={this.state.nick}
+                               onChange={this.handleChange}/>
                     </Field>
                 </Form>
             </div>

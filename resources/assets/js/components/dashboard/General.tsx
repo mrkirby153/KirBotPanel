@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import LoggingSettings from './general/LogSettings';
-import Field from "../Field";
 import BotNick from "./general/BotNick";
 import MutedRole from "./general/MutedRole";
 import UserPersistence from "./general/UserPersistence";

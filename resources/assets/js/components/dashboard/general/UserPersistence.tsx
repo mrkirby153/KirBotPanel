@@ -1,8 +1,8 @@
 import React, {Component, ReactElement} from 'react';
-import Switch from "../../Switch";
 import Field from "../../Field";
 import SettingsRepository from "../../../settings_repository";
 import _ from 'lodash';
+import {DashboardSelect, DashboardSwitch} from "../../DashboardInput";
 
 
 interface PersistState {
@@ -37,7 +37,7 @@ export default class UserPersistence extends Component<{}, PersistState> {
     handleChecked(e) {
         let newMode = this.state.mode;
         let target = e.target;
-        if(target.dataset.mode == "1" && !target.checked) {
+        if (target.dataset.mode == "1" && !target.checked) {
             newMode = 0;
         } else {
             if (target.checked) {
@@ -78,8 +78,8 @@ export default class UserPersistence extends Component<{}, PersistState> {
 
         let persistRoles: ReactElement[] = [];
         this.localizedRoles().forEach(role => {
-            persistRoles.push(<div className="role" key={role.id}>{role.name} <span
-                onClick={e => this.removeRole(role.id)}><i className="fas fa-times x-icon"/></span>
+            persistRoles.push(<div className="role" key={role.id}>{role.name} {!window.Panel.Server.readonly && <span
+                onClick={e => this.removeRole(role.id)}><i className="fas fa-times x-icon"/></span>}
             </div>)
         });
 
@@ -87,8 +87,8 @@ export default class UserPersistence extends Component<{}, PersistState> {
             persistRoles.push(<div className="role" key={"no_roles"}><i>All roles</i></div>)
         }
 
-        if(!persistenceEnabled) {
-            persistRoles = [<div className="role" key={"disabled"}><i>Role persistence is disabled.</i></div> ]
+        if (!persistenceEnabled) {
+            persistRoles = [<div className="role" key={"disabled"}><i>Role persistence is disabled.</i></div>]
         }
 
         return (
@@ -104,12 +104,17 @@ export default class UserPersistence extends Component<{}, PersistState> {
                 </div>
                 <div className="row">
                     <div className="col-lg-6 col-md-12">
-                        <Switch label="Enable Persistence" id="enablePersistence" data-mode="1" checked={(this.state.mode & 1) > 0} onChange={this.handleChecked}/>
+                        <DashboardSwitch label="Enable Persistence" id="enablePersistence" data-mode="1"
+                                         checked={(this.state.mode & 1) > 0} onChange={this.handleChecked}/>
                         <div className="mt-1">
-                            <Switch label="Persist Mute" id="persistMute" switchSize="small" data-mode="2" checked={(this.state.mode & 2) > 0} onChange={this.handleChecked}/>
-                            <Switch label="Persist Roles" id="persistRoles" switchSize="small" data-mode="16" checked={(this.state.mode & 16) > 0} onChange={this.handleChecked}/>
-                            <Switch label="Persist Deafen" id="persistDeafen" switchSize="small" data-mode="4" checked={(this.state.mode & 4) > 0} onChange={this.handleChecked}/>
-                            <Switch label="Persist Nickname" id="persistNick" switchSize="small" data-mode="8" checked={(this.state.mode & 8) > 0} onChange={this.handleChecked}/>
+                            <DashboardSwitch label="Persist Mute" id="persistMute" switchSize="small" data-mode="2"
+                                             checked={(this.state.mode & 2) > 0} onChange={this.handleChecked}/>
+                            <DashboardSwitch label="Persist Roles" id="persistRoles" switchSize="small" data-mode="16"
+                                             checked={(this.state.mode & 16) > 0} onChange={this.handleChecked}/>
+                            <DashboardSwitch label="Persist Deafen" id="persistDeafen" switchSize="small" data-mode="4"
+                                             checked={(this.state.mode & 4) > 0} onChange={this.handleChecked}/>
+                            <DashboardSwitch label="Persist Nickname" id="persistNick" switchSize="small" data-mode="8"
+                                             checked={(this.state.mode & 8) > 0} onChange={this.handleChecked}/>
                         </div>
                     </div>
                     <div className="col-lg-6 col-md-12">
@@ -119,10 +124,11 @@ export default class UserPersistence extends Component<{}, PersistState> {
                             If no roles are selected, all roles will persist.
                         </p>
                         <Field>
-                            <select className="form-control" value={""} onChange={this.handleChange} disabled={!persistenceEnabled}>
+                            <DashboardSelect className="form-control" value={""} onChange={this.handleChange}
+                                             disabled={!persistenceEnabled}>
                                 <option value={""} disabled={true}>Persist a role</option>
                                 {selectRoles}
-                            </select>
+                            </DashboardSelect>
                         </Field>
 
                         <div className="roles">

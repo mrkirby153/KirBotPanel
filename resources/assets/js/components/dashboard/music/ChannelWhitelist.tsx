@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import SettingsRepository from "../../../settings_repository";
 import _ from 'lodash';
+import {DashboardSelect} from "../../DashboardInput";
 
 
 interface ChannelWhitelistChannelProps {
@@ -60,9 +61,9 @@ class ChannelWhitelistChannels extends Component<{}, ChannelWhitelistChannelProp
             return <option key={c.id} value={c.id}>{c.channel_name}</option>
         });
         let activeChannels = this.getChannels().map(c => {
-            return <div key={c.id} className="channel">{c.name} <span className="x-icon"
+            return <div key={c.id} className="channel">{c.name} {!window.Panel.Server.readonly && <span className="x-icon"
                                                                       onClick={() => this.removeChannel(c.id)}><i
-                className="fas fa-times"/></span>
+                className="fas fa-times"/></span>}
             </div>
         });
         return (
@@ -70,10 +71,10 @@ class ChannelWhitelistChannels extends Component<{}, ChannelWhitelistChannelProp
                 <div className="row">
                     <div className="col-12">
                         <label><b>Add Channel</b></label>
-                        <select className="form-control" value={''} onChange={this.addChannel}>
+                        <DashboardSelect className="form-control" value={''} onChange={this.addChannel}>
                             <option value={''} disabled={true}>Select a channel</option>
                             {availableChannels}
-                        </select>
+                        </DashboardSelect>
                     </div>
                 </div>
                 <div className="row">
@@ -121,11 +122,11 @@ export default class ChannelWhitelist extends Component<{}, ChannelWhitelistStat
                         <div className={col_name}>
                             <div className="form-group">
                                 <label><b>Mode</b></label>
-                                <select className="form-control" value={this.state.mode} onChange={this.change}>
+                                <DashboardSelect className="form-control" value={this.state.mode} onChange={this.change}>
                                     <option value={'OFF'}>Off</option>
                                     <option value={'WHITELIST'}>Whitelist</option>
                                     <option value={'BLACKLIST'}>Blacklist</option>
-                                </select>
+                                </DashboardSelect>
                             </div>
                         </div>
                         {this.state.mode != 'OFF'? <div className="col-lg-6 col-md-12">

@@ -110,7 +110,7 @@ export default class JsonSettings extends Component<JsonSettingsProps, JsonSetti
                     </button>
                 </div>}
                 <AceEditor mode="json" theme="github" name="spam-settings" width="100%" showPrintMargin={false}
-                           onChange={this.bodyChange} value={this.state.value}/>
+                           onChange={this.bodyChange} value={this.state.value} readOnly={window.Panel.Server.readonly}/>
             </div>
         );
     }

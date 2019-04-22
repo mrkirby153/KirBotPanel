@@ -3,6 +3,7 @@ import Form from "../../Form";
 import Field from "../../Field";
 import SettingsRepository from "../../../settings_repository";
 import axios from 'axios';
+import {DashboardSelect} from "../../DashboardInput";
 
 interface MutedState {
     success: boolean
@@ -47,10 +48,10 @@ export default class MutedRole extends Component<{}, MutedState> {
                 <Form busy={false}>
                     <Field success={this.state.success? "Muted role updated!" : null}
                            errors={this.state.selected == "" && this.state.changed ? "No muted role has been selected. Mutes will not work" : null}>
-                        <select className="form-control" onChange={this.onChange} value={this.state.selected}>
+                        <DashboardSelect className="form-control" onChange={this.onChange} value={this.state.selected}>
                             <option value={""}>None</option>
                             {roles}
-                        </select>
+                        </DashboardSelect>
                     </Field>
                 </Form>
             </div>

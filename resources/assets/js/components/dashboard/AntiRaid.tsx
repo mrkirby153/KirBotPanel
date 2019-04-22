@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import DetectionSettings from "./raid/DetectionSettings";
-import Switch from "../Switch";
 import AlertSettings from "./raid/AlertSettings";
 import SettingsRepository from "../../settings_repository";
+import {DashboardSwitch} from "../DashboardInput";
 
 interface AntiRaidState {
     enabled: boolean
@@ -34,7 +34,7 @@ export default class AntiRaid extends Component<{}, AntiRaidState> {
                 <h2>Anti-Raid Settings</h2>
 
                 <p>Raid reports are kept for a maximum of 30 days after the raid.</p>
-                <Switch id="master-switch" label="Master Switch" checked={this.state.enabled} onChange={this.onChange}/>
+                <DashboardSwitch id="master-switch" label="Master Switch" checked={this.state.enabled} onChange={this.onChange}/>
                 <hr/>
                 <h2>Detection Settings</h2>
                 <div className="row">

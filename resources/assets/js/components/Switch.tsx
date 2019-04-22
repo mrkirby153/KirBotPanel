@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 
 
 // Extend the default HTMLAttributes for the input
-interface SwitchProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface SwitchProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label: string,
     id: string,
     switchSize?: "small" | "normal" | "large"

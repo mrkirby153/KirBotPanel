@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import Form from "../../Form";
 import Field from "../../Field";
 import SettingsRepository from "../../../settings_repository";
+import {DashboardInput} from "../../DashboardInput";
 
 interface CommandPrefixState {
     prefix: string,
@@ -71,7 +72,7 @@ export default class CommandPrefix extends Component<{}, CommandPrefixState> {
                             <Field success={this.state.success ? 'Prefix saved!' : null}
                                    errors={this.state.prefix_errors}>
                                 <label htmlFor="commandPrefix"><b>Command Prefix</b></label>
-                                <input type="text" className="form-control" id="commandPrefix" onChange={this.onChange}
+                                <DashboardInput type="text" className="form-control" id="commandPrefix" onChange={this.onChange}
                                        value={this.state.prefix} onBlur={this.save} required={true}/>
                             </Field>
                         </Form>

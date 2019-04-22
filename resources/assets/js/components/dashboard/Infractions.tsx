@@ -1,4 +1,4 @@
-import React, {Component, FunctionComponent} from 'react';
+import React, {Component} from 'react';
 import ReactTable from 'react-table';
 import axios from 'axios';
 
