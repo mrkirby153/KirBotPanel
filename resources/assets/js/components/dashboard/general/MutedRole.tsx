@@ -36,7 +36,7 @@ export default class MutedRole extends Component<{}, MutedState> {
     render() {
         let roles: ReactElement[] = [];
         window.Panel.Server.roles.forEach(role => {
-            roles.push(<option value={role.id}>{role.name}</option>)
+            roles.push(<option value={role.id} key={role.id}>{role.name}</option>)
         });
         return (
             <div>

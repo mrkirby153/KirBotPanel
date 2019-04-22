@@ -54,7 +54,7 @@ export default class ChannelWhitelist extends Component<{}, WhitelistState> {
         let whitelistChannels: ReactElement[] = [];
         this.localizeChannels().forEach(c => {
             whitelistChannels.push(
-                <div className="channel">
+                <div className="channel" key={c.id}>
                     #{c.channel_name} <span className="x-icon" onClick={_ => this.removeChannel(c.id)}><i className="fas fa-times"/></span>
                 </div>
             )

@@ -256,9 +256,9 @@ export default class PanelPermissions extends Component<{}, PanelPermissionState
                             }} onCancel={() => {
                                 this.toggleAdding(false)
                             }}/> :
-                            <th colSpan={3}><button className="btn btn-success" onClick={e => this.toggleAdding(true)}><i
+                           <tr> <th colSpan={3}><button className="btn btn-success" onClick={e => this.toggleAdding(true)}><i
                                 className="fas fa-plus"/> Add
-                            </button></th>
+                           </button></th></tr>
                         }
                         </tfoot>
                     </table>
