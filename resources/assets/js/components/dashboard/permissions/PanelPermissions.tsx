@@ -207,13 +207,16 @@ export default class PanelPermissions extends Component<{}, PanelPermissionState
     render() {
         let panelPermissions: ReactElement[] = [];
         this.state.permissions.forEach(perm => {
+            let ownUser = window.Panel.user && perm.user_id == window.Panel.user.id;
+            if(window.Panel.user && window.Panel.user.admin == 1)
+                ownUser = false;
             let userString = <span className="user">{perm.user_id} {perm.user ? '(' + perm.user + ')' : ''}</span>
             panelPermissions.push(
                 <tr key={perm.id}>
                     <td>{userString}</td>
                     <td>
                         <DashboardSelect className="form-control" value={perm.permission}
-                                         onChange={e => this.changePanelPermissions(perm.id, e)}>
+                                         onChange={e => this.changePanelPermissions(perm.id, e)} disabled={ownUser && !window.Panel.Server.owner || !window.Panel.Server.admin}>
                             <option value={"VIEW"}>View</option>
                             <option value={"EDIT"}>Edit</option>
                             <option value={"ADMIN"}>Admin</option>
@@ -221,7 +224,7 @@ export default class PanelPermissions extends Component<{}, PanelPermissionState
                     </td>
                     <td>
                         <button className="btn btn-danger" onClick={() => this.deletePanelPermission(perm.id)}
-                                disabled={window.Panel.Server.readonly}><i
+                                disabled={window.Panel.Server.readonly || (ownUser && !window.Panel.Server.owner) || !window.Panel.Server.admin}><i
                             className="fas fa-times"/> Delete
                         </button>
                     </td>
@@ -259,7 +262,7 @@ export default class PanelPermissions extends Component<{}, PanelPermissionState
                             }} onCancel={() => {
                                 this.toggleAdding(false)
                             }}/> :
-                            !window.Panel.Server.readonly &&
+                            (!window.Panel.Server.readonly && window.Panel.Server.admin) &&
                            <tr><th colSpan={3}><button className="btn btn-success" onClick={e => this.toggleAdding(true)}><i
                                 className="fas fa-plus"/> Add
                            </button></th></tr>

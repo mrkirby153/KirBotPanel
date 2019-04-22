@@ -71,7 +71,9 @@ declare interface Panel {
         settings: ServerSetting[],
         channels: Channel[],
         roles: Role[],
-        readonly: boolean
+        readonly: boolean,
+        owner: boolean,
+        admin: boolean
     }
 }
 

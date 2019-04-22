@@ -126,7 +126,7 @@ class ApiController extends Controller
 
     public function updatePanelPermission(Request $request, Guild $guild, ServerPermission $permission)
     {
-        $this->authorize('update', $guild);
+        $this->authorize('admin', $guild);
         $request->validate([
             'permission' => Rule::in('VIEW', 'EDIT', 'ADMIN')
         ]);
@@ -137,13 +137,13 @@ class ApiController extends Controller
 
     public function deletePanelPermission(Guild $guild, ServerPermission $permission)
     {
-        $this->authorize('update', $guild);
+        $this->authorize('admin', $guild);
         $permission->delete();
     }
 
     public function createPanelPermission(Request $request, Guild $guild)
     {
-        $this->authorize('update', $guild);
+        $this->authorize('admin', $guild);
         $request->validate([
             'id' => 'required|numeric',
             'permission' => ['required', Rule::in('VIEW', 'EDIT', 'ADMIN')]

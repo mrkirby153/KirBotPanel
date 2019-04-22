@@ -50,6 +50,8 @@ class GeneralController extends Controller
         $server->load('channels');
         $server->load('roles');
         $server['readonly'] = !\Auth::user()->can('update', $server);
+        $server['owner'] = $server->owner == \Auth::id();
+        $server['admin'] = \Auth::user()->can('admin', $server);
         \JavaScript::put([
             'Server' => $server
         ]);
