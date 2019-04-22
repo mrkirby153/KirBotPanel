@@ -49,6 +49,7 @@ class GeneralController extends Controller
         $this->authorize('view', $server);
         $server->load('channels');
         $server->load('roles');
+        $server['readonly'] = !\Auth::user()->can('update', $server);
         \JavaScript::put([
             'Server' => $server
         ]);

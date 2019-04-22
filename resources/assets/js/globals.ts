@@ -70,7 +70,8 @@ declare interface Panel {
         icon_id: string|null,
         settings: ServerSetting[],
         channels: Channel[],
-        roles: Role[]
+        roles: Role[],
+        readonly: boolean
     }
 }
 
