@@ -47,3 +47,8 @@ Route::group(['prefix' => '/guild/{guild}'], function () {
     Route::patch('/commands/{command}', 'ApiController@updateCustomCommand');
     Route::get('/infractions', 'ApiController@getInfractions');
 });
+
+Route::group(['prefix' => '/admin'], function() {
+    Route::get('/guilds', 'AdminApiController@getGuilds');
+    Route::patch('/setting', 'AdminApiController@setData');
+});

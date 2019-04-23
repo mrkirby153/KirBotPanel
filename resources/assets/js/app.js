@@ -1,5 +1,6 @@
 import NavBar from './components/NavBar';
 import Dashboard from './components/Dashboard';
+import AdminSettings from './components/admin/AdminSettings';
 import ReactDOM from 'react-dom';
 import React from 'react';
 
@@ -26,6 +27,11 @@ if (navMount) {
 let dashMount = document.getElementById("dash-mount");
 if(dashMount) {
     ReactDOM.render(<Dashboard/>, dashMount);
+}
+
+let adminSettingsMount = document.getElementById('admin-settings-mount');
+if(adminSettingsMount) {
+    ReactDOM.render(<AdminSettings/>, adminSettingsMount);
 }
 
 // Enable hot reload
