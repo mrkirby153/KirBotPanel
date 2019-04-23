@@ -38,7 +38,7 @@ const routes: Route[] = [
     },
     {
         path: '/raid',
-        component: require('./components/Dashboard/AntiRaid').default,
+        component: require('./components/dashboard/AntiRaid').default,
         name: 'Anti-Raid'
     }
 ];
