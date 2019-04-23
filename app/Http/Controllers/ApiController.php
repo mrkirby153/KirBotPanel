@@ -47,6 +47,7 @@ class ApiController extends Controller
         'anti_raid_quiet_period',
         'anti_raid_count',
         'anti_raid_enabled',
+        'log_timezone',
     ];
 
     public function __construct()
