@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Guild;
 use Illuminate\Http\Request;
 use Intervention\Image\AbstractFont;
+use Redis;
+use Response;
 
 class DashController extends Controller
 {
