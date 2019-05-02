@@ -32,7 +32,7 @@ export default class AlertSettings extends Component<AlertSettingsProps, AlertSe
 
     render() {
         let channels = window.Panel.Server.channels.filter(e => e.type == 'TEXT').map(channel => {
-            return <option key={channel.id}>#{channel.channel_name}</option>
+            return <option key={channel.id} value={channel.id}>#{channel.channel_name}</option>
         });
         let roles = window.Panel.Server.roles.filter(e => e.id != e.server_id).map(role => {
             return <option key={role.id} value={role.id}>{role.name}</option>
