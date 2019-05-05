@@ -1,5 +1,7 @@
 .ReactTable {
-  .rt-tr {
-    cursor: pointer;
+  &.pointer {
+    .rt-tr {
+      cursor: pointer;
+    }
   }
 }

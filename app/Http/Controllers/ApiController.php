@@ -337,4 +337,16 @@ class ApiController extends Controller
         $this->authorize('view', $guild);
         return Infraction::whereGuild($guild->id)->get();
     }
+
+    public function getRaids(Guild $guild)
+    {
+        $id = $guild->id;
+        $data = [];
+        foreach (Redis::keys("raid:$id:*") as $key) {
+            $json = json_decode(Redis::get($key));
+            $json->id = str_replace("raid:$id:", "", $key);
+            $data[] = $json;
+        }
+        return $data;
+    }
 }

@@ -156,7 +156,7 @@ export default class Infractions extends Component<{}, InfractionsState> {
                                         this.openModal(rowInfo.original)
                                     }
                                 }
-                            }} className={"-striped -highlight"}/>
+                            }} className={"-striped -highlight pointer"}/>
                 {this.state.viewing_infraction &&
                 <Modal title={'Infraction ' + this.state.viewing_infraction.id} open={this.state.details_visible}
                        onClose={this.closeModal}>

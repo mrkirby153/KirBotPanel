@@ -46,6 +46,7 @@ Route::group(['prefix' => '/guild/{guild}'], function () {
     Route::delete('/commands/{command}', 'ApiController@deleteCustomCommand');
     Route::patch('/commands/{command}', 'ApiController@updateCustomCommand');
     Route::get('/infractions', 'ApiController@getInfractions');
+    Route::get('/raids', 'ApiController@getRaids');
 });
 
 Route::group(['prefix' => '/admin'], function() {

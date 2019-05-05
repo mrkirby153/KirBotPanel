@@ -37,6 +37,7 @@ export default class AlertSettings extends Component<AlertSettingsProps, AlertSe
         let roles = window.Panel.Server.roles.filter(e => e.id != e.server_id).map(role => {
             return <option key={role.id} value={role.id}>{role.name}</option>
         });
+        let alertRole = this.state.anti_raid_alert_role ? this.state.anti_raid_alert_role : "";
         return(
             <div>
                 <div className="row">
@@ -45,7 +46,7 @@ export default class AlertSettings extends Component<AlertSettingsProps, AlertSe
                             <div className="col-6">
                                 <Field help="The role to ping when a potential raid is detected">
                                     <label htmlFor="anti_raid_alert_role"><b>Alert Role</b></label>
-                                    <DashboardSelect name="anti_raid_alert_role" className="form-control" value={this.state.anti_raid_alert_role} onChange={this.onChange} disabled={!this.props.enabled}>
+                                    <DashboardSelect name="anti_raid_alert_role" className="form-control" value={alertRole} onChange={this.onChange} disabled={!this.props.enabled}>
                                         <option value={''}>None</option>
                                         {roles}
                                         <option value={'@here'}>@here</option>

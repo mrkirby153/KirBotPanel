@@ -3,6 +3,7 @@ import DetectionSettings from "./raid/DetectionSettings";
 import AlertSettings from "./raid/AlertSettings";
 import SettingsRepository from "../../settings_repository";
 import {DashboardSwitch} from "../DashboardInput";
+import PastRaids from "./raid/PastRaids";
 
 interface AntiRaidState {
     enabled: boolean
@@ -47,6 +48,13 @@ export default class AntiRaid extends Component<{}, AntiRaidState> {
                 <div className="row">
                     <div className="col-12">
                         <AlertSettings enabled={this.state.enabled}/>
+                    </div>
+                </div>
+                <hr/>
+                <h2>Recent Raids</h2>
+                <div className="row">
+                    <div className="col-12">
+                        <PastRaids/>
                     </div>
                 </div>
             </div>
