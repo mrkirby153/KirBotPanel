@@ -10,6 +10,8 @@ use App\Models\LogSetting;
 use App\Models\Role;
 use App\Models\RolePermission;
 use App\Models\ServerPermission;
+use App\Utils\Redis\RedisMessage;
+use App\Utils\RedisMessenger;
 use App\Utils\SettingsRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
@@ -78,24 +80,41 @@ class ApiController extends Controller
         $settings->included = $request->input('include');
         $settings->excluded = $request->input('exclude');
         $settings->save();
+        RedisMessenger::dispatch(new RedisMessage("log-settings", $guild->id, [
+            'id' => $settings->id,
+            'included' => $settings->included,
+            'excluded' => $settings->excluded
+        ]));
         return $settings;
     }
 
     public function deleteLogSettings(Guild $guild, LogSetting $settings)
     {
         $this->authorize('update', $guild);
+        RedisMessenger::dispatch(new RedisMessage("log-settings", $guild->id, [
+            'id' => $settings->id,
+            'included' => -1,
+            'excluded' => -1
+        ]));
         return $settings->delete() ? "true" : "false";
     }
 
     public function createLogSettings(Request $request, Guild $guild)
     {
         $this->authorize('update', $guild);
-        return LogSetting::create([
+
+        $settings = LogSetting::create([
             'server_id' => $guild->id,
             'channel_id' => $request->input('channel'),
             'included' => 0,
             'excluded' => 0
-        ])->load('channel');
+        ]);
+        RedisMessenger::dispatch(new RedisMessage("log-settings", $guild->id, [
+            'id' => $settings->id,
+            'included' => $settings->included,
+            'excluded' => $settings->excluded
+        ]));
+        return $settings->load('channel');
     }
 
     public function setBotNick(Request $request, Guild $guild)
@@ -187,12 +206,19 @@ class ApiController extends Controller
 
         $permission->permission_level = $request->input('permission');
         $permission->save();
+        RedisMessenger::dispatch(new RedisMessage("role-clearance", $guild->id, [
+            'role' => $permission->role_id,
+            'clearance' => $permission->permission_level
+        ]));
         return $permission;
     }
 
     public function deleteRolePermissions(Guild $guild, RolePermission $permission)
     {
         $this->authorize('update', $guild);
+        RedisMessenger::dispatch(new RedisMessage("role-clearance", $guild->id, [
+            'role' => $permission->role_id,
+        ]));
         $permission->delete();
     }
 
@@ -210,6 +236,11 @@ class ApiController extends Controller
         $perm->role_id = $request->input('role_id');
         $perm->permission_level = $request->input('permission_level');
         $perm->save();
+
+        RedisMessenger::dispatch(new RedisMessage("role-clearance", $guild->id, [
+            'role' => $perm->role_id,
+            'clearance' => $perm->permission_level
+        ]));
 
         $role = Role::whereId($request->input('role_id'))->first();
 
