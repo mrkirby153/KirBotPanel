@@ -39,6 +39,7 @@ class DiscordOAuthUserRepository
             'id' => $raw_user->id,
             'username' => $raw_user->username,
             'token' => $tokens->getAccessToken(),
+            'api_token' => \Keygen::token(64)->generate(),
             'refresh_token' => $tokens->getExpiresAt(),
             'expires_in' => $tokens->getExpiresAt()
         ]);
@@ -47,6 +48,7 @@ class DiscordOAuthUserRepository
             $user->token = $tokens->getAccessToken();
             $user->refresh_token = $tokens->getRefreshToken();
             $user->expires_in = $tokens->getExpiresAt();
+            $user->api_token = \Keygen::token(64)->generate();
             $user->save();
         }
         return $user;
