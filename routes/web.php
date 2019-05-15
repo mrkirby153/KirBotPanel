@@ -18,7 +18,7 @@ Route::get('/', function () {
 Route::get('/serverIcon', 'DashController@makeIcon')->name('serverIcon');
 
 Route::get('/servers', 'DashController@displayOverview')->name('dashboard.all');
-Route::group(['middleware' => ['has_discord_token', 'can:view,server']], function () {
+Route::group(['middleware' => ['can:view,server']], function () {
     Route::group(['prefix' => 'dashboard'], function () {
         Route::get('/{server}/', 'DashController@showDashboard');
         Route::get('/{server}/{any}', 'DashController@showDashboard')->where('any', '.*');

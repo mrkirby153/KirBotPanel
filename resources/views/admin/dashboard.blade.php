@@ -31,7 +31,7 @@
                                         <td class="d-flex justify-content-center">
                                             <div class="btn-group">
                                                 <a class="btn btn-success"
-                                                   href="{{route('dashboard.general', ['server'=>$server->id])}}"><i
+                                                   href="{{url('/dashboard/' . $server->id)}}"><i
                                                             class="fas fa-pencil-alt"></i> Manage</a>
                                             </div>
                                         </td>
