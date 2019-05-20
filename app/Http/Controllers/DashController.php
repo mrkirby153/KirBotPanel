@@ -16,8 +16,8 @@ class DashController extends Controller
             return redirect(route('login') . '?returnUrl=' . urlencode($request->getRequestUri()));
         }
         $sub = \DB::table('server_permissions')->where('user_id', '=', \Auth::id())->select('server_id as id',
-            'name', 'icon_id')->join('guild', 'server_id', '=', 'guild.id');
-        $servers = \DB::table('guild')->where('owner', '=', \Auth::id())->select([
+            'name', 'icon_id')->join('guild', 'server_id', '=', 'guild.id')->whereNull('guild.deleted_at');
+        $servers = \DB::table('guild')->where('owner', '=', \Auth::id())->whereNull('deleted_at')->select([
             'id',
             'name',
             'icon_id'
