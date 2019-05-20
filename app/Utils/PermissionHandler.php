@@ -9,6 +9,9 @@ use App\User;
 
 class PermissionHandler
 {
+
+    private static $guild_cache = [];
+
     /**
      * @param User $user
      * @param $serverId string
@@ -57,15 +60,20 @@ class PermissionHandler
      */
     private static function checkPermission(User $user, $serverId, $permission)
     {
-        $guild = Guild::whereId($serverId)->firstOrFail();
-        if($guild->owner == $user->id) {
-            return true;
+        if (array_key_exists($serverId, self::$guild_cache)) {
+            return self::$guild_cache[$serverId];
         } else {
-            $perm = ServerPermission::whereServerId($serverId)->whereUserId($user->id)->first();
-            if ($perm == null) {
-                return false;
+            $guild = Guild::whereId($serverId)->firstOrFail();
+            self::$guild_cache[$serverId] = $guild;
+            if ($guild->owner == $user->id) {
+                return true;
+            } else {
+                $perm = ServerPermission::whereServerId($serverId)->whereUserId($user->id)->first();
+                if ($perm == null) {
+                    return false;
+                }
+                return $perm->permission == $permission;
             }
-            return $perm->permission == $permission;
         }
     }
 }

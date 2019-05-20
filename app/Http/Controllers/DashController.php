@@ -39,6 +39,7 @@ class DashController extends Controller
         $server['readonly'] = !\Auth::user()->can('update', $server);
         $server['owner'] = $server->owner == \Auth::id();
         $server['admin'] = \Auth::user()->can('admin', $server);
+        $server->load('settings');
         \JavaScript::put([
             'Server' => $server
         ]);

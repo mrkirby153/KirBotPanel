@@ -13,10 +13,6 @@ class Guild extends Model
 
     public $incrementing = false;
 
-    protected $with = [
-        'settings'
-    ];
-
     public function settings()
     {
         return $this->hasMany(GuildSettings::class, 'guild');
