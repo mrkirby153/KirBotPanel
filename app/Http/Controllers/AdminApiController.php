@@ -11,7 +11,7 @@ class AdminApiController extends Controller
 
     public function getGuilds()
     {
-        return Guild::get();
+        return Guild::get()->load('settings');
     }
 
     public function setData(Request $request) {
