@@ -83,8 +83,7 @@ export default class JsonSettings extends Component<JsonSettingsProps, JsonSetti
 
     saveChanges() {
         let val = this.state.value;
-        let to_save = JSON.parse(val);
-        SettingsRepository.setSetting(this.props.settingsKey, to_save, true).then(() => {
+        SettingsRepository.setSetting(this.props.settingsKey, val, true).then(() => {
             this.setState({
                 value: val,
                 default: val
