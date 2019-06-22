@@ -1,5 +1,6 @@
 import React, {RefObject} from 'react';
 import {DashboardInput} from "../../DashboardInput";
+import Field from "../../Field";
 
 interface SpamItemProps {
     name: string,
@@ -63,17 +64,23 @@ class SpamItem extends React.Component<SpamItemProps, {}> {
         return (
             <div className="spam-item">
                 <h5 className="spam-label">{getLocalizedRule(this.props.name)}</h5>
+                {!this.props.period && !this.props.count && <div className="disabled-rule">Rule is disabled</div>}
                 <form>
                     <div className="form-row align-items-center">
                         <div className="col-auto">
-                            <label htmlFor="count">Count</label>
-                            <DashboardInput type="number" placeholder="Count" value={this.props.count} name="count"
-                                            className="form-control" onChange={this.onChange}/>
+                            <Field errors={this.props.period && !this.props.count ? "This field is required" : ""}>
+                                <label htmlFor="count">Count</label>
+                                <DashboardInput type="number" placeholder="Count" value={this.props.count} name="count"
+                                                className="form-control" onChange={this.onChange}/>
+                            </Field>
                         </div>
                         <div className="col-auto">
-                            <label htmlFor="period">Period</label>
-                            <DashboardInput type="number" placeholder="Period" value={this.props.period} name="period"
-                                            className="form-control" onChange={this.onChange}/>
+                            <Field errors={this.props.count && !this.props.period ? "This field is required" : ""}>
+                                <label htmlFor="period">Period</label>
+                                <DashboardInput type="number" placeholder="Period" value={this.props.period}
+                                                name="period"
+                                                className="form-control" onChange={this.onChange}/>
+                            </Field>
                         </div>
                     </div>
                 </form>

@@ -28,6 +28,12 @@
       cursor: pointer;
     }
 
+    .disabled-rule {
+      font-style: italic;
+      font-size: 80%;
+      color: $gray-700
+    }
+
     .spam-items {
       display: flex;
       flex-wrap: wrap;
