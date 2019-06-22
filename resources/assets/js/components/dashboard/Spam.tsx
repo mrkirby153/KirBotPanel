@@ -12,6 +12,31 @@ interface SpamState {
     rules: any[]
 }
 
+/*
+    TODO:
+        * Clicking on the "level" thing lets them change the level
+        * Clicking on the big "+" creates a new level which is editing and the number is focused
+        * Clicking "Save" commits the json to the backend
+ */
+
+
+const new_rule = {
+    level: "",
+    _id: "",
+    data: []
+};
+
+
+function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
 export default class Spam extends Component<{}, SpamState> {
     private mockData: any;
 
@@ -25,6 +50,7 @@ export default class Spam extends Component<{}, SpamState> {
             rules: [
                 {
                     level: 0,
+                    _id: "",
                     data: [
                         {
                             name: "max_links",
@@ -66,14 +92,16 @@ export default class Spam extends Component<{}, SpamState> {
 
         this.onRuleChange = this.onRuleChange.bind(this);
         this.onChange = this.onChange.bind(this);
+        this.addNewRule = this.addNewRule.bind(this);
+        this.deleteRule = this.deleteRule.bind(this);
     }
 
     onRuleChange(key, data) {
         let prevRules = [...this.state.rules];
         for (let i = 0; i < prevRules.length; i++) {
-            if (prevRules[i].level == key) {
+            if (prevRules[i]._id == key) {
                 prevRules[i] = {
-                    level: key,
+                    ...prevRules[i],
                     data: data
                 };
             }
@@ -84,12 +112,13 @@ export default class Spam extends Component<{}, SpamState> {
     }
 
     buildSpamJson() {
-        let json = {
-            punishment: this.state.punishment,
-            punishment_duration: parseInt(this.state.punishment_duration),
-            clean_amount: this.state.clean_amount,
-            clean_duration: this.state.clean_duration
-        };
+        let keys = ["punishment", "punishment_duration", "clean_amount", "clean_duration"];
+        let json = {};
+        keys.forEach(key => {
+            if (this.state[key]) {
+                json[key] = this.state[key]
+            }
+        });
         this.state.rules.forEach(rule => {
             let ruleJson = {};
             rule.data.forEach(data => {
@@ -114,6 +143,30 @@ export default class Spam extends Component<{}, SpamState> {
         })
     }
 
+    addNewRule() {
+        let rules = [...this.state.rules];
+        rules.push({
+            ...new_rule,
+            _id: makeid(5)
+        });
+        this.setState({
+            rules: rules
+        })
+    }
+
+    deleteRule(id) {
+        console.log("Deleting rule " + id);
+        let rules: any[] = [];
+        this.state.rules.forEach(rule => {
+            if (rule._id != id) {
+                rules.push(rule)
+            }
+        });
+        this.setState({
+            rules: rules
+        })
+    }
+
 
     explodeJson(json) {
         let keys = Object.keys(json);
@@ -134,7 +187,12 @@ export default class Spam extends Component<{}, SpamState> {
                 // Clearance level rule
                 let rules = json[key];
 
-                let rule_data = Object.keys(rules).map(rule => {
+                let id = json[key]["_id"];
+                if (!id) {
+                    id = makeid(5)
+                }
+
+                let rule_data = Object.keys(rules).filter(e => e != "_id").map(rule => {
                     return {
                         name: rule,
                         count: rules[rule]["count"],
@@ -143,6 +201,7 @@ export default class Spam extends Component<{}, SpamState> {
                 });
                 newRules.push({
                     level: parseInt(level),
+                    _id: id,
                     data: rule_data
                 })
             }
@@ -155,8 +214,9 @@ export default class Spam extends Component<{}, SpamState> {
 
     render() {
         let rules = this.state.rules ? this.state.rules.map(rule => {
-            return <SpamRule key={rule.level} level={rule.level} data={rule.data}
-                             onChange={e => this.onRuleChange(rule.level, e)}/>
+            return <SpamRule key={rule._id} level={rule.level} data={rule.data}
+                             onChange={e => this.onRuleChange(rule._id, e)} id={rule._id}
+                             onDeleteRule={() => this.deleteRule(rule._id)}/>
         }) : [];
         return (
             <div>
@@ -166,7 +226,8 @@ export default class Spam extends Component<{}, SpamState> {
                 <div className="spam-rules">
                     {rules}
                 </div>
-                <button className="w-100 btn btn-outline-info"><i className="fas fa-plus"/></button>
+                <button className="w-100 btn btn-outline-info" onClick={this.addNewRule}><i className="fas fa-plus"/>
+                </button>
                 <hr/>
                 <form>
                     <div className="form-row align-items-center">

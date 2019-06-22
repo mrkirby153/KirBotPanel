@@ -9,9 +9,11 @@ interface SpamItemProps {
 }
 
 interface SpamRuleComponentProps {
+    id: string,
     level: number,
     data: SpamItemProps[],
-    onChange?: Function
+    onChange?: Function,
+    onDeleteRule?: Function
 }
 
 const rule_localizations = {
@@ -80,6 +82,7 @@ export default class SpamRule extends React.Component<SpamRuleComponentProps, {}
         super(props);
 
         this.onChange = this.onChange.bind(this);
+        this.deleteRule = this.deleteRule.bind(this);
     }
 
     onChange(key, data) {
@@ -118,6 +121,12 @@ export default class SpamRule extends React.Component<SpamRuleComponentProps, {}
         }
     }
 
+    deleteRule() {
+        if (this.props.onDeleteRule) {
+            this.props.onDeleteRule(this.props.id);
+        }
+    }
+
     render() {
         let items = Object.keys(rule_localizations).map(key => {
             let data = this.getSpamData(key);
@@ -126,8 +135,8 @@ export default class SpamRule extends React.Component<SpamRuleComponentProps, {}
         });
         return (
             <div className="spam-rule">
-                <span className="level"> {this.props.level}</span>
-                <div className="delete-button"><i className="fas fa-minus-square"/></div>
+                <span className="level"> {this.props.level} - {this.props.id}</span>
+                <div className="delete-button" onClick={this.deleteRule}><i className="fas fa-minus-square"/></div>
                 <div className="spam-items">
                     {items}
                 </div>
