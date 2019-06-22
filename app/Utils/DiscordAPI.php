@@ -70,7 +70,7 @@ class DiscordAPI
             \App::abort(429);
         }
         $body = $response->getBody();
-        \Cache::put($key, $body->getContents(), 0.5);
+        \Cache::put($key, $body->getContents(), 30);
         return json_decode($body);
     }
 

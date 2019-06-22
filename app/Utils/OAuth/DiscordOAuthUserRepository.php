@@ -21,7 +21,7 @@ class DiscordOAuthUserRepository
         ]);
         $resp_body = $response->getBody();
         $body = json_decode($resp_body);
-        \Cache::put("user_$token", json_encode($body), 5);
+        \Cache::put("user_$token", json_encode($body), 300);
         return $body;
     }
 
