@@ -88,7 +88,7 @@ export default class BotNick extends Component<{}, BotNickState> {
                     <Field success={this.state.success ? "Name has been updated" : null}
                            errors={this.state.errors['nick']}>
                         <DashboardInput type="text" name="nick" className="form-control" value={this.state.nick}
-                               onChange={this.handleChange}/>
+                               onChange={this.handleChange} onBlur={this.save}/>
                     </Field>
                 </Form>
             </div>

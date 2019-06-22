@@ -1,50 +1,92 @@
 import React, {Component} from 'react';
-import JsonSettings from "./spam/JsonSettings";
-import {SpamSchema, CensorSchema} from './spam/Schemas';
+import SpamRule from "./spam/SpamRule";
+import {DashboardInput, DashboardSelect} from "../DashboardInput";
+
 
 export default class Spam extends Component {
+
+    private mock_data: any;
+
     constructor(props) {
         super(props);
+        this.mock_data = {
+            punishment: 'TEMPMUTE',
+            punishment_duration: 30,
+            clean_amount: 4,
+            clean_duration: 10,
+            rules: [
+                {
+                    level: 0,
+                    data: [
+                        {
+                            name: "max_links",
+                            count: 10,
+                            period: 60
+                        },
+                        {
+                            name: "max_messages",
+                            count: 7,
+                            period: 10
+                        },
+                        {
+                            name: "max_newlines",
+                            count: 30,
+                            period: 120
+                        },
+                        {
+                            name: "max_mentions",
+                            count: 10,
+                            period: 10
+                        },
+                        {
+                            name: "max_duplicates",
+                            count: 6,
+                            period: 30
+                        },
+                        {
+                            name: "max_attachments",
+                            count: 5,
+                            period: 120
+                        }
+                    ]
+                }
+            ]
+        }
     }
 
     render() {
+        let rules = this.mock_data.rules.map(rule => {
+            return <SpamRule level={rule.level} key={rule.level} data={rule.data}/>
+        });
         return (
             <div>
-                <h2>Spam Settings</h2>
-                <p>
-                    <b>Available Rules</b><br/>
-                    The following rules are available for each clearance level: <code>max_messages, max_newlines,
-                    max_mentions, max_links, max_emoji, max_uppercase, max_attachments</code>. Each rule has two
-                    options: <code>count and period</code>. "Count" is the number of violations that trigger action,
-                    "period" is teh time (in seconds) in which the bot looks.
-                </p>
-                <p className="mb-0">
-                    <b>Available Actions</b><br/>
-                    The following actions are available and can be set with the <code>punishment</code> string in teh
-                    root of the element. For temporary actions, provide a <code>punishment_duration</code> in seconds
-                </p>
-                <ul>
-                    <li><b>None: </b>Take no action</li>
-                    <li><b>MUTE: </b>Permanently mute the user</li>
-                    <li><b>KICK: </b>Kick the user from the server</li>
-                    <li><b>BAN: </b>Ban the user form the server</li>
-                    <li><b>TEMPBAN: </b>Temporarily ban the user from the server</li>
-                    <li><b>TEMPMUTE: </b>Temporarily mute the user</li>
-                </ul>
-                <JsonSettings schema={SpamSchema} settingsKey="spam_settings"/>
-                <hr/>
-                <h2>Censor Settings</h2>
-                <p className="mb-0">
-                    <b>Available Rules:</b>
-                </p>
-                <ul>
-                    <li><b>Invites: </b>Censor invites. Keys: <code>enabled, whitelist, guild_whitelist, blacklist, guild_blacklist</code></li>
-                    <li><b>Domains: </b>Censor domains. Keys: <code>enabled, whitelist, blacklist</code></li>
-                    <li><b>blocked_tokens: </b>Blocks tokens (can appear in the word anywhere) [array]</li>
-                    <li><b>blocked_words: </b>Blocked words (words separated by a space) [array]</li>
-                    <li><b>zalgo: </b>Block Zalgo text from being sent [boolean]</li>
-                </ul>
-                <JsonSettings schema={CensorSchema} settingsKey="censor_settings"/>
+                <div className="spam-rules">
+                    {rules}
+                </div>
+                <form>
+                    <div className="form-row align-items-center">
+                        <div className="col-auto">
+                            <label htmlFor="punishment">Punishment</label>
+                            <DashboardSelect id="punishment" name="punishment" className="form-control">
+                                <option value={"NONE"}>No Action</option>
+                                <option value={"MUTE"}>Mute the user</option>
+                                <option value={"KICK"}>Kick the user</option>
+                                <option value={"BAN"}>Ban the user</option>
+                                <option value={"TEMPBAN"}>Temporarily Ban the user</option>
+                                <option value={"TEMPMUTE"}>Temporarily Mute the user</option>
+                            </DashboardSelect>
+                        </div>
+                        <div className="col-auto">
+                            <label htmlFor="clean-amount">Clean Amount</label>
+                            <DashboardInput name="clean-amount" type="number" className="form-control"/>
+                        </div>
+                        <div className="col-auto">
+                            <label htmlFor="clean-duration">Clean Duration</label>
+                            <DashboardInput name="clean-duration" type="number" className="form-control"/>
+                        </div>
+                    </div>
+
+                </form>
             </div>
         )
     }
