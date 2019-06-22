@@ -16,6 +16,11 @@ if (process.env.NODE_ENV === "production") {
     mix.version();
 }
 
+// Generate sourcemaps in development
+if(process.env.NODE_ENV === "development") {
+    mix.sourceMaps();
+}
+
 mix.webpackConfig({
     module: {
         rules: [

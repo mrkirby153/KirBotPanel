@@ -3,13 +3,19 @@ import SpamRule from "./spam/SpamRule";
 import {DashboardInput, DashboardSelect} from "../DashboardInput";
 
 
-export default class Spam extends Component {
+interface SpamState {
+    punishment: string,
+    punishment_duration: string,
+    clean_amount: string,
+    clean_duration: string,
+    rules: any[]
+}
 
-    private mock_data: any;
+export default class Spam extends Component<{}, SpamState> {
 
     constructor(props) {
         super(props);
-        this.mock_data = {
+        let mock_data = {
             punishment: 'TEMPMUTE',
             punishment_duration: 30,
             clean_amount: 4,
@@ -51,15 +57,70 @@ export default class Spam extends Component {
                     ]
                 }
             ]
+        };
+        // @ts-ignore
+        this.state = {...mock_data};
+
+        this.onRuleChange = this.onRuleChange.bind(this);
+        this.onChange = this.onChange.bind(this);
+    }
+
+    onRuleChange(key, data) {
+        let prevRules = [...this.state.rules];
+        for (let i = 0; i < prevRules.length; i++) {
+            if (prevRules[i].level == key) {
+                prevRules[i] = {
+                    level: key,
+                    data: data
+                };
+            }
         }
+        this.setState({
+            rules: prevRules
+        });
+    }
+
+    buildSpamJson() {
+        let json = {
+            punishment: this.state.punishment,
+            punishment_duration: parseInt(this.state.punishment_duration),
+            clean_amount: this.state.clean_amount,
+            clean_duration: this.state.clean_duration
+        };
+        this.state.rules.forEach(rule => {
+            let ruleJson = {};
+            rule.data.forEach(data => {
+                if (data.count !== "" && data.period !== "") {
+                    ruleJson[data.name] = {
+                        count: parseInt(data.count),
+                        period: parseInt(data.period)
+                    }
+                }
+            });
+            json[rule.level] = ruleJson;
+        });
+        return json;
+    }
+
+    onChange(e) {
+        let {name, value} = e.target;
+
+        // @ts-ignore
+        this.setState({
+            [name]: value
+        })
     }
 
     render() {
-        let rules = this.mock_data.rules.map(rule => {
-            return <SpamRule level={rule.level} key={rule.level} data={rule.data}/>
+        let rules = this.state.rules.map(rule => {
+            return <SpamRule key={rule.level} level={rule.level} data={rule.data}
+                             onChange={e => this.onRuleChange(rule.level, e)}/>
         });
         return (
             <div>
+                <code>
+                    {JSON.stringify(this.buildSpamJson(), null, 5)}
+                </code>
                 <div className="spam-rules">
                     {rules}
                 </div>
@@ -67,25 +128,32 @@ export default class Spam extends Component {
                     <div className="form-row align-items-center">
                         <div className="col-auto">
                             <label htmlFor="punishment">Punishment</label>
-                            <DashboardSelect id="punishment" name="punishment" className="form-control">
+                            <DashboardSelect id="punishment" name="punishment" className="form-control"
+                                             value={this.state.punishment} onChange={this.onChange}>
                                 <option value={"NONE"}>No Action</option>
                                 <option value={"MUTE"}>Mute the user</option>
                                 <option value={"KICK"}>Kick the user</option>
                                 <option value={"BAN"}>Ban the user</option>
-                                <option value={"TEMPBAN"}>Temporarily Ban the user</option>
-                                <option value={"TEMPMUTE"}>Temporarily Mute the user</option>
+                                <option value={"TEMPBAN"}>Temporarily ban the user</option>
+                                <option value={"TEMPMUTE"}>Temporarily mute the user</option>
                             </DashboardSelect>
                         </div>
                         <div className="col-auto">
-                            <label htmlFor="clean-amount">Clean Amount</label>
-                            <DashboardInput name="clean-amount" type="number" className="form-control"/>
+                            <label htmlFor="punishment_duration">Punishment Duration</label>
+                            <DashboardInput name="punishment_duration" type="number" className="form-control"
+                                            value={this.state.punishment_duration} onChange={this.onChange}/>
                         </div>
                         <div className="col-auto">
-                            <label htmlFor="clean-duration">Clean Duration</label>
-                            <DashboardInput name="clean-duration" type="number" className="form-control"/>
+                            <label htmlFor="clean_amount">Clean Amount</label>
+                            <DashboardInput name="clean_amount" type="number" className="form-control"
+                                            value={this.state.clean_amount} onChange={this.onChange}/>
+                        </div>
+                        <div className="col-auto">
+                            <label htmlFor="clean_duration">Clean Duration</label>
+                            <DashboardInput name="clean_duration" type="number" className="form-control"
+                                            value={this.state.clean_duration} onChange={this.onChange}/>
                         </div>
                     </div>
-
                 </form>
             </div>
         )

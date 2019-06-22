@@ -27,7 +27,13 @@
       flex-direction: row;
 
       .spam-item {
-        padding: 0 10px;
+        h5 {
+          margin-top: 0;
+        }
+        margin: 10px 10px;
+        border: $card-border-width solid rgba(0, 0, 0, 0.075);
+        padding: 10px;
+        border-radius: $card-border-radius;
       }
     }
   }
