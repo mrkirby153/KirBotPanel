@@ -21,6 +21,11 @@
       font-weight: bold;
     }
 
+    .delete-button {
+      float: right;
+      margin-right: 5px;
+    }
+
     .spam-items {
       display: flex;
       flex-wrap: wrap;

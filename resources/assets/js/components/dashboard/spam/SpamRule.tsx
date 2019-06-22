@@ -46,9 +46,9 @@ class SpamItem extends React.Component<SpamItemProps, {}> {
             [name]: value
         };
 
-        // @ts-ignore
-        if (this.props.onChange)
+        if (this.props.onChange) {
             this.props.onChange(newState);
+        }
     }
 
     render() {
@@ -83,7 +83,6 @@ export default class SpamRule extends React.Component<SpamRuleComponentProps, {}
     }
 
     onChange(key, data) {
-
         let rules = [...this.props.data];
 
         for (let i = 0; i < rules.length; i++) {
@@ -122,11 +121,13 @@ export default class SpamRule extends React.Component<SpamRuleComponentProps, {}
     render() {
         let items = Object.keys(rule_localizations).map(key => {
             let data = this.getSpamData(key);
-            return <SpamItem name={key} count={data.count} period={data.period}/>
+            return <SpamItem name={key} key={key} count={data.count} period={data.period}
+                             onChange={e => this.onChange(key, e)}/>
         });
         return (
             <div className="spam-rule">
                 <span className="level"> {this.props.level}</span>
+                <div className="delete-button"><i className="fas fa-minus-square"/></div>
                 <div className="spam-items">
                     {items}
                 </div>

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import SpamRule from "./spam/SpamRule";
 import {DashboardInput, DashboardSelect} from "../DashboardInput";
+import SettingsRepository from "../../settings_repository";
 
 
 interface SpamState {
@@ -12,6 +13,7 @@ interface SpamState {
 }
 
 export default class Spam extends Component<{}, SpamState> {
+    private mockData: any;
 
     constructor(props) {
         super(props);
@@ -58,8 +60,9 @@ export default class Spam extends Component<{}, SpamState> {
                 }
             ]
         };
+        // this.mockData = mock_data;
         // @ts-ignore
-        this.state = {...mock_data};
+        this.state = this.explodeJson(SettingsRepository.getSetting("spam_settings", {}));
 
         this.onRuleChange = this.onRuleChange.bind(this);
         this.onChange = this.onChange.bind(this);
@@ -111,11 +114,50 @@ export default class Spam extends Component<{}, SpamState> {
         })
     }
 
+
+    explodeJson(json) {
+        let keys = Object.keys(json);
+        let newState = {};
+        let newRules: any[] = [];
+        keys.forEach(key => {
+            if (key == "punishment" || key == "punishment_duration" || key == "clean_amount" || key == "clean_duration") {
+                newState = {
+                    ...newState,
+                    [key]: json[key]
+                }
+            }
+
+            // We hit a clearance level
+            if (!isNaN(parseInt(key))) {
+                let level = key;
+
+                // Clearance level rule
+                let rules = json[key];
+
+                let rule_data = Object.keys(rules).map(rule => {
+                    return {
+                        name: rule,
+                        count: rules[rule]["count"],
+                        period: rules[rule]["period"]
+                    }
+                });
+                newRules.push({
+                    level: parseInt(level),
+                    data: rule_data
+                })
+            }
+        });
+        return {
+            ...newState,
+            rules: newRules
+        }
+    }
+
     render() {
-        let rules = this.state.rules.map(rule => {
+        let rules = this.state.rules ? this.state.rules.map(rule => {
             return <SpamRule key={rule.level} level={rule.level} data={rule.data}
                              onChange={e => this.onRuleChange(rule.level, e)}/>
-        });
+        }) : [];
         return (
             <div>
                 <code>
@@ -124,6 +166,8 @@ export default class Spam extends Component<{}, SpamState> {
                 <div className="spam-rules">
                     {rules}
                 </div>
+                <button className="w-100 btn btn-outline-info"><i className="fas fa-plus"/></button>
+                <hr/>
                 <form>
                     <div className="form-row align-items-center">
                         <div className="col-auto">
@@ -140,19 +184,37 @@ export default class Spam extends Component<{}, SpamState> {
                         </div>
                         <div className="col-auto">
                             <label htmlFor="punishment_duration">Punishment Duration</label>
-                            <DashboardInput name="punishment_duration" type="number" className="form-control"
-                                            value={this.state.punishment_duration} onChange={this.onChange}/>
+                            <div className="input-group">
+                                <DashboardInput name="punishment_duration" type="number" className="form-control"
+                                                value={this.state.punishment_duration} onChange={this.onChange}/>
+                                <div className="input-group-append">
+                                    <div className="input-group-text">Seconds</div>
+                                </div>
+                            </div>
                         </div>
                         <div className="col-auto">
                             <label htmlFor="clean_amount">Clean Amount</label>
-                            <DashboardInput name="clean_amount" type="number" className="form-control"
-                                            value={this.state.clean_amount} onChange={this.onChange}/>
+                            <div className="input-group">
+                                <div className="input-group-append">
+                                    <DashboardInput name="clean_amount" type="number" className="form-control"
+                                                    value={this.state.clean_amount} onChange={this.onChange}/>
+                                    <div className="input-group-text">Messages</div>
+                                </div>
+                            </div>
                         </div>
                         <div className="col-auto">
                             <label htmlFor="clean_duration">Clean Duration</label>
-                            <DashboardInput name="clean_duration" type="number" className="form-control"
-                                            value={this.state.clean_duration} onChange={this.onChange}/>
+                            <div className="input-group">
+                                <DashboardInput name="clean_duration" type="number" className="form-control"
+                                                value={this.state.clean_duration} onChange={this.onChange}/>
+                                <div className="input-group-append">
+                                    <div className="input-group-text">Seconds</div>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                    <div className="form-row mt-2">
+                        <button className="btn btn-success">Save</button>
                     </div>
                 </form>
             </div>
