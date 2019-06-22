@@ -19,11 +19,13 @@
 
     .level {
       font-weight: bold;
+      cursor: pointer;
     }
 
     .delete-button {
       float: right;
       margin-right: 5px;
+      cursor: pointer;
     }
 
     .spam-items {

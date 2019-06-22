@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {RefObject} from 'react';
 import {DashboardInput} from "../../DashboardInput";
 
 interface SpamItemProps {
@@ -8,12 +8,18 @@ interface SpamItemProps {
     onChange?: Function
 }
 
+interface SpamRuleComponentState {
+    editing: boolean,
+    level: string | number
+}
+
 interface SpamRuleComponentProps {
     id: string,
-    level: number,
+    level: number | string,
     data: SpamItemProps[],
     onChange?: Function,
-    onDeleteRule?: Function
+    onDeleteRule?: Function,
+    onLevelChange?: Function
 }
 
 const rule_localizations = {
@@ -77,30 +83,56 @@ class SpamItem extends React.Component<SpamItemProps, {}> {
 
 }
 
-export default class SpamRule extends React.Component<SpamRuleComponentProps, {}> {
+export default class SpamRule extends React.Component<SpamRuleComponentProps, SpamRuleComponentState> {
+
+    private inputRef: RefObject<HTMLInputElement>;
+
     constructor(props) {
         super(props);
 
+        this.state = {
+            editing: false,
+            level: ""
+        };
+
+        this.inputRef = React.createRef();
+
         this.onChange = this.onChange.bind(this);
         this.deleteRule = this.deleteRule.bind(this);
+        this.updateEditingState = this.updateEditingState.bind(this);
+        this.onLevelChange = this.onLevelChange.bind(this);
+        this.startEditing = this.startEditing.bind(this);
+        this.stopEditing = this.stopEditing.bind(this);
     }
 
     onChange(key, data) {
         let rules = [...this.props.data];
 
+        let found = false;
         for (let i = 0; i < rules.length; i++) {
             let rule = rules[i];
             if (rule.name == key) {
+                found = true;
                 rules[i] = {
                     ...rule,
                     ...data
                 }
             }
         }
+        if (!found) {
+            rules.push({...data, name: key});
+        }
 
         if (this.props.onChange) {
             this.props.onChange(rules);
         }
+    }
+
+    onLevelChange(e) {
+        let {value} = e.target;
+        this.setState({
+            level: value
+        });
     }
 
 
@@ -121,9 +153,42 @@ export default class SpamRule extends React.Component<SpamRuleComponentProps, {}
         }
     }
 
+    componentDidMount(): void {
+        this.updateEditingState();
+    }
+
     deleteRule() {
         if (this.props.onDeleteRule) {
             this.props.onDeleteRule(this.props.id);
+        }
+    }
+
+    updateEditingState() {
+        if (this.props.level === "" && !this.state.editing) {
+            this.startEditing();
+        }
+    }
+
+    startEditing() {
+        this.setState({
+            level: this.props.level,
+            editing: true
+        });
+        const ref = this.inputRef.current;
+        if (ref) {
+            setTimeout(() => {
+                ref.focus();
+            }, 100)
+        }
+    }
+
+    stopEditing() {
+        this.setState({
+            editing: false
+        });
+        // Propagate the change out
+        if (this.props.onLevelChange) {
+            this.props.onLevelChange(this.props.id, this.state.level);
         }
     }
 
@@ -135,8 +200,22 @@ export default class SpamRule extends React.Component<SpamRuleComponentProps, {}
         });
         return (
             <div className="spam-rule">
-                <span className="level"> {this.props.level} - {this.props.id}</span>
-                <div className="delete-button" onClick={this.deleteRule}><i className="fas fa-minus-square"/></div>
+                <div className="form-row" style={!this.state.editing ? {display: "none"} : {}}>
+                    <div className="col-auto">
+                        <div className="input-group input-group-sm">
+                            <div className="input-group-prepend">
+                                <div className="input-group-text">Level</div>
+                            </div>
+                            <DashboardInput type="number" value={this.state.level} onChange={this.onLevelChange}
+                                            className="form-control form-control-sm" ref={this.inputRef}
+                                            onBlur={this.stopEditing}/>
+                        </div>
+                    </div>
+                </div>
+                <span className="level" style={this.state.editing ? {display: "none"} : {}}
+                      onClick={this.startEditing}>{this.props.level}</span>
+                {!this.state.editing &&
+                <div className="delete-button" onClick={this.deleteRule}><i className="fas fa-minus-square"/></div>}
                 <div className="spam-items">
                     {items}
                 </div>

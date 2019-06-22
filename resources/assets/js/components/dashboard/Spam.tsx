@@ -38,55 +38,10 @@ function makeid(length) {
 }
 
 export default class Spam extends Component<{}, SpamState> {
-    private mockData: any;
 
     constructor(props) {
         super(props);
-        let mock_data = {
-            punishment: 'TEMPMUTE',
-            punishment_duration: 30,
-            clean_amount: 4,
-            clean_duration: 10,
-            rules: [
-                {
-                    level: 0,
-                    _id: "",
-                    data: [
-                        {
-                            name: "max_links",
-                            count: 10,
-                            period: 60
-                        },
-                        {
-                            name: "max_messages",
-                            count: 7,
-                            period: 10
-                        },
-                        {
-                            name: "max_newlines",
-                            count: 30,
-                            period: 120
-                        },
-                        {
-                            name: "max_mentions",
-                            count: 10,
-                            period: 10
-                        },
-                        {
-                            name: "max_duplicates",
-                            count: 6,
-                            period: 30
-                        },
-                        {
-                            name: "max_attachments",
-                            count: 5,
-                            period: 120
-                        }
-                    ]
-                }
-            ]
-        };
-        // this.mockData = mock_data;
+
         // @ts-ignore
         this.state = this.explodeJson(SettingsRepository.getSetting("spam_settings", {}));
 
@@ -94,18 +49,22 @@ export default class Spam extends Component<{}, SpamState> {
         this.onChange = this.onChange.bind(this);
         this.addNewRule = this.addNewRule.bind(this);
         this.deleteRule = this.deleteRule.bind(this);
+        this.changeLevel = this.changeLevel.bind(this);
     }
 
     onRuleChange(key, data) {
+        let dcopy = [...data];
         let prevRules = [...this.state.rules];
         for (let i = 0; i < prevRules.length; i++) {
             if (prevRules[i]._id == key) {
+                console.log(dcopy);
                 prevRules[i] = {
                     ...prevRules[i],
-                    data: data
+                    data: dcopy
                 };
             }
         }
+        console.log(prevRules);
         this.setState({
             rules: prevRules
         });
@@ -148,6 +107,19 @@ export default class Spam extends Component<{}, SpamState> {
         rules.push({
             ...new_rule,
             _id: makeid(5)
+        });
+        this.setState({
+            rules: rules
+        })
+    }
+
+    changeLevel(id, newLevel) {
+        console.log(`Updating level of ${id} to ${newLevel}`);
+        let rules = [...this.state.rules];
+        rules.forEach(rule => {
+            if(rule._id == id) {
+                rule.level = newLevel
+            }
         });
         this.setState({
             rules: rules
@@ -216,7 +188,7 @@ export default class Spam extends Component<{}, SpamState> {
         let rules = this.state.rules ? this.state.rules.map(rule => {
             return <SpamRule key={rule._id} level={rule.level} data={rule.data}
                              onChange={e => this.onRuleChange(rule._id, e)} id={rule._id}
-                             onDeleteRule={() => this.deleteRule(rule._id)}/>
+                             onDeleteRule={() => this.deleteRule(rule._id)} onLevelChange={this.changeLevel}/>
         }) : [];
         return (
             <div>
