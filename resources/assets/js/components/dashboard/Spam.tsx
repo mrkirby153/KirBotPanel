@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import SpamRule from "./spam/SpamRule";
 import {DashboardInput, DashboardSelect} from "../DashboardInput";
 import SettingsRepository from "../../settings_repository";
+import toastr from 'toastr';
 
 
 interface SpamState {
@@ -9,15 +10,9 @@ interface SpamState {
     punishment_duration: string,
     clean_amount: string,
     clean_duration: string,
-    rules: any[]
+    rules: any[],
+    changed: boolean
 }
-
-/*
-    TODO:
-        * Clicking on the "level" thing lets them change the level
-        * Clicking on the big "+" creates a new level which is editing and the number is focused
-        * Clicking "Save" commits the json to the backend
- */
 
 
 const new_rule = {
@@ -43,13 +38,17 @@ export default class Spam extends Component<{}, SpamState> {
         super(props);
 
         // @ts-ignore
-        this.state = this.explodeJson(SettingsRepository.getSetting("spam_settings", {}));
+        this.state = {
+            ...this.explodeJson(SettingsRepository.getSetting("spam_settings", {})),
+            changed: false
+        };
 
         this.onRuleChange = this.onRuleChange.bind(this);
         this.onChange = this.onChange.bind(this);
         this.addNewRule = this.addNewRule.bind(this);
         this.deleteRule = this.deleteRule.bind(this);
         this.changeLevel = this.changeLevel.bind(this);
+        this.onFormSubmit = this.onFormSubmit.bind(this);
     }
 
     onRuleChange(key, data) {
@@ -57,16 +56,15 @@ export default class Spam extends Component<{}, SpamState> {
         let prevRules = [...this.state.rules];
         for (let i = 0; i < prevRules.length; i++) {
             if (prevRules[i]._id == key) {
-                console.log(dcopy);
                 prevRules[i] = {
                     ...prevRules[i],
                     data: dcopy
                 };
             }
         }
-        console.log(prevRules);
         this.setState({
-            rules: prevRules
+            rules: prevRules,
+            changed: true
         });
     }
 
@@ -98,7 +96,8 @@ export default class Spam extends Component<{}, SpamState> {
 
         // @ts-ignore
         this.setState({
-            [name]: value
+            [name]: value,
+            changed: true
         })
     }
 
@@ -109,7 +108,8 @@ export default class Spam extends Component<{}, SpamState> {
             _id: makeid(5)
         });
         this.setState({
-            rules: rules
+            rules: rules,
+            changed: true
         })
     }
 
@@ -117,12 +117,13 @@ export default class Spam extends Component<{}, SpamState> {
         console.log(`Updating level of ${id} to ${newLevel}`);
         let rules = [...this.state.rules];
         rules.forEach(rule => {
-            if(rule._id == id) {
+            if (rule._id == id) {
                 rule.level = newLevel
             }
         });
         this.setState({
-            rules: rules
+            rules: rules,
+            changed: true
         })
     }
 
@@ -135,10 +136,20 @@ export default class Spam extends Component<{}, SpamState> {
             }
         });
         this.setState({
-            rules: rules
+            rules: rules,
+            changed: true
         })
     }
 
+    onFormSubmit(e) {
+        e.preventDefault();
+        SettingsRepository.setSetting("spam_settings", this.buildSpamJson(), true).then(resp => {
+            toastr.success('Rules updated');
+        });
+        this.setState({
+            changed: false
+        })
+    }
 
     explodeJson(json) {
         let keys = Object.keys(json);
@@ -192,16 +203,13 @@ export default class Spam extends Component<{}, SpamState> {
         }) : [];
         return (
             <div>
-                <code>
-                    {JSON.stringify(this.buildSpamJson(), null, 5)}
-                </code>
                 <div className="spam-rules">
                     {rules}
                 </div>
                 <button className="w-100 btn btn-outline-info" onClick={this.addNewRule}><i className="fas fa-plus"/>
                 </button>
                 <hr/>
-                <form>
+                <form onSubmit={this.onFormSubmit}>
                     <div className="form-row align-items-center">
                         <div className="col-auto">
                             <label htmlFor="punishment">Punishment</label>
@@ -219,7 +227,8 @@ export default class Spam extends Component<{}, SpamState> {
                             <label htmlFor="punishment_duration">Punishment Duration</label>
                             <div className="input-group">
                                 <DashboardInput name="punishment_duration" type="number" className="form-control"
-                                                value={this.state.punishment_duration} onChange={this.onChange}/>
+                                                value={this.state.punishment_duration} onChange={this.onChange}
+                                                disabled={this.state.punishment != "TEMPMUTE" && this.state.punishment != "TEMPBAN"}/>
                                 <div className="input-group-append">
                                     <div className="input-group-text">Seconds</div>
                                 </div>
@@ -228,9 +237,9 @@ export default class Spam extends Component<{}, SpamState> {
                         <div className="col-auto">
                             <label htmlFor="clean_amount">Clean Amount</label>
                             <div className="input-group">
+                                <DashboardInput name="clean_amount" type="number" className="form-control"
+                                                value={this.state.clean_amount} onChange={this.onChange}/>
                                 <div className="input-group-append">
-                                    <DashboardInput name="clean_amount" type="number" className="form-control"
-                                                    value={this.state.clean_amount} onChange={this.onChange}/>
                                     <div className="input-group-text">Messages</div>
                                 </div>
                             </div>
@@ -246,9 +255,9 @@ export default class Spam extends Component<{}, SpamState> {
                             </div>
                         </div>
                     </div>
-                    <div className="form-row mt-2">
+                    {this.state.changed && <div className="form-row mt-2">
                         <button className="btn btn-success">Save</button>
-                    </div>
+                    </div>}
                 </form>
             </div>
         )

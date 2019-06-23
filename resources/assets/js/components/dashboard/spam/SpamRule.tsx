@@ -1,6 +1,7 @@
 import React, {RefObject} from 'react';
 import {DashboardInput} from "../../DashboardInput";
 import Field from "../../Field";
+import Swal from 'sweetalert2';
 
 interface SpamItemProps {
     name: string,
@@ -77,9 +78,14 @@ class SpamItem extends React.Component<SpamItemProps, {}> {
                         <div className="col-auto">
                             <Field errors={this.props.count && !this.props.period ? "This field is required" : ""}>
                                 <label htmlFor="period">Period</label>
-                                <DashboardInput type="number" placeholder="Period" value={this.props.period}
-                                                name="period"
-                                                className="form-control" onChange={this.onChange}/>
+                                <div className="input-group">
+                                    <DashboardInput type="number" placeholder="Period" value={this.props.period}
+                                                    name="period"
+                                                    className="form-control" onChange={this.onChange}/>
+                                    <div className="input-group-append">
+                                        <div className="input-group-text">Seconds</div>
+                                    </div>
+                                </div>
                             </Field>
                         </div>
                     </div>
@@ -165,9 +171,19 @@ export default class SpamRule extends React.Component<SpamRuleComponentProps, Sp
     }
 
     deleteRule() {
-        if (this.props.onDeleteRule) {
-            this.props.onDeleteRule(this.props.id);
-        }
+        Swal.fire({
+            title: 'Delete Rule',
+            text: 'Are you sure you want to delete this rule?',
+            type: "warning",
+            showConfirmButton: true,
+            showCancelButton: true
+        }).then(e => {
+            if (e.value) {
+                if (this.props.onDeleteRule) {
+                    this.props.onDeleteRule(this.props.id);
+                }
+            }
+        })
     }
 
     updateEditingState() {
