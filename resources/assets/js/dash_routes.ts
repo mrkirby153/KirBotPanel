@@ -40,6 +40,11 @@ const routes: Route[] = [
         path: '/raid',
         component: require('./components/dashboard/AntiRaid').default,
         name: 'Anti-Raid'
+    },
+    {
+        path: '/censor',
+        component: require('./components/dashboard/Censor').default,
+        name: 'Censor'
     }
 ];
 
