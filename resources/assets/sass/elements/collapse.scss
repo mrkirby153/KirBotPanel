@@ -6,6 +6,9 @@ $caret-transition: 0.2s ease;
   overflow: hidden;
   transition: height $transition-speed ease;
   margin: 5px;
+  .visible {
+    overflow: visible;
+  }
 }
 
 .caret {

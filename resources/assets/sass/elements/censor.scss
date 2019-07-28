@@ -1,4 +1,24 @@
+@import "~bootstrap/scss/variables";
+
 .censor-rule {
+
+  box-sizing: border-box;
+  height: 100%;
+  border-radius: $card-border-radius;
+  border: $card-border-width solid $card-border-color;
+  padding: 10px;
+  margin-bottom: 10px;
+
+  .level::before {
+    content: "Level ";
+  }
+
+  .level {
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 5px;
+  }
+
   .section-header {
     cursor: pointer;
     margin-bottom: 10px;
@@ -11,5 +31,28 @@
   .container-fluid {
     padding-right: 0;
     padding-left: 0;
+  }
+
+  .delete-button {
+    float: right;
+    margin-right: 5px;
+    cursor: pointer;
+  }
+
+  .sections {
+    margin-top: 10px;
+  }
+
+  .section-header {
+    font-size: 1.5em;
+  }
+
+  .subsection-header {
+    //font-size: 1.25em;
+    font-weight: bold;
+  }
+
+  .section-header[data-open="false"] {
+    margin-bottom: 0px;
   }
 }

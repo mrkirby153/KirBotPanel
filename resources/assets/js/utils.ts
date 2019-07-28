@@ -30,6 +30,21 @@ export function traverseObject(path, obj): any {
 }
 
 /**
+ * Sets a value on an object
+ * @param path The path
+ * @param obj The object
+ * @param value The value
+ */
+export function setObject(path, obj, value) {
+    let splitPath = path.split('.');
+    let toModify = obj;
+    for (let i = 0; i < splitPath.length - 1; i++) {
+        toModify = toModify[splitPath[i]];
+    }
+    toModify[splitPath[splitPath.length - 1]] = value;
+}
+
+/**
  * Generates an ID
  * @param length The length of the ID
  */
