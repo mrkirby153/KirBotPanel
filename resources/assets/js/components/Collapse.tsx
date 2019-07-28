@@ -4,7 +4,11 @@ interface CollapseProps {
     visible: boolean
 }
 
-export default class Collapse extends React.Component<CollapseProps, {}> {
+interface CollapseState {
+    visible: boolean
+}
+
+export default class Collapse extends React.Component<CollapseProps, CollapseState> {
 
     private ref: React.RefObject<HTMLDivElement>;
     private shouldRemove: boolean;
@@ -15,6 +19,10 @@ export default class Collapse extends React.Component<CollapseProps, {}> {
         this.ref = React.createRef();
         this.shouldRemove = false;
         this.registered = false;
+
+        this.state = {
+            visible: false
+        };
 
         this.expand = this.expand.bind(this);
         this.collapse = this.collapse.bind(this);
@@ -43,6 +51,9 @@ export default class Collapse extends React.Component<CollapseProps, {}> {
     }
 
     expand() {
+        if(this.state.visible) {
+            return;
+        }
         let element = this.ref.current;
         if (!element) {
             console.warn("Collapse ref was null?");
@@ -55,9 +66,15 @@ export default class Collapse extends React.Component<CollapseProps, {}> {
             this.registered = true;
             element.addEventListener('transitionend', this.removeStyle);
         }
+        this.setState({
+            visible: true
+        })
     }
 
     collapse() {
+        if(!this.state.visible) {
+            return;
+        }
         let element = this.ref.current;
         if (!element) {
             console.warn("Collapse ref was null?");
@@ -77,6 +94,9 @@ export default class Collapse extends React.Component<CollapseProps, {}> {
                     if (element != null) {
                         element.style.height = 0 + 'px';
                         element.classList.remove('visible');
+                        this.setState({
+                            visible: false
+                        })
                     }
                 })
             }
