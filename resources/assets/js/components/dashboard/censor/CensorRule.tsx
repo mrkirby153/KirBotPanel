@@ -1,6 +1,7 @@
 import React from 'react';
 import Collapse from "../../Collapse";
 import Switch from "../../Switch";
+import {deepClone, traverseObject} from "../../../utils";
 import {DashboardInput} from "../../DashboardInput";
 
 interface CensorRuleProps {
@@ -19,7 +20,8 @@ interface CensorRuleProps {
         blocked_tokens: string[],
         blocked_words: string[],
         zalgo: boolean
-    }
+    },
+    onChange?: Function
 }
 
 interface CensorRuleState {
@@ -70,14 +72,15 @@ const ListGroup: React.FC<ListGroupProps> = (props) => {
     };
     let components: React.ReactElement[] = [];
     for (let i = 0; i < props.data.length; i++) {
-        components.push(<div className="row" key={props.data[i]}>
+        components.push(<div className="row" key={i}>
             <div className="col-6 mb-2">
                 <div className="input-group">
                     <DashboardInput type="text" value={props.data[i]} className="form-control"
                                     onChange={e => onChange(i, e)}/>
                     <div className="input-group-append">
-                        <span className="input-group-text"><i className="fas fa-times remove-button"
-                                                              onClick={() => props.removeItem(i)}/></span>
+                        <span className="input-group-text"><span onClick={() => {
+                            props.removeItem(i)
+                        }}><i className="fas fa-times remove-button"/></span></span>
                     </div>
                 </div>
             </div>
@@ -109,16 +112,37 @@ export default class CensorRule extends React.Component<CensorRuleProps, CensorR
         })
     };
 
-    mkInviteWhitelist = () => {
-        let invites = this.props.data.invites.guild_whitelist;
 
-        let components: React.ReactElement[] = [];
-        for (let i = 0; i < invites.length; i++) {
-            components.push(
+    removeItem = (key, index) => {
+        console.log(`Removing index ${index} from ${key}`);
+        let newData = deepClone(this.props.data);
+        traverseObject(key, newData).splice(index, 1);
+        this.emitChange(newData);
+    };
 
-            );
+    editItem = (key, index, newVal) => {
+        console.log(`Replacing index ${index} in ${key} with ${newVal}`);
+        let newData = deepClone(this.props.data);
+        traverseObject(key, newData).splice(index, 1, newVal);
+        this.emitChange(newData);
+    };
+
+    addItem = (key) => {
+        let newData = deepClone(this.props.data);
+        traverseObject(key, newData).push("");
+        this.emitChange(newData);
+    };
+
+    onZalgoChange = (e) => {
+        let newData = deepClone(this.props.data);
+        newData.zalgo = e.target.checked;
+        this.emitChange(newData);
+    };
+
+    emitChange = (data) => {
+        if (this.props.onChange) {
+            this.props.onChange(data);
         }
-        return components;
     };
 
     render() {
@@ -133,8 +157,11 @@ export default class CensorRule extends React.Component<CensorRuleProps, CensorR
                             <div className="subsection-header">Guild Whitelist</div>
                             <div className="container-fluid">
                                 <ListGroup data={this.props.data.invites.guild_whitelist} addItem={() => {
-                                }} removeItem={() => {
-                                }} editItem={() => {
+                                    this.addItem('invites.guild_whitelist');
+                                }} removeItem={n => {
+                                    this.removeItem('invites.guild_whitelist', n);
+                                }} editItem={(n, value) => {
+                                    this.editItem('invites.guild_whitelist', n, value)
                                 }}/>
                             </div>
                         </div>
@@ -142,8 +169,11 @@ export default class CensorRule extends React.Component<CensorRuleProps, CensorR
                             <div className="subsection-header">Guild Blacklist</div>
                             <div className="container-fluid">
                                 <ListGroup data={this.props.data.invites.guild_blacklist} addItem={() => {
-                                }} removeItem={() => {
-                                }} editItem={() => {
+                                    this.addItem('invites.guild_blacklist')
+                                }} removeItem={n => {
+                                    this.removeItem('invites.guild_blacklist', n);
+                                }} editItem={(n, value) => {
+                                    this.editItem('invites.guild_blacklist', n, value);
                                 }}/>
                             </div>
                         </div>
@@ -156,15 +186,21 @@ export default class CensorRule extends React.Component<CensorRuleProps, CensorR
                         <div className="col-6">
                             <div className="subsection-header">Domain Whitelist</div>
                             <ListGroup data={this.props.data.domains.whitelist} addItem={() => {
-                            }} removeItem={() => {
-                            }} editItem={() => {
+                                this.addItem('domains.whitelist')
+                            }} removeItem={n => {
+                                this.removeItem('domains.whitelist', n);
+                            }} editItem={(n, value) => {
+                                this.editItem('domains.whitelist', n, value);
                             }}/>
                         </div>
                         <div className="col-6">
                             <div className="subsection-header">Domain Blacklist</div>
                             <ListGroup data={this.props.data.domains.blacklist} addItem={() => {
-                            }} removeItem={() => {
-                            }} editItem={() => {
+                                this.addItem('domains.blacklist')
+                            }} removeItem={n => {
+                                this.removeItem('domains.blacklist', n);
+                            }} editItem={(n, value) => {
+                                this.editItem('domains.blacklist', n, value);
                             }}/>
                         </div>
                     </div>
@@ -175,20 +211,26 @@ export default class CensorRule extends React.Component<CensorRuleProps, CensorR
                         <div className="col-6">
                             <div className="subsection-header">Blocked Tokens</div>
                             <ListGroup data={this.props.data.blocked_tokens} addItem={() => {
-                            }} removeItem={() => {
-                            }} editItem={() => {
+                                this.addItem('blocked_tokens')
+                            }} removeItem={n => {
+                                this.removeItem('blocked_tokens', n)
+                            }} editItem={(n, value) => {
+                                this.editItem('blocked_tokens', n, value);
                             }}/>
                         </div>
                         <div className="col-6">
                             <div className="subsection-header">Blocked Words</div>
                             <ListGroup data={this.props.data.blocked_words} addItem={() => {
-                            }} removeItem={() => {
-                            }} editItem={() => {
+                                this.addItem('blocked_words')
+                            }} removeItem={n => {
+                                this.removeItem('blocked_words', n)
+                            }} editItem={(n, value) => {
+                                this.editItem('blocked_words', n, value);
                             }}/>
                         </div>
                     </div>
                 </Section>
-                <Switch id="zalgo" label="Censor Zalgo"/>
+                <Switch id="zalgo" label="Censor Zalgo" onChange={this.onZalgoChange} checked={this.props.data.zalgo}/>
             </div>
         );
     }

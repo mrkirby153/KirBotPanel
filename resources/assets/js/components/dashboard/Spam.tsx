@@ -3,6 +3,7 @@ import SpamRule from "./spam/SpamRule";
 import {DashboardInput, DashboardSelect} from "../DashboardInput";
 import SettingsRepository from "../../settings_repository";
 import toastr from 'toastr';
+import {makeId} from "../../utils";
 
 
 interface SpamState {
@@ -22,15 +23,6 @@ const new_rule = {
 };
 
 
-function makeid(length) {
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-}
 
 export default class Spam extends Component<{}, SpamState> {
 
@@ -105,7 +97,7 @@ export default class Spam extends Component<{}, SpamState> {
         let rules = [...this.state.rules];
         rules.push({
             ...new_rule,
-            _id: makeid(5)
+            _id: makeId(5)
         });
         this.setState({
             rules: rules,
@@ -172,7 +164,7 @@ export default class Spam extends Component<{}, SpamState> {
 
                 let id = json[key]["_id"];
                 if (!id) {
-                    id = makeid(5)
+                    id = makeId(5)
                 }
 
                 let rule_data = Object.keys(rules).filter(e => e != "_id").map(rule => {
