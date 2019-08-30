@@ -33,31 +33,8 @@ const RULE_TEMPLATE = {
 
 export default class Censor extends React.Component<{}, CensorState> {
 
-    private mock_data: any;
-
     constructor(props) {
         super(props);
-        this.mock_data = [
-            {
-                _id: '1',
-                level: '0',
-                data: {
-                    invites: {
-                        enabled: false,
-                        guild_whitelist: ["12345", "6789", "101112"],
-                        guild_blacklist: ["12345678"]
-                    },
-                    domains: {
-                        enabled: false,
-                        whitelist: ["http://google.com"],
-                        blacklist: ["http://example.com"]
-                    },
-                    blocked_tokens: ["one", "two"],
-                    blocked_words: ["three", "four"],
-                    zalgo: false
-                }
-            }
-        ];
         this.state = {
             saving: false,
             changed: false,
@@ -70,7 +47,7 @@ export default class Censor extends React.Component<{}, CensorState> {
             return [];
         }
         let cloned = deepClone(data);
-        cloned = Object.keys(cloned).map(key => {
+        cloned = Object.keys(cloned).filter(key => key != "_id").map(key => {
             return {
                 level: key,
                 _id: makeId(5),
