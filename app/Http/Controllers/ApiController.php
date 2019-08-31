@@ -50,6 +50,7 @@ class ApiController extends Controller
         'anti_raid_count',
         'anti_raid_enabled',
         'log_timezone',
+        'command_silent_fail',
     ];
 
     public function __construct()

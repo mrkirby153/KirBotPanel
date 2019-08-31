@@ -2,13 +2,14 @@ import React, {Component} from 'react';
 import Form from "../../Form";
 import Field from "../../Field";
 import SettingsRepository from "../../../settings_repository";
-import {DashboardInput} from "../../DashboardInput";
+import {DashboardInput, DashboardSwitch} from "../../DashboardInput";
 
 interface CommandPrefixState {
     prefix: string,
     prefix_errors: string | null,
     success: boolean,
-    busy: boolean
+    busy: boolean,
+    silent: boolean
 }
 
 export default class CommandPrefix extends Component<{}, CommandPrefixState> {
@@ -22,13 +23,15 @@ export default class CommandPrefix extends Component<{}, CommandPrefixState> {
             prefix: SettingsRepository.getSetting('command_prefix', '!'),
             prefix_errors: null,
             success: false,
-            busy: false
+            busy: false,
+            silent: SettingsRepository.getSetting('command_silent_fail', '0') == '1'
         };
         this.submitRef = React.createRef();
         this.oldPrefix = this.state.prefix;
 
         this.onChange = this.onChange.bind(this);
         this.save = this.save.bind(this);
+        this.onSilentChange = this.onSilentChange.bind(this);
     }
 
     onChange(e) {
@@ -40,8 +43,16 @@ export default class CommandPrefix extends Component<{}, CommandPrefixState> {
         })
     }
 
+    onSilentChange(e) {
+        let {checked} = e.target;
+        this.setState({
+            silent: checked
+        });
+        SettingsRepository.setSetting('command_silent_fail', checked, true);
+    }
+
     save() {
-        if(this.oldPrefix == this.state.prefix) {
+        if (this.oldPrefix == this.state.prefix) {
             return;
         }
         if (this.state.prefix == "") {
@@ -72,14 +83,25 @@ export default class CommandPrefix extends Component<{}, CommandPrefixState> {
                             <Field success={this.state.success ? 'Prefix saved!' : null}
                                    errors={this.state.prefix_errors}>
                                 <label htmlFor="commandPrefix"><b>Command Prefix</b></label>
-                                <DashboardInput type="text" className="form-control" id="commandPrefix" onChange={this.onChange}
-                                       value={this.state.prefix} onBlur={this.save} required={true}/>
+                                <DashboardInput type="text" className="form-control" id="commandPrefix"
+                                                onChange={this.onChange}
+                                                value={this.state.prefix} onBlur={this.save} required={true}/>
                             </Field>
                         </Form>
                     </div>
                     <div className="col-lg-6 col-sm-12">
                         <h5>Example Command</h5>
                         <code>{example_command}</code>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-lg-12">
+                        <DashboardSwitch label="Silent Fail" id="command-silent-fail" checked={this.state.silent}
+                                         onChange={this.onSilentChange}/>
+                        <p>
+                            If enabled, KirBot will not respond with a message informing the user they lack
+                            permission to run the command
+                        </p>
                     </div>
                 </div>
             </div>
