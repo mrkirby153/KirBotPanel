@@ -50,7 +50,7 @@ export default class Music extends Component<{}, MusicState> {
                 <h2>Master Switch</h2>
                 <p>This switch allows KirBot to play music in voice channels on your server. If this is disabled, the
                     bot will ignore music related commands and they will not show up in help</p>
-                <Switch label="Master Switch" id="music-master-switch" checked={this.state.enabled} onChange={this.changeMaster}/>
+                <Switch label="Master Switch" id="music-master-switch" checked={this.state.enabled} onChange={this.changeMaster} disabled={window.Panel.Server.readonly}/>
                 <MusicWrapper visible={this.state.enabled}>
                     <hr/>
                     <div className="row">

@@ -21,6 +21,7 @@ class PermissionHandler
     public static function canEdit(User $user, $serverId)
     {
         if (\Auth::user()->admin || self::isAdmin($user, $serverId)) {
+            \Log::info("Admin bypass");
             return true;
         }
         return self::checkPermission($user, $serverId, 'EDIT');
@@ -60,20 +61,23 @@ class PermissionHandler
      */
     private static function checkPermission(User $user, $serverId, $permission)
     {
-        if (array_key_exists($serverId, self::$guild_cache)) {
-            return self::$guild_cache[$serverId];
+        $guild = null;
+        if (\Cache::has("guild:" . $serverId)) {
+            \Log::info("cached");
+            $guild = \Cache::get("guild:" . $serverId);
         } else {
             $guild = Guild::whereId($serverId)->firstOrFail();
-            self::$guild_cache[$serverId] = $guild;
-            if ($guild->owner == $user->id) {
-                return true;
-            } else {
-                $perm = ServerPermission::whereServerId($serverId)->whereUserId($user->id)->first();
-                if ($perm == null) {
-                    return false;
-                }
-                return $perm->permission == $permission;
-            }
+            \Log::info("not cached");
+            \Cache::put("guild:" . $serverId, $guild, 30);
+        }
+        if ($guild->owner == $user->id) {
+            \Log::info("owner");
+            return true;
+        } else {
+            $perm = ServerPermission::whereServerId($serverId)->whereUserId($user->id)->first();
+            if ($perm == null)
+                return false;
+            return $perm->permission == $permission;
         }
     }
 }

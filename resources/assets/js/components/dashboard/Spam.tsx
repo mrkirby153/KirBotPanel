@@ -94,6 +94,8 @@ export default class Spam extends Component<{}, SpamState> {
     }
 
     addNewRule() {
+        if(window.Panel.Server.readonly)
+            return;
         let rules = [...this.state.rules];
         rules.push({
             ...new_rule,
@@ -198,7 +200,10 @@ export default class Spam extends Component<{}, SpamState> {
                 <div className="spam-rules">
                     {rules}
                 </div>
-                <button className="w-100 btn btn-outline-info" onClick={this.addNewRule}><i className="fas fa-plus"/>
+                <button className="w-100 btn btn-outline-info"
+                        disabled={window.Panel.Server.readonly}
+                        onClick={this.addNewRule}>
+                    <i className="fas fa-plus"/>
                 </button>
                 <hr/>
                 <form onSubmit={this.onFormSubmit}>
@@ -247,7 +252,7 @@ export default class Spam extends Component<{}, SpamState> {
                             </div>
                         </div>
                     </div>
-                    {this.state.changed && <div className="form-row mt-2">
+                    {!window.Panel.Server.readonly && this.state.changed && <div className="form-row mt-2">
                         <button className="btn btn-success">Save</button>
                     </div>}
                 </form>

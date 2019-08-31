@@ -95,6 +95,8 @@ export default class Censor extends React.Component<{}, CensorState> {
     };
 
     addRule = () => {
+        if(window.Panel.Server.readonly)
+            return;
         let newData = deepClone(this.state.data);
         let data = deepClone(RULE_TEMPLATE);
         data._id = makeId(5);
@@ -140,7 +142,7 @@ export default class Censor extends React.Component<{}, CensorState> {
         return (
             <div>
                 {components}
-                <button className="w-100 btn btn-outline-info" onClick={this.addRule}><i className="fas fa-plus"/>
+                <button className="w-100 btn btn-outline-info" onClick={this.addRule} disabled={window.Panel.Server.readonly}><i className="fas fa-plus"/>
                 </button>
                 {this.state.changed && <div className="form-row mt-2">
                     <button className="btn btn-success" onClick={this.saveSettings} disabled={this.state.saving}>Save

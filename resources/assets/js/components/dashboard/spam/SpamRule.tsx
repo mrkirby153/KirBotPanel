@@ -193,6 +193,8 @@ export default class SpamRule extends React.Component<SpamRuleComponentProps, Sp
     }
 
     startEditing() {
+        if(window.Panel.Server.readonly)
+            return;
         this.setState({
             level: this.props.level,
             editing: true
@@ -221,6 +223,15 @@ export default class SpamRule extends React.Component<SpamRuleComponentProps, Sp
             return <SpamItem name={key} key={key} count={data.count} period={data.period}
                              onChange={e => this.onChange(key, e)}/>
         });
+
+        let spanStyle = {};
+        if(this.state.editing) {
+            spanStyle["display"] = "none";
+        }
+        if(window.Panel.Server.readonly) {
+            spanStyle["cursor"] = "default";
+        }
+
         return (
             <div className="spam-rule">
                 <div className="form-row" style={!this.state.editing ? {display: "none"} : {}}>
@@ -235,9 +246,9 @@ export default class SpamRule extends React.Component<SpamRuleComponentProps, Sp
                         </div>
                     </div>
                 </div>
-                <span className="level" style={this.state.editing ? {display: "none"} : {}}
+                <span className="level" style={spanStyle}
                       onClick={this.startEditing}>{this.props.level}</span>
-                {!this.state.editing &&
+                {!window.Panel.Server.readonly && !this.state.editing &&
                 <div className="delete-button" onClick={this.deleteRule}><i className="fas fa-minus-square"/></div>}
                 <div className="spam-items">
                     {items}

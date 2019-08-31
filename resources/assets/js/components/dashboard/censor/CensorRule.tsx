@@ -84,11 +84,11 @@ const ListGroup: React.FC<ListGroupProps> = (props) => {
                     <div className="input-group">
                         <DashboardInput type="text" value={data} className="form-control"
                                         onChange={e => onChange(index, e)}/>
-                        <div className="input-group-append">
+                        {!window.Panel.Server.readonly && <div className="input-group-append">
                         <span className="input-group-text"><span onClick={() => {
                             props.removeItem(index)
                         }}><i className="fas fa-times remove-button"/></span></span>
-                        </div>
+                        </div>}
                     </div>
                 </div>
             </div>)
@@ -97,7 +97,8 @@ const ListGroup: React.FC<ListGroupProps> = (props) => {
     return (
         <div className="container-fluid">
             {components}
-            <button className="btn btn-success" onClick={props.addItem}>Add</button>
+            <button className="btn btn-success" onClick={props.addItem} disabled={window.Panel.Server.readonly}>Add
+            </button>
         </div>);
 };
 
@@ -199,7 +200,7 @@ export default class CensorRule extends React.Component<CensorRuleProps, CensorR
             showConfirmButton: true,
             showCancelButton: true
         }).then(e => {
-            if(e.value) {
+            if (e.value) {
                 if (this.props.onDelete) {
                     this.props.onDelete();
                 }
@@ -224,6 +225,13 @@ export default class CensorRule extends React.Component<CensorRuleProps, CensorR
     };
 
     render() {
+        let spanStyle = {};
+        if(this.state.editing) {
+            spanStyle["display"] = "none";
+        }
+        if(window.Panel.Server.readonly) {
+            spanStyle["cursor"] = "default";
+        }
         return (
             <div className="censor-rule">
                 <div className="form-row" style={!this.state.editing ? {display: "none"} : {}}>
@@ -238,16 +246,17 @@ export default class CensorRule extends React.Component<CensorRuleProps, CensorR
                         </div>
                     </div>
                 </div>
-                <span className="level" style={this.state.editing ? {display: "none"} : {}}
+                <span className="level" style={spanStyle}
                       onClick={this.startEditing}>{this.props.level}</span>
-                {!this.state.editing &&
+                {!window.Panel.Server.readonly && !this.state.editing &&
                 <div className="delete-button" onClick={this.deleteRule}><i className="fas fa-minus-square"/></div>}
                 <div className="sections">
                     <Section name="Invites" open={this.state.invitesVisible}
                              onClick={() => this.toggleSection('invites')}>
                         <Switch id="invites-enabled" label="Enabled" switchSize="small"
                                 checked={this.props.data.invites.enabled}
-                                onChange={e => this.onCheckChange('invites', e)}/>
+                                onChange={e => this.onCheckChange('invites', e)}
+                                disabled={window.Panel.Server.readonly}/>
                         <div className="row">
                             <div className="col-6">
                                 <div className="subsection-header">Guild Whitelist</div>
@@ -279,7 +288,8 @@ export default class CensorRule extends React.Component<CensorRuleProps, CensorR
                              onClick={() => this.toggleSection('domains')}>
                         <Switch id="domains-enabled" label="Enabled" switchSize="small"
                                 checked={this.props.data.domains.enabled}
-                                onChange={e => this.onCheckChange('domains', e)}/>
+                                onChange={e => this.onCheckChange('domains', e)}
+                                disabled={window.Panel.Server.readonly}/>
                         <div className="row">
                             <div className="col-6">
                                 <div className="subsection-header">Domain Whitelist</div>
@@ -329,7 +339,13 @@ export default class CensorRule extends React.Component<CensorRuleProps, CensorR
                         </div>
                     </Section>
                 </div>
-                <Switch id="zalgo" label="Censor Zalgo" onChange={this.onZalgoChange} checked={this.props.data.zalgo}/>
+                <Switch
+                    id="zalgo"
+                    label="Censor Zalgo"
+                    onChange={this.onZalgoChange}
+                    checked={this.props.data.zalgo}
+                    disabled={window.Panel.Server.readonly}
+                />
             </div>
         );
     }
