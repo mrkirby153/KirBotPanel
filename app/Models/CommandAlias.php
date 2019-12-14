@@ -11,4 +11,6 @@ class CommandAlias extends Model
     protected $table = "command_aliases";
 
     public $incrementing = false;
+
+    protected $keyType = 'string';
 }

@@ -15,4 +15,6 @@ class ServerPermission extends Model
     ];
 
     public $incrementing = false;
+
+    protected $keyType = 'string';
 }

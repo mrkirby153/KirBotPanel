@@ -11,6 +11,8 @@ class RolePermission extends Model
     public $incrementing = false;
     protected $table = "role_permissions";
 
+    protected $keyType = 'string';
+
     protected $fillable = [
         'id', 'server_id', 'role_id', 'permission_level'
     ];

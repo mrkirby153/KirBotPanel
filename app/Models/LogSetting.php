@@ -11,6 +11,8 @@ class LogSetting extends Model
 
     public $incrementing = false;
 
+    protected $keyType = 'string';
+
     protected $fillable = [
         'server_id',
         'channel_id',

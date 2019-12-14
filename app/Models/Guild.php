@@ -13,6 +13,8 @@ class Guild extends Model
 
     public $incrementing = false;
 
+    protected $keyType = 'string';
+
     public function settings()
     {
         return $this->hasMany(GuildSettings::class, 'guild');

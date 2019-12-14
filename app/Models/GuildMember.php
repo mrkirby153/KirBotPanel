@@ -8,4 +8,6 @@ class GuildMember extends Model
 {
     public $incrementing = false;
     protected $table = "guild_members";
+
+    protected $keyType = 'string';
 }

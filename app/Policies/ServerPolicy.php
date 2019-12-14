@@ -28,7 +28,7 @@ class ServerPolicy
     /**
      * Determine whether the user can view the serverSettings.
      *
-     * @param  \App\User $user
+     * @param \App\User $user
      * @param Guild $serverSettings
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -41,7 +41,7 @@ class ServerPolicy
     /**
      * Determine whether the user can create serverSettings.
      *
-     * @param  \App\User $user
+     * @param \App\User $user
      * @return mixed
      */
     public function create(User $user)
@@ -52,7 +52,7 @@ class ServerPolicy
     /**
      * Determine whether the user can update the serverSettings.
      *
-     * @param  \App\User $user
+     * @param \App\User $user
      * @param Guild $serverSettings
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -65,7 +65,7 @@ class ServerPolicy
     /**
      * Determine whether the user can delete the serverSettings.
      *
-     * @param  \App\User $user
+     * @param \App\User $user
      * @param Guild $serverSettings
      * @return mixed
      */
@@ -83,5 +83,10 @@ class ServerPolicy
     public function admin(User $user, Guild $server)
     {
         return PermissionHandler::isAdmin($user, $server->id);
+    }
+
+    public function viewAny(User $User)
+    {
+        return true;
     }
 }

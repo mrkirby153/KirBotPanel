@@ -10,6 +10,8 @@ class DiscordUser extends Model
 
     public $incrementing = false;
 
+    protected $keyType = 'string';
+
     public function getDiscriminatorAttribute($value)
     {
         if ($value < 1000) {

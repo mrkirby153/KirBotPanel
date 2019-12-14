@@ -13,6 +13,8 @@ class UserInfo extends Model
 
     public $table = "user_info";
 
+    protected $keyType = 'string';
+
     public function user()
     {
         return $this->belongsTo(User::class);

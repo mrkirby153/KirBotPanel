@@ -14,6 +14,8 @@ class CustomCommand extends Model
         'respect_whitelist' => 'boolean'
     ];
 
+    protected $keyType = 'string';
+
     public function guild()
     {
         return $this->belongsTo(Guild::class, 'server');

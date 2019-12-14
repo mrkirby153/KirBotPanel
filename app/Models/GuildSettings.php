@@ -21,6 +21,8 @@ class GuildSettings extends Model
 
     public $incrementing = false;
 
+    protected $keyType = 'string';
+
 
     protected static function boot()
     {

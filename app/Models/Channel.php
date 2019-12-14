@@ -13,6 +13,8 @@ class Channel extends Model
 
     public $deletableRelations = ['messages'];
 
+    protected $keyType = 'string';
+
     public function server()
     {
         return $this->belongsTo(Guild::class, 'id', 'server');
