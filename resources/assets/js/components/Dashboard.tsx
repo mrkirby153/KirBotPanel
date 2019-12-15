@@ -9,6 +9,8 @@ import {
 } from 'react-router-dom';
 import tabs from './dashboard/tabs';
 import ErrorBoundary from "./ErrorBoundary";
+import configureStore from "./dashboard/store";
+import {Provider} from 'react-redux';
 
 function DashLink(props: NavLinkProps) {
     let p = Object.assign({}, props);
@@ -80,37 +82,40 @@ class Dashboard extends Component<RouteProps, {}> {
     }
 
     render() {
+        const store = configureStore(tabs);
         return (
-            <ErrorBoundary>
-                <div className="row mt-2">
-                    <div className="col-lg-2 col-md-12">
-                        <div className="mb-3 pb-2 card">
-                            <div className="card-header">
-                                {window.Panel.Server.name}
+            <Provider store={store}>
+                <ErrorBoundary>
+                    <div className="row mt-2">
+                        <div className="col-lg-2 col-md-12">
+                            <div className="mb-3 pb-2 card">
+                                <div className="card-header">
+                                    {window.Panel.Server.name}
+                                </div>
+                                <div className="card-body d-flex flex-column">
+                                    <img className="m-auto server-image" src={Dashboard.getServerIcon()}
+                                         alt={window.Panel.Server.name}/>
+                                    <ul className="nav nav-pills nav-fill flex-column mt-3 dashboard-sidebar">
+                                        {Dashboard.getDashLinks()}
+                                    </ul>
+                                </div>
                             </div>
-                            <div className="card-body d-flex flex-column">
-                                <img className="m-auto server-image" src={Dashboard.getServerIcon()}
-                                     alt={window.Panel.Server.name}/>
-                                <ul className="nav nav-pills nav-fill flex-column mt-3 dashboard-sidebar">
-                                    {Dashboard.getDashLinks()}
-                                </ul>
+                        </div>
+                        <div className="col-lg-10 col-md-12 pb-sm-2">
+                            <div className="card">
+                                <div className="card-header">
+                                    {this.getRouteName()}
+                                </div>
+                                <div className="card-body">
+                                    <Switch>
+                                        {Dashboard.generateRoutes()}
+                                    </Switch>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div className="col-lg-10 col-md-12 pb-sm-2">
-                        <div className="card">
-                            <div className="card-header">
-                                {this.getRouteName()}
-                            </div>
-                            <div className="card-body">
-                                <Switch>
-                                    {Dashboard.generateRoutes()}
-                                </Switch>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </ErrorBoundary>
+                </ErrorBoundary>
+            </Provider>
         );
     }
 }
