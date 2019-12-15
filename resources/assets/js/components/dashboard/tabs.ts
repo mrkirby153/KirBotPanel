@@ -15,6 +15,7 @@ export interface Tab {
     icon: string,
     route: RouteProps,
     reducer?: object,
+    saga?: any
 }
 
 const tabs: Tab[] = [

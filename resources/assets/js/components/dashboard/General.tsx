@@ -10,13 +10,17 @@ import reducer from './general/reducer';
 import {bindActionCreators} from "redux";
 import {getLogs, getLogsOk} from "./general/actionCreators";
 import {connect} from 'react-redux';
+import saga from './general/saga';
 
-class General extends Component<{
+interface GeneralProps {
+    getLogs: typeof getLogs
     getLogsOk: typeof getLogsOk
-}> {
+}
+
+class General extends Component<GeneralProps> {
 
     componentDidMount(): void {
-        this.props.getLogsOk(['a', 'b', 'c']);
+        this.props.getLogs();
     }
 
     render() {
@@ -67,7 +71,8 @@ const tab: Tab = {
         exact: true,
         component: withConnect
     },
-    reducer: reducer
+    reducer: reducer,
+    saga: saga
 };
 
 export default tab;
