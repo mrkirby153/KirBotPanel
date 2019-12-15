@@ -5,8 +5,9 @@ import MutedRole from "./general/MutedRole";
 import UserPersistence from "./general/UserPersistence";
 import ChannelWhitelist from "./general/ChannelWhitelist";
 import Starboard from './general/Starboard';
+import {Tab} from "./tabs";
 
-export default class General extends Component {
+class General extends Component {
 
     render() {
         return (
@@ -31,3 +32,15 @@ export default class General extends Component {
         )
     }
 }
+
+const tab: Tab = {
+    name: 'General',
+    icon: 'cog',
+    route: {
+        path: '/',
+        exact: true,
+        component: General
+    }
+};
+
+export default tab;

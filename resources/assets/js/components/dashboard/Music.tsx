@@ -4,6 +4,7 @@ import SettingsRepository from "../../settings_repository";
 import ChannelWhitelist from "./music/ChannelWhitelist";
 import QueueSettings from "./music/QueueSettings";
 import SkipSettings from "./music/SkipSettings";
+import {Tab} from "./tabs";
 
 
 interface MusicWrapperProps {
@@ -25,7 +26,7 @@ const MusicWrapper: FunctionComponent<MusicWrapperProps> = props => {
 interface MusicState {
     enabled: boolean
 }
-export default class Music extends Component<{}, MusicState> {
+class Music extends Component<{}, MusicState> {
     constructor(props) {
         super(props);
 
@@ -75,3 +76,13 @@ export default class Music extends Component<{}, MusicState> {
         )
     }
 }
+
+const tab: Tab = {
+    name: 'Music',
+    icon: 'music',
+    route: {
+        path: '/music',
+        component: Music
+    }
+};
+export default tab;

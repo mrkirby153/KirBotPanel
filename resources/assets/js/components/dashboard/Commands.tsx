@@ -2,8 +2,9 @@ import React, {Component} from 'react';
 import CommandPrefix from "./commands/CommandPrefix";
 import CustomCommands from "./commands/CustomCommands";
 import CommandAliases from "./commands/CommandAliases";
+import {Tab} from "./tabs";
 
-export default class Commands extends Component {
+class Commands extends Component {
     constructor(props) {
         super(props);
     }
@@ -31,3 +32,13 @@ export default class Commands extends Component {
         )
     }
 }
+
+const tab: Tab = {
+    name: 'Commands',
+    icon: 'sticky-note',
+    route: {
+        path: '/commands',
+        component: Commands
+    }
+};
+export default tab

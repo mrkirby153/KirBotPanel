@@ -4,12 +4,13 @@ import AlertSettings from "./raid/AlertSettings";
 import SettingsRepository from "../../settings_repository";
 import {DashboardSwitch} from "../DashboardInput";
 import PastRaids from "./raid/PastRaids";
+import {Tab} from "./tabs";
 
 interface AntiRaidState {
     enabled: boolean
 }
 
-export default class AntiRaid extends Component<{}, AntiRaidState> {
+class AntiRaid extends Component<{}, AntiRaidState> {
     constructor(props) {
         super(props);
 
@@ -61,3 +62,14 @@ export default class AntiRaid extends Component<{}, AntiRaidState> {
         )
     }
 }
+
+const tab: Tab = {
+    name: 'Anti-Raid',
+    icon: 'shield-alt',
+    route: {
+        path: '/raid',
+        component: AntiRaid
+    }
+};
+
+export default tab;

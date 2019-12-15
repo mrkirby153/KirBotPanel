@@ -5,6 +5,7 @@ import axios from 'axios';
 import 'react-table/react-table.css'
 import Modal from "../Modal";
 import './infractions/infractions.scss'
+import {Tab} from "./tabs";
 
 interface Infraction {
     id: number,
@@ -44,7 +45,7 @@ const InfractionTableRow = (props: InfTableRow) => <tr>
     <td>{props.value}</td>
 </tr>;
 
-export default class Infractions extends Component<{}, InfractionsState> {
+class Infractions extends Component<{}, InfractionsState> {
     constructor(props) {
         super(props);
 
@@ -185,3 +186,13 @@ export default class Infractions extends Component<{}, InfractionsState> {
         )
     }
 }
+
+const tab: Tab = {
+    name: 'Infractions',
+    icon: 'exclamation-triangle',
+    route: {
+        path: '/infractions',
+        component: Infractions
+    }
+};
+export default tab

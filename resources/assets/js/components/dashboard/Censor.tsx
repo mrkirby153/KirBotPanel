@@ -3,6 +3,7 @@ import CensorRule from "./censor/CensorRule";
 import {deepClone, makeId} from "../../utils";
 import SettingsRepository from "../../settings_repository";
 import toastr from 'toastr';
+import {Tab} from "./tabs";
 
 
 interface CensorState {
@@ -31,7 +32,7 @@ const RULE_TEMPLATE = {
     }
 };
 
-export default class Censor extends React.Component<{}, CensorState> {
+class Censor extends React.Component<{}, CensorState> {
 
     constructor(props) {
         super(props);
@@ -152,3 +153,13 @@ export default class Censor extends React.Component<{}, CensorState> {
         );
     }
 }
+const tab: Tab = {
+    name: 'Censor',
+    icon: 'trash',
+    route: {
+        path: '/censor',
+        component: Censor
+    }
+};
+
+export default tab;

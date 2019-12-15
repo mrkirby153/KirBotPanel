@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import PanelPermissions from "./permissions/PanelPermissions";
 import RolePermissions from "./permissions/RolePermissions";
+import {Tab} from "./tabs";
 
-export default class Permissions extends Component {
+class Permissions extends Component {
 
     render() {
         return (
@@ -21,3 +22,13 @@ export default class Permissions extends Component {
         )
     }
 }
+
+const tab: Tab = {
+    name: 'Permissions',
+    route: {
+        path: '/permissions',
+        component: Permissions
+    },
+    icon: 'user-shield'
+};
+export default tab;

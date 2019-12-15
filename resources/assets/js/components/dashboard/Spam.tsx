@@ -4,6 +4,7 @@ import {DashboardInput, DashboardSelect} from "../DashboardInput";
 import SettingsRepository from "../../settings_repository";
 import toastr from 'toastr';
 import {makeId} from "../../utils";
+import {Tab} from "./tabs";
 
 
 interface SpamState {
@@ -24,7 +25,7 @@ const new_rule = {
 
 
 
-export default class Spam extends Component<{}, SpamState> {
+class Spam extends Component<{}, SpamState> {
 
     constructor(props) {
         super(props);
@@ -260,3 +261,14 @@ export default class Spam extends Component<{}, SpamState> {
         )
     }
 }
+
+const tab: Tab = {
+    name: 'Spam',
+    icon: 'fire-extinguisher',
+    route: {
+        path: '/spam',
+        component: Spam
+    }
+};
+
+export default tab;

@@ -7,7 +7,7 @@ import {
     NavLink,
     BrowserRouter, Switch, RouteProps, NavLinkProps, withRouter
 } from 'react-router-dom';
-import declared_routes from '../dash_routes';
+import tabs from './dashboard/tabs';
 import ErrorBoundary from "./ErrorBoundary";
 
 function DashLink(props: NavLinkProps) {
@@ -15,59 +15,6 @@ function DashLink(props: NavLinkProps) {
     p.to = '/dashboard/' + window.Panel.Server.id + props.to;
     return (<NavLink {...p}>{props.children}</NavLink>)
 }
-
-interface DashLinkProps {
-    name: string,
-    icon: string,
-    route: string,
-    exact?: boolean
-}
-
-const links: DashLinkProps[] = [
-    {
-        name: 'General',
-        icon: 'cog',
-        route: '/',
-        exact: true
-    },
-    {
-        name: 'Permissions',
-        icon: 'user-shield',
-        route: '/permissions'
-    },
-    {
-        name: 'Commands',
-        icon: 'sticky-note',
-        route: '/commands'
-    },
-    {
-        name: 'Music',
-        icon: 'music',
-        route: '/music'
-    },
-    {
-        name: 'Infractions',
-        icon: 'exclamation-triangle',
-        route: '/infractions'
-    },
-    {
-        name: 'Spam',
-        icon: 'fire-extinguisher',
-        route: '/spam'
-    },
-    {
-        name: 'Censor',
-        icon: 'trash',
-        route: '/censor'
-    },
-    {
-        name: 'Anti-Raid',
-        icon: 'shield-alt',
-        route: '/raid'
-    }
-
-];
-
 
 export default class DashRouter extends Component {
     render() {
@@ -82,19 +29,19 @@ class Dashboard extends Component<RouteProps, {}> {
 
     static generateRoutes(): ReactElement[] {
         let routes: ReactElement[] = [];
-        declared_routes.forEach(route => {
-            routes.push(<Route {...route} key={route.path as string}
-                               path={'/dashboard/' + window.Panel.Server.id + route.path}/>)
+        tabs.forEach(tab => {
+            routes.push(<Route {...tab.route} key={tab.route.path as string}
+                               path={'/dashboard/' + window.Panel.Server.id + tab.route.path}/>)
         });
         return routes;
     }
 
     static getDashLinks(): ReactElement[] {
         let dash_links: ReactElement[] = [];
-        links.forEach(link => {
-            dash_links.push(<li className="nav-item" key={link.name}>
-                <DashLink to={link.route} exact={link.exact} className="nav-link text-left"><i
-                    className={"fas fa-" + link.icon + " menu-icon"}/>{link.name}</DashLink>
+        tabs.forEach(tab => {
+            dash_links.push(<li className="nav-item" key={tab.name}>
+                <DashLink to={tab.route.path as string} exact={tab.route.exact} className="nav-link text-left"><i
+                    className={"fas fa-" + tab.icon + " menu-icon"}/>{tab.name}</DashLink>
             </li>)
         });
         return dash_links;
@@ -117,8 +64,8 @@ class Dashboard extends Component<RouteProps, {}> {
                 pathName = pathName.substr(0, pathName.length - 1);
             }
 
-            let matches = declared_routes.filter(route => {
-                let routePath = '/dashboard/' + window.Panel.Server.id + (route.path as string);
+            let matches = tabs.filter(tab => {
+                let routePath = '/dashboard/' + window.Panel.Server.id + (tab.route.path as string);
                 if (routePath.endsWith("/")) {
                     routePath = routePath.substr(0, routePath.length - 1);
                 }
