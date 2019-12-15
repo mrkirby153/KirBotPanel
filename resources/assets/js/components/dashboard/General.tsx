@@ -6,8 +6,18 @@ import UserPersistence from "./general/UserPersistence";
 import ChannelWhitelist from "./general/ChannelWhitelist";
 import Starboard from './general/Starboard';
 import {Tab} from "./tabs";
+import reducer from './general/reducer';
+import {bindActionCreators} from "redux";
+import {getLogs, getLogsOk} from "./general/actionCreators";
+import {connect} from 'react-redux';
 
-class General extends Component {
+class General extends Component<{
+    getLogsOk: typeof getLogsOk
+}> {
+
+    componentDidMount(): void {
+        this.props.getLogsOk(['a', 'b', 'c']);
+    }
 
     render() {
         return (
@@ -33,6 +43,21 @@ class General extends Component {
     }
 }
 
+const actionCreators = dispatch => {
+    return bindActionCreators({
+        getLogs,
+        getLogsOk
+    }, dispatch);
+};
+
+const mapStateToProps = state => {
+    return {
+        general: state.general
+    }
+};
+
+const withConnect = connect(mapStateToProps, actionCreators)(General);
+
 const tab: Tab = {
     key: 'general',
     name: 'General',
@@ -40,8 +65,9 @@ const tab: Tab = {
     route: {
         path: '/',
         exact: true,
-        component: General
-    }
+        component: withConnect
+    },
+    reducer: reducer
 };
 
 export default tab;

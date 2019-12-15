@@ -31,12 +31,9 @@ export default function configureStore(tabs: Tab[]) {
     });
 
     store.replaceReducer(makeReducers(store.dynamicReducers));
-    console.log(store.dynamicReducers);
 
     if (process.env.NODE_ENV !== 'production' && module.hot) {
-        console.log('Enabling hot reloading of reducers');
         module.hot.accept('./reducers', () => {
-            console.log('Hot reloading reducers');
             store.replaceReducer(makeReducers(store.dynamicReducers));
         });
     }
