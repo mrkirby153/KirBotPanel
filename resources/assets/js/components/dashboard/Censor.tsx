@@ -154,6 +154,7 @@ class Censor extends React.Component<{}, CensorState> {
     }
 }
 const tab: Tab = {
+    key: 'censor',
     name: 'Censor',
     icon: 'trash',
     route: {

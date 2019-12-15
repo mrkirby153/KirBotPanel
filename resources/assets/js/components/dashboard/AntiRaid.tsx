@@ -64,6 +64,7 @@ class AntiRaid extends Component<{}, AntiRaidState> {
 }
 
 const tab: Tab = {
+    key: 'anti-raid',
     name: 'Anti-Raid',
     icon: 'shield-alt',
     route: {

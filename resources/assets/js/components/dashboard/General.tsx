@@ -34,6 +34,7 @@ class General extends Component {
 }
 
 const tab: Tab = {
+    key: 'general',
     name: 'General',
     icon: 'cog',
     route: {

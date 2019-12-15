@@ -263,6 +263,7 @@ class Spam extends Component<{}, SpamState> {
 }
 
 const tab: Tab = {
+    key: 'spam',
     name: 'Spam',
     icon: 'fire-extinguisher',
     route: {

@@ -24,6 +24,7 @@ class Permissions extends Component {
 }
 
 const tab: Tab = {
+    key: 'permissions',
     name: 'Permissions',
     route: {
         path: '/permissions',

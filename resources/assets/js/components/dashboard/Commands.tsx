@@ -34,6 +34,7 @@ class Commands extends Component {
 }
 
 const tab: Tab = {
+    key: 'commands',
     name: 'Commands',
     icon: 'sticky-note',
     route: {

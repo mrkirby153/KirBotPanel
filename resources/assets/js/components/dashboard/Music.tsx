@@ -78,6 +78,7 @@ class Music extends Component<{}, MusicState> {
 }
 
 const tab: Tab = {
+    key: 'music',
     name: 'Music',
     icon: 'music',
     route: {

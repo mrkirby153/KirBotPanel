@@ -188,6 +188,7 @@ class Infractions extends Component<{}, InfractionsState> {
 }
 
 const tab: Tab = {
+    key: 'infractions',
     name: 'Infractions',
     icon: 'exclamation-triangle',
     route: {

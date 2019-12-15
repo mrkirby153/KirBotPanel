@@ -10,9 +10,11 @@ import censor from './Censor';
 import antiraid from './AntiRaid';
 
 export interface Tab {
+    key: string,
     name: string,
     icon: string,
     route: RouteProps,
+    reducer?: object,
 }
 
 const tabs: Tab[] = [
