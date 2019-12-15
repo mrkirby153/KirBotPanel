@@ -1,7 +1,8 @@
 import {Tab} from "./tabs";
-import {applyMiddleware, compose, createStore, Store as ReduxStore} from "redux";
+import {applyMiddleware, compose, createStore, Middleware, Store as ReduxStore} from "redux";
 import makeReducers from "./reducers";
 import createSagaMiddleware from 'redux-saga';
+import {createLogger} from 'redux-logger';
 
 
 interface Store extends ReduxStore {
@@ -12,7 +13,14 @@ interface Store extends ReduxStore {
 export default function configureStore(tabs: Tab[]) {
 
     const sagaMiddleware = createSagaMiddleware();
-    const middlewares = [sagaMiddleware];
+    const middlewares: Middleware[] = [sagaMiddleware];
+
+    if(process.env.NODE_ENV != 'production') {
+        const logger = createLogger({
+            collapsed: true
+        });
+        middlewares.push(logger);
+    }
 
     const middlewareEnhancer = applyMiddleware(...middlewares);
 
