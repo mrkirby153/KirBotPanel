@@ -25,17 +25,19 @@ export default function configureStore(tabs: Tab[]) {
     // Tab registration
     tabs.forEach(tab => {
         if (tab.reducer) {
+            console.log(`Registering reducer for tab ${tab.name}`);
             store.dynamicReducers[tab.key] = tab.reducer;
         }
     });
 
     store.replaceReducer(makeReducers(store.dynamicReducers));
+    console.log(store.dynamicReducers);
 
     if (process.env.NODE_ENV !== 'production' && module.hot) {
         console.log('Enabling hot reloading of reducers');
         module.hot.accept('./reducers', () => {
             console.log('Hot reloading reducers');
-            store.replaceReducer(makeReducers(store.dynamicReducers))
+            store.replaceReducer(makeReducers(store.dynamicReducers));
         });
     }
     return store;

@@ -10,7 +10,9 @@ import {
 import tabs from './dashboard/tabs';
 import ErrorBoundary from "./ErrorBoundary";
 import configureStore from "./dashboard/store";
-import {Provider} from 'react-redux';
+import {Provider, connect} from 'react-redux';
+import {bindActionCreators} from "redux";
+import {getUser} from "./actionCreators";
 
 function DashLink(props: NavLinkProps) {
     let p = Object.assign({}, props);
@@ -18,16 +20,30 @@ function DashLink(props: NavLinkProps) {
     return (<NavLink {...p}>{props.children}</NavLink>)
 }
 
+
+const actionCreators = dispatch => {
+   return bindActionCreators({
+       getUser
+   }, dispatch);
+};
+
 export default class DashRouter extends Component {
     render() {
-        const Dash = withRouter(props => <Dashboard {...props}/>);
+        const Dash = connect(null, actionCreators)(withRouter(props => <Dashboard {...props}/>));
+        const store = configureStore(tabs);
         return (<BrowserRouter>
-            <Dash/>
+            <Provider store={store}>
+                <Dash/>
+            </Provider>
         </BrowserRouter>)
     }
 }
 
-class Dashboard extends Component<RouteProps, {}> {
+interface DashboardProps extends RouteProps {
+    getUser?: Function
+}
+
+class Dashboard extends Component<DashboardProps, {}> {
 
     static generateRoutes(): ReactElement[] {
         let routes: ReactElement[] = [];
@@ -57,6 +73,12 @@ class Dashboard extends Component<RouteProps, {}> {
         }
     }
 
+    componentDidMount(): void {
+        if(this.props.getUser) {
+            this.props.getUser();
+        }
+    }
+
     getRouteName(): string {
         let location = this.props.location;
         if (location) {
@@ -82,40 +104,37 @@ class Dashboard extends Component<RouteProps, {}> {
     }
 
     render() {
-        const store = configureStore(tabs);
         return (
-            <Provider store={store}>
-                <ErrorBoundary>
-                    <div className="row mt-2">
-                        <div className="col-lg-2 col-md-12">
-                            <div className="mb-3 pb-2 card">
-                                <div className="card-header">
-                                    {window.Panel.Server.name}
-                                </div>
-                                <div className="card-body d-flex flex-column">
-                                    <img className="m-auto server-image" src={Dashboard.getServerIcon()}
-                                         alt={window.Panel.Server.name}/>
-                                    <ul className="nav nav-pills nav-fill flex-column mt-3 dashboard-sidebar">
-                                        {Dashboard.getDashLinks()}
-                                    </ul>
-                                </div>
+            <ErrorBoundary>
+                <div className="row mt-2">
+                    <div className="col-lg-2 col-md-12">
+                        <div className="mb-3 pb-2 card">
+                            <div className="card-header">
+                                {window.Panel.Server.name}
                             </div>
-                        </div>
-                        <div className="col-lg-10 col-md-12 pb-sm-2">
-                            <div className="card">
-                                <div className="card-header">
-                                    {this.getRouteName()}
-                                </div>
-                                <div className="card-body">
-                                    <Switch>
-                                        {Dashboard.generateRoutes()}
-                                    </Switch>
-                                </div>
+                            <div className="card-body d-flex flex-column">
+                                <img className="m-auto server-image" src={Dashboard.getServerIcon()}
+                                     alt={window.Panel.Server.name}/>
+                                <ul className="nav nav-pills nav-fill flex-column mt-3 dashboard-sidebar">
+                                    {Dashboard.getDashLinks()}
+                                </ul>
                             </div>
                         </div>
                     </div>
-                </ErrorBoundary>
-            </Provider>
+                    <div className="col-lg-10 col-md-12 pb-sm-2">
+                        <div className="card">
+                            <div className="card-header">
+                                {this.getRouteName()}
+                            </div>
+                            <div className="card-body">
+                                <Switch>
+                                    {Dashboard.generateRoutes()}
+                                </Switch>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ErrorBoundary>
         );
     }
 }
