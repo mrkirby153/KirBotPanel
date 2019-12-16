@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import SpamRule from "./spam/SpamRule";
-import {DashboardInput, DashboardSelect} from "../DashboardInput";
-import SettingsRepository from "../../settings_repository";
+import SpamRule from "./SpamRule";
+import {DashboardInput, DashboardSelect} from "../../DashboardInput";
+import SettingsRepository from "../../../settings_repository";
 import toastr from 'toastr';
-import {makeId} from "../../utils";
-import {Tab} from "./tabs";
+import {makeId} from "../../../utils";
+import {Tab} from "../tabs";
 
 
 interface SpamState {

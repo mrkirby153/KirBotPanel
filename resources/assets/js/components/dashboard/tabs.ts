@@ -1,13 +1,13 @@
 import {RouteProps} from 'react-router';
 // Import pages
-import general from './General';
-import permissions from './Permissions';
-import commands from './Commands';
-import music from './Music';
-import infractions from './Infractions';
-import spam from './Spam';
-import censor from './Censor';
-import antiraid from './AntiRaid';
+import general from './general/General';
+import permissions from './permissions/Permissions';
+import commands from './commands/Commands';
+import music from './music/Music';
+import infractions from './infractions/Infractions';
+import spam from './spam/Spam';
+import censor from './censor/Censor';
+import antiraid from './raid/AntiRaid';
 
 export interface Tab {
     key: string,

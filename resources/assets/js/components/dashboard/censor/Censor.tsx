@@ -1,9 +1,9 @@
 import React from 'react';
-import CensorRule from "./censor/CensorRule";
-import {deepClone, makeId} from "../../utils";
-import SettingsRepository from "../../settings_repository";
+import CensorRule from "./CensorRule";
+import {deepClone, makeId} from "../../../utils";
+import SettingsRepository from "../../../settings_repository";
 import toastr from 'toastr';
-import {Tab} from "./tabs";
+import {Tab} from "../tabs";
 
 
 interface CensorState {

@@ -3,9 +3,9 @@ import ReactTable from 'react-table';
 import axios from 'axios';
 
 import 'react-table/react-table.css'
-import Modal from "../Modal";
-import './infractions/infractions.scss'
-import {Tab} from "./tabs";
+import Modal from "../../Modal";
+import './infractions.scss'
+import {Tab} from "../tabs";
 
 interface Infraction {
     id: number,

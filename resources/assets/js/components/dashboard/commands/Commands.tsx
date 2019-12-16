@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import CommandPrefix from "./commands/CommandPrefix";
-import CustomCommands from "./commands/CustomCommands";
-import CommandAliases from "./commands/CommandAliases";
-import {Tab} from "./tabs";
+import CommandPrefix from "./CommandPrefix";
+import CustomCommands from "./CustomCommands";
+import CommandAliases from "./CommandAliases";
+import {Tab} from "../tabs";
 
 class Commands extends Component {
     constructor(props) {

@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import DetectionSettings from "./raid/DetectionSettings";
-import AlertSettings from "./raid/AlertSettings";
-import SettingsRepository from "../../settings_repository";
-import {DashboardSwitch} from "../DashboardInput";
-import PastRaids from "./raid/PastRaids";
-import {Tab} from "./tabs";
+import DetectionSettings from "./DetectionSettings";
+import AlertSettings from "./AlertSettings";
+import SettingsRepository from "../../../settings_repository";
+import {DashboardSwitch} from "../../DashboardInput";
+import PastRaids from "./PastRaids";
+import {Tab} from "../tabs";
 
 interface AntiRaidState {
     enabled: boolean

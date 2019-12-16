@@ -1,16 +1,16 @@
 import React, {Component} from 'react';
-import LoggingSettings from './general/LogSettings';
-import BotNick from "./general/BotNick";
-import MutedRole from "./general/MutedRole";
-import UserPersistence from "./general/UserPersistence";
-import ChannelWhitelist from "./general/ChannelWhitelist";
-import Starboard from './general/Starboard';
-import {Tab} from "./tabs";
-import reducer from './general/reducer';
+import LoggingSettings from './LogSettings';
+import BotNick from "./BotNick";
+import MutedRole from "./MutedRole";
+import UserPersistence from "./UserPersistence";
+import ChannelWhitelist from "./ChannelWhitelist";
+import Starboard from './Starboard';
+import {Tab} from "../tabs";
+import reducer from './reducer';
 import {bindActionCreators} from "redux";
-import {getLogs, getLogsOk} from "./general/actionCreators";
+import {getLogs, getLogsOk} from "./actionCreators";
 import {connect} from 'react-redux';
-import saga from './general/saga';
+import saga from './saga';
 
 interface PropsFromDispatch {
     getLogs: typeof getLogs

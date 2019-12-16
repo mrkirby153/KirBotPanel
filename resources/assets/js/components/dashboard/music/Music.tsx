@@ -1,10 +1,10 @@
 import React, {Component, FunctionComponent} from 'react';
-import Switch from "../Switch";
-import SettingsRepository from "../../settings_repository";
-import ChannelWhitelist from "./music/ChannelWhitelist";
-import QueueSettings from "./music/QueueSettings";
-import SkipSettings from "./music/SkipSettings";
-import {Tab} from "./tabs";
+import Switch from "../../Switch";
+import SettingsRepository from "../../../settings_repository";
+import ChannelWhitelist from "./ChannelWhitelist";
+import QueueSettings from "./QueueSettings";
+import SkipSettings from "./SkipSettings";
+import {Tab} from "../tabs";
 
 
 interface MusicWrapperProps {

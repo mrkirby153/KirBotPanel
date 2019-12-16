@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import PanelPermissions from "./permissions/PanelPermissions";
-import RolePermissions from "./permissions/RolePermissions";
-import {Tab} from "./tabs";
+import PanelPermissions from "./PanelPermissions";
+import RolePermissions from "./RolePermissions";
+import {Tab} from "../tabs";
 
 class Permissions extends Component {
 
