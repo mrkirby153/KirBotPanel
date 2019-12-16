@@ -1,5 +1,5 @@
 import NavBar from './components/NavBar';
-import Dashboard from './components/Dashboard';
+import Dashboard from './components/dashboard';
 import AdminSettings from './components/admin/AdminSettings';
 import ReactDOM from 'react-dom';
 import React from 'react';

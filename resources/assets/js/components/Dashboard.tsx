@@ -1,16 +1,8 @@
-import React, {
-    Component,
-    ReactElement,
-} from 'react';
-import {
-    Route,
-    NavLink,
-    BrowserRouter, Switch, RouteProps, NavLinkProps, withRouter
-} from 'react-router-dom';
+import React, {Component, ReactElement} from 'react';
+import {NavLink, NavLinkProps, Route, RouteComponentProps, Switch, withRouter} from 'react-router-dom';
 import tabs from './dashboard/tabs';
 import ErrorBoundary from "./ErrorBoundary";
-import configureStore from "./dashboard/store";
-import {Provider, connect} from 'react-redux';
+import {connect} from 'react-redux';
 import {bindActionCreators} from "redux";
 import {getUser} from "./dashboard/actionCreators";
 
@@ -21,29 +13,13 @@ function DashLink(props: NavLinkProps) {
 }
 
 
-const actionCreators = dispatch => {
-   return bindActionCreators({
-       getUser
-   }, dispatch);
-};
-
-export default class DashRouter extends Component {
-    render() {
-        const Dash = connect(null, actionCreators)(withRouter(props => <Dashboard {...props}/>));
-        const store = configureStore(tabs);
-        return (<BrowserRouter>
-            <Provider store={store}>
-                <Dash/>
-            </Provider>
-        </BrowserRouter>)
-    }
+interface PropsFromDispatch {
+    getUser: typeof getUser
 }
 
-interface DashboardProps extends RouteProps {
-    getUser?: Function
-}
+type AllProps = PropsFromDispatch & RouteComponentProps
 
-class Dashboard extends Component<DashboardProps, {}> {
+class Dashboard extends Component<AllProps, {}> {
 
     static generateRoutes(): ReactElement[] {
         let routes: ReactElement[] = [];
@@ -74,9 +50,7 @@ class Dashboard extends Component<DashboardProps, {}> {
     }
 
     componentDidMount(): void {
-        if(this.props.getUser) {
-            this.props.getUser();
-        }
+        this.props.getUser();
     }
 
     getRouteName(): string {
@@ -138,3 +112,12 @@ class Dashboard extends Component<DashboardProps, {}> {
         );
     }
 }
+
+const actionCreators = dispatch => {
+    return bindActionCreators({
+        getUser
+    }, dispatch);
+};
+
+const withConnect = connect(null, actionCreators)(Dashboard);
+export default withRouter(withConnect);

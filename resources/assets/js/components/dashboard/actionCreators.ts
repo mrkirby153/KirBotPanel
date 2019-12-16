@@ -1,8 +1,5 @@
 import {GET_USER} from "./actions";
 import {GetUserAction} from "./reducer";
+import {action} from "typesafe-actions";
 
-export function getUser(): GetUserAction {
-    return {
-        type: GET_USER
-    }
-}
+export const getUser = () => action(GET_USER);
