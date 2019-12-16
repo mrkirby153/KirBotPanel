@@ -12,12 +12,13 @@ import {getLogs, getLogsOk} from "./general/actionCreators";
 import {connect} from 'react-redux';
 import saga from './general/saga';
 
-interface GeneralProps {
+interface PropsFromDispatch {
     getLogs: typeof getLogs
-    getLogsOk: typeof getLogsOk
 }
 
-class General extends Component<GeneralProps> {
+type AllProps = PropsFromDispatch
+
+class General extends Component<AllProps> {
 
     componentDidMount(): void {
         this.props.getLogs();
@@ -47,10 +48,9 @@ class General extends Component<GeneralProps> {
     }
 }
 
-const actionCreators = dispatch => {
+const mapDispatchToProps = dispatch => {
     return bindActionCreators({
-        getLogs,
-        getLogsOk
+        getLogs
     }, dispatch);
 };
 
@@ -60,7 +60,7 @@ const mapStateToProps = state => {
     }
 };
 
-const withConnect = connect(mapStateToProps, actionCreators)(General);
+const withConnect = connect(mapStateToProps, mapDispatchToProps)(General);
 
 const tab: Tab = {
     key: 'general',
