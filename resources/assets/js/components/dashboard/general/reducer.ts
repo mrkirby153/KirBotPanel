@@ -1,11 +1,10 @@
 import {GET_LOGS, GET_LOGS_OK} from "./actions";
+import {Action} from "redux";
 
-export interface GetLogsAction {
-    type: string
+export interface GetLogsAction extends Action {
 }
 
-export interface GetLogsOkAction {
-    type: string,
+export interface GetLogsOkAction extends Action {
     actions: Array<String>
 }
 

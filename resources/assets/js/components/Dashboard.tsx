@@ -12,7 +12,7 @@ import ErrorBoundary from "./ErrorBoundary";
 import configureStore from "./dashboard/store";
 import {Provider, connect} from 'react-redux';
 import {bindActionCreators} from "redux";
-import {getUser} from "./actionCreators";
+import {getUser} from "./dashboard/actionCreators";
 
 function DashLink(props: NavLinkProps) {
     let p = Object.assign({}, props);
