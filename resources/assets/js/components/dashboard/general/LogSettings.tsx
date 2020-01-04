@@ -16,6 +16,7 @@ import {
     onLogCheckChange,
     saveLogSettings
 } from "./actionCreators";
+import ConfirmButton from "../../ConfirmButton";
 
 interface LogSettingsProps {
     log_events: Events,
@@ -34,7 +35,6 @@ interface LogChannelProps {
 
 const LogChannel: React.FC<LogChannelProps> = (props) => {
     const [editing, isEditing] = useState(false);
-    const [deleting, isDeleting] = useState(false);
     const [mode, setMode] = useState<"include" | "exclude">('include');
 
     const dispatch = useDispatch();
@@ -69,15 +69,6 @@ const LogChannel: React.FC<LogChannelProps> = (props) => {
     const onClose = () => {
         isEditing(false);
         dispatch(saveLogSettings(props.id))
-    };
-
-    const deleteSettings = () => {
-        if (deleting) {
-            isDeleting(false);
-            dispatch(deleteLogSetting(props.id))
-        } else {
-            isDeleting(true);
-        }
     };
 
     const onCheck = (event: ChangeEvent<HTMLInputElement>) => {
@@ -127,8 +118,11 @@ const LogChannel: React.FC<LogChannelProps> = (props) => {
                             disabled={window.Panel.Server.readonly}>
                         <i className="fas fa-edit"/> Edit
                     </button>
-                    <button className="btn btn-danger" onClick={deleteSettings} disabled={window.Panel.Server.readonly}>
-                        <i className="fas fa-times"/> {deleting ? 'Confirm?' : 'Delete'}</button>
+                    <ConfirmButton className="btn btn-danger"
+                                   onConfirm={() => dispatch(deleteLogSetting(props.id))}
+                                   confirmText={<React.Fragment><i className="fas fa-times"/> Confirm?</React.Fragment>}>
+                        <i className="fas fa-times"/> Delete
+                    </ConfirmButton>
                 </div>
             </div>
             <Modal title={`Edit #${settings.channel.channel_name}`} open={editing} onClose={onClose}>
