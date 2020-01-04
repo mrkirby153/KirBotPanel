@@ -1,92 +1,93 @@
-import {LOGS} from './actions';
 import {Reducer} from "redux";
-import {LogEventPayload, LogMassSelectPayload, LogSetting} from "./types";
+import * as Actions from './actions';
+import {LogEventPayload, LogMassSelectPayload, LogMassSelectType, LogMode, LogSetting} from "./types";
 import ld_findIndex from 'lodash/findIndex';
 import ld_filter from 'lodash/filter';
+import {ActionType, getType} from "typesafe-actions";
 
 interface GeneralReducerState {
     logActions: Array<String>
-    getLogsInProgress: boolean
-    log_settings: LogSetting[]
+    logSettings: LogSetting[]
 }
 
 const defaultState: GeneralReducerState = {
     logActions: [],
-    getLogsInProgress: false,
-    log_settings: []
+    logSettings: []
 };
 
-const reducer: Reducer<GeneralReducerState> = (state = defaultState, action) => {
+export type GeneralAction = ActionType<typeof Actions>
+
+const reducer: Reducer<GeneralReducerState, GeneralAction> = (state = defaultState, action: GeneralAction) => {
     switch (action.type) {
-        case LOGS.GET_LOG_EVENTS_OK: {
+        case getType(Actions.getLogEventsOk): {
             return { ...state, logActions: action.payload }
         }
-        case LOGS.GET_LOG_SETTINGS_OK: {
-            return {... state, log_settings: action.payload }
+        case getType(Actions.getLogSettingsOk): {
+            return {... state, logSettings: action.payload }
         }
-        case LOGS.EVENT_CHANGE: {
+        case getType(Actions.onLogCheckChange): {
             const payload: LogEventPayload = action.payload;
-            let index = ld_findIndex(state.log_settings, f => f.id == payload.id);
-            let settings = Object.assign({}, state.log_settings[index]);
+            let index = ld_findIndex(state.logSettings, f => f.id == payload.id);
+            let settings = Object.assign({}, state.logSettings[index]);
 
-            let mode = payload.mode == 'include'? 'included' : 'excluded';
+            let mode = payload.mode == LogMode.Include ? 'included' : 'excluded';
             if (payload.enabled) {
                 settings[mode] |= payload.number
             } else {
                 settings[mode] &= ~payload.number;
             }
 
-            let newSettings = [... state.log_settings];
+            let newSettings = [... state.logSettings];
             newSettings[index] = settings;
             return {
                 ...state,
-                log_settings: newSettings
+                logSettings: newSettings,
             }
         }
-        case LOGS.MASS_SELECT: {
+        case getType(Actions.logMassSelect): {
             const payload: LogMassSelectPayload = action.payload;
 
-            let index = ld_findIndex(state.log_settings, f => f.id == payload.id);
-            let settings = Object.assign({}, state.log_settings[index]);
+            let index = ld_findIndex(state.logSettings, f => f.id == payload.id);
+            let settings = Object.assign({}, state.logSettings[index]);
 
-            let mode = payload.mode == 'include'? 'included' : 'excluded';
+            let mode = payload.mode == LogMode.Include? 'included' : 'excluded';
 
             let val = settings[mode];
             switch(payload.type) {
-                case "all":
+                case LogMassSelectType.All:
                     Object.keys(state.logActions).forEach(key => {
                         val |= state.logActions[key]
                     });
                     break;
-                case "none":
+                case LogMassSelectType.None:
                     val = 0;
                     break;
-                case "invert":
+                case LogMassSelectType.Invert:
                     val = ~val;
                     break;
             }
 
             settings[mode] = val;
-            let newSettings = [... state.log_settings];
+            let newSettings = [... state.logSettings];
             newSettings[index] = settings;
             return {
                 ...state,
-                log_settings: newSettings
+                logSettings: newSettings
             }
         }
-        case LOGS.DELETE_SETTING: {
-            let settings = ld_filter(state.log_settings, f => f.id != action.payload);
+        case getType(Actions.deleteLogSetting): {
+            let settings = ld_filter(state.logSettings, f => f.id != action.payload);
             return {
                 ...state,
-                log_settings: settings
+                logSettings: settings
             }
         }
-        case LOGS.CREATE_SETTING_OK: {
-            let settings = [... state.log_settings];
+        case getType(Actions.createLogSettingOk): {
+            let settings = [... state.logSettings];
             settings.push(action.payload);
             return {
                 ...state,
-                log_settings: settings
+                logSettings: settings
             }
         }
         default: {

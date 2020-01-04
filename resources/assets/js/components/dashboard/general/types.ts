@@ -16,15 +16,22 @@ export interface Events {
     [key: string]: number
 }
 
+
+export enum LogMode {
+    Include, Exclude
+}
 export interface LogEventPayload {
     id: string,
-    mode: 'include' | 'exclude',
+    mode: LogMode,
     number: number,
     enabled: boolean
 }
 
+export enum LogMassSelectType {
+    Invert, All, None
+}
 export interface LogMassSelectPayload {
     id: string,
-    mode: 'include' | 'exclude',
-    type: 'invert'| 'all' | 'none'
+    mode: LogMode,
+    type: LogMassSelectType
 }

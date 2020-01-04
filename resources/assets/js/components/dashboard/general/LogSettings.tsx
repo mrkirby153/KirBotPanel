@@ -5,7 +5,7 @@ import ld_find from 'lodash/find';
 import ld_indexof from 'lodash/indexOf';
 import ld_debounce from 'lodash/debounce';
 import {DashboardInput, DashboardSelect} from "../../DashboardInput";
-import {Events, LogSetting} from "./types";
+import {Events, LogMassSelectType, LogMode, LogSetting} from "./types";
 import {connect, useDispatch, useSelector} from 'react-redux';
 import {bindActionCreators} from "redux";
 import {
@@ -15,7 +15,7 @@ import {
     logMassSelect,
     onLogCheckChange,
     saveLogSettings
-} from "./actionCreators";
+} from "./actions";
 import ConfirmButton from "../../ConfirmButton";
 
 interface LogSettingsProps {
@@ -35,12 +35,12 @@ interface LogChannelProps {
 
 const LogChannel: React.FC<LogChannelProps> = (props) => {
     const [editing, isEditing] = useState(false);
-    const [mode, setMode] = useState<"include" | "exclude">('include');
+    const [mode, setMode] = useState<LogMode>(LogMode.Include);
 
     const dispatch = useDispatch();
 
     const settings: LogSetting = useSelector(state => {
-        return ld_find(state.general.log_settings, l => {
+        return ld_find(state.general.logSettings, l => {
             return l.id == props.id;
         })
     });
@@ -83,7 +83,7 @@ const LogChannel: React.FC<LogChannelProps> = (props) => {
         }
     };
 
-    const dispatchMassSelect = (type: 'all' | 'none' | 'invert') => dispatch(logMassSelect({id: props.id, mode, type}));
+    const dispatchMassSelect = (type: LogMassSelectType) => dispatch(logMassSelect({id: props.id, mode, type}));
 
 
     const {friendly: includedFriendly, raw: includedRaw} = explodeEvents(settings.included, 'All Events');
@@ -92,7 +92,7 @@ const LogChannel: React.FC<LogChannelProps> = (props) => {
     let checkboxes: ReactElement[] = [];
     for (const key in logEvents) {
         if (logEvents.hasOwnProperty(key)) {
-            let checked = ld_indexof(mode == 'include' ? includedRaw : excludedRaw, key) != -1;
+            let checked = ld_indexof(mode == LogMode.Include ? includedRaw : excludedRaw, key) != -1;
             const checkboxId = `option_${props.id}_${key}`;
             checkboxes.push(
                 <div className="custom-control custom-checkbox" key={key}>
@@ -127,16 +127,16 @@ const LogChannel: React.FC<LogChannelProps> = (props) => {
             </div>
             <Modal title={`Edit #${settings.channel.channel_name}`} open={editing} onClose={onClose}>
                 <div className="btn-group">
-                    <button className={"btn btn-primary " + (mode == "include" ? 'active' : '')} onClick={() => setMode('include')}>Include</button>
-                    <button className={"btn btn-primary " + (mode == "exclude" ? 'active' : '')} onClick={() => setMode('exclude')}>Exclude</button>
+                    <button className={"btn btn-primary " + (mode == LogMode.Include ? 'active' : '')} onClick={() => setMode(LogMode.Include)}>Include</button>
+                    <button className={"btn btn-primary " + (mode == LogMode.Exclude ? 'active' : '')} onClick={() => setMode(LogMode.Exclude)}>Exclude</button>
                 </div>
                 <p className="mt-1">
-                    Below are log events that can be {mode}d from the log channel. Leave blank to {mode == 'include'? 'include all events' : 'exclude no events'}
+                    Below are log events that can be {mode}d from the log channel. Leave blank to {mode == LogMode.Include? 'include all events' : 'exclude no events'}
                 </p>
                 <div className="btn-group btn-group-sm">
-                    <button className="btn btn-secondary" onClick={() => dispatchMassSelect('all')}>Select All</button>
-                    <button className="btn btn-secondary" onClick={() => dispatchMassSelect('none')}>Select None</button>
-                    <button className="btn btn-secondary" onClick={() => dispatchMassSelect('invert')}>Invert Selection</button>
+                    <button className="btn btn-secondary" onClick={() => dispatchMassSelect(LogMassSelectType.All)}>Select All</button>
+                    <button className="btn btn-secondary" onClick={() => dispatchMassSelect(LogMassSelectType.None)}>Select None</button>
+                    <button className="btn btn-secondary" onClick={() => dispatchMassSelect(LogMassSelectType.Invert)}>Invert Selection</button>
                 </div>
                 {checkboxes}
             </Modal>
@@ -231,7 +231,7 @@ const actionCreators = dispatch => {
 const mapStateToProps = state => {
     return {
         log_events: state.general.logActions,
-        logSettings: state.general.log_settings
+        logSettings: state.general.logSettings
     }
 };
 export default connect(mapStateToProps, actionCreators)(LoggingSettings)

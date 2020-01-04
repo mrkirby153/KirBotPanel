@@ -8,7 +8,7 @@ import Starboard from './Starboard';
 import {Tab} from "../tabs";
 import reducer from './reducer';
 import {bindActionCreators} from "redux";
-import {getLogEvents, getLogEventsOk} from "./actionCreators";
+import {getLogEvents, getLogEventsOk} from "./actions";
 import {connect} from 'react-redux';
 import saga from './saga';
 

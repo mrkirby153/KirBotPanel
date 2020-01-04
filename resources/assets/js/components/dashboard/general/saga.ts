@@ -1,9 +1,10 @@
 import {all, call, put, select, takeEvery, takeLatest} from 'redux-saga/effects';
 import axios from 'axios';
-import {createLogSettingOk, getLogEventsOk, getLogSettingsOk} from "./actionCreators";
+import {createLogSettingOk, getLogEventsOk, getLogSettingsOk} from "./actions";
 import {LogSetting} from "./types";
 import ld_find from 'lodash/find';
-import {LOGS} from "./actions";
+import {getType} from "typesafe-actions";
+import * as Actions from './actions';
 
 function* getLogs() {
     try {
@@ -25,7 +26,7 @@ function* getLogSettings() {
 
 function* saveLogSettings(action) {
     const getSettings = (state): LogSetting => {
-        return ld_find(state.general.log_settings, l => l.id == action.payload)
+        return ld_find(state.general.logSettings, l => l.id == action.payload)
     };
     const data = yield select(getSettings);
     try {
@@ -59,10 +60,10 @@ function* createLogSettings(action) {
 
 export default function* generalSaga() {
     return yield all([
-        takeEvery(LOGS.GET_LOG_EVENTS, getLogs),
-        takeEvery(LOGS.GET_LOG_SETTINGS, getLogSettings),
-        takeLatest(LOGS.SAVE_SETTING, saveLogSettings),
-        takeLatest(LOGS.DELETE_SETTING, deleteLogSettings),
-        takeLatest(LOGS.CREATE_SETTING, createLogSettings)
+        takeEvery(getType(Actions.getLogEvents), getLogs),
+        takeEvery(getType(Actions.getLogSettings), getLogSettings),
+        takeLatest(getType(Actions.saveLogSettings), saveLogSettings),
+        takeLatest(getType(Actions.deleteLogSetting), deleteLogSettings),
+        takeLatest(getType(Actions.createLogSetting), createLogSettings)
     ])
 }
