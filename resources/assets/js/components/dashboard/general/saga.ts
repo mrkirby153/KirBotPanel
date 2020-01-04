@@ -1,9 +1,9 @@
 import {all, call, put, select, takeEvery, takeLatest} from 'redux-saga/effects';
 import axios from 'axios';
-import {GET_LOG_EVENTS, GET_LOGS, LOG_CREATE_SETTINGS, LOG_DELETE_SETTING, LOG_SAVE_SETTING} from "./actions";
 import {createLogSettingOk, getLogEventsOk, getLogSettingsOk} from "./actionCreators";
 import {LogSetting} from "./types";
 import ld_find from 'lodash/find';
+import {LOGS} from "./actions";
 
 function* getLogs() {
     try {
@@ -47,7 +47,7 @@ function* deleteLogSettings(action) {
 }
 
 function* createLogSettings(action) {
-    try{
+    try {
         const results = yield call(axios.put, '/api/guild/' + window.Panel.Server.id + '/log-settings', {
             channel: action.payload
         });
@@ -59,10 +59,10 @@ function* createLogSettings(action) {
 
 export default function* generalSaga() {
     return yield all([
-        takeEvery(GET_LOG_EVENTS, getLogs),
-        takeEvery(GET_LOGS, getLogSettings),
-        takeLatest(LOG_SAVE_SETTING, saveLogSettings),
-        takeLatest(LOG_DELETE_SETTING, deleteLogSettings),
-        takeLatest(LOG_CREATE_SETTINGS, createLogSettings)
+        takeEvery(LOGS.GET_LOG_EVENTS, getLogs),
+        takeEvery(LOGS.GET_LOG_SETTINGS, getLogSettings),
+        takeLatest(LOGS.SAVE_SETTING, saveLogSettings),
+        takeLatest(LOGS.DELETE_SETTING, deleteLogSettings),
+        takeLatest(LOGS.CREATE_SETTING, createLogSettings)
     ])
 }

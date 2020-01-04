@@ -1,11 +1,4 @@
-import {
-    GET_LOG_EVENTS_OK,
-    GET_LOGS_OK,
-    LOG_CREATE_SETTINGS_OK,
-    LOG_DELETE_SETTING,
-    LOG_EVENT_CHANGE,
-    LOG_MASS_SELECT
-} from "./actions";
+import {LOGS} from './actions';
 import {Reducer} from "redux";
 import {LogEventPayload, LogMassSelectPayload, LogSetting} from "./types";
 import ld_findIndex from 'lodash/findIndex';
@@ -25,13 +18,13 @@ const defaultState: GeneralReducerState = {
 
 const reducer: Reducer<GeneralReducerState> = (state = defaultState, action) => {
     switch (action.type) {
-        case GET_LOG_EVENTS_OK: {
+        case LOGS.GET_LOG_EVENTS_OK: {
             return { ...state, logActions: action.payload }
         }
-        case GET_LOGS_OK: {
+        case LOGS.GET_LOG_SETTINGS_OK: {
             return {... state, log_settings: action.payload }
         }
-        case LOG_EVENT_CHANGE: {
+        case LOGS.EVENT_CHANGE: {
             const payload: LogEventPayload = action.payload;
             let index = ld_findIndex(state.log_settings, f => f.id == payload.id);
             let settings = Object.assign({}, state.log_settings[index]);
@@ -50,7 +43,7 @@ const reducer: Reducer<GeneralReducerState> = (state = defaultState, action) => 
                 log_settings: newSettings
             }
         }
-        case LOG_MASS_SELECT: {
+        case LOGS.MASS_SELECT: {
             const payload: LogMassSelectPayload = action.payload;
 
             let index = ld_findIndex(state.log_settings, f => f.id == payload.id);
@@ -81,14 +74,14 @@ const reducer: Reducer<GeneralReducerState> = (state = defaultState, action) => 
                 log_settings: newSettings
             }
         }
-        case LOG_DELETE_SETTING: {
+        case LOGS.DELETE_SETTING: {
             let settings = ld_filter(state.log_settings, f => f.id != action.payload);
             return {
                 ...state,
                 log_settings: settings
             }
         }
-        case LOG_CREATE_SETTINGS_OK: {
+        case LOGS.CREATE_SETTING_OK: {
             let settings = [... state.log_settings];
             settings.push(action.payload);
             return {
