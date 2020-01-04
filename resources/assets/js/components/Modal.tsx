@@ -25,11 +25,13 @@ export default class Modal extends Component<ModalProps, ModalState> {
         this.modalRef = React.createRef();
     }
 
-    componentWillReceiveProps(nextProps: Readonly<ModalProps>, nextContext: any): void {
-        if (nextProps.open == true) {
-            this.showModal();
-        } else {
-            this.hideModal();
+    componentDidUpdate(prevProps: Readonly<ModalProps>, prevState: Readonly<ModalState>): void {
+        if(prevProps.open != this.props.open) {
+            if(this.props.open) {
+                this.showModal();
+            } else {
+                this.hideModal();
+            }
         }
     }
 
