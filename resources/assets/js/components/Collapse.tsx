@@ -44,7 +44,7 @@ export default class Collapse extends React.Component<CollapseProps, CollapseSta
         let el = this.ref.current;
         if (el && this.shouldRemove) {
             this.shouldRemove = false;
-            el.style.height = null;
+            el.style.height = '';
             el.classList.add('visible');
             el.removeEventListener('transitioned', this.removeStyle);
         }
