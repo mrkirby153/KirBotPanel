@@ -8,12 +8,12 @@ import Starboard from './Starboard';
 import {Tab} from "../tabs";
 import reducer from './reducer';
 import {bindActionCreators} from "redux";
-import {getLogs, getLogsOk} from "./actionCreators";
+import {getLogEvents, getLogEventsOk} from "./actionCreators";
 import {connect} from 'react-redux';
 import saga from './saga';
 
 interface PropsFromDispatch {
-    getLogs: typeof getLogs
+    getLogs: typeof getLogEvents
 }
 
 type AllProps = PropsFromDispatch
@@ -50,7 +50,7 @@ class General extends Component<AllProps> {
 
 const mapDispatchToProps = dispatch => {
     return bindActionCreators({
-        getLogs
+        getLogs: getLogEvents
     }, dispatch);
 };
 
