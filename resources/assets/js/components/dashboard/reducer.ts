@@ -1,27 +1,35 @@
-import {GET_USER} from "./actions";
-
-export interface GetUserAction {
-    type: typeof GET_USER
-}
+import {ActionType, getType} from "typesafe-actions";
+import * as Actions from './actions';
+import {Reducer} from "redux";
 
 interface RootReducerState {
-    user: null | object
+    user: User | null,
+    settings: {
+        [key: string]: any
+    }
 }
 
-type RootReducerTypes = GetUserAction
-
 const defaultState: RootReducerState = {
-    user: null
+    user: null,
+    settings: {}
 };
 
-export default function rootReducer(state = defaultState, action: RootReducerTypes) {
+type DashboardAction = ActionType<typeof Actions>
+
+const reducer: Reducer<RootReducerState, DashboardAction> = (state = defaultState, action: DashboardAction) => {
     switch (action.type) {
-        case GET_USER:
+        case getType(Actions.getUser):
             return {
                 ...state,
                 user: window.Panel.user
             };
+        case getType(Actions.getSettingsOk):
+            return {
+                ...state,
+                settings: action.payload
+            };
         default:
             return state;
     }
-}
+};
+export default reducer;

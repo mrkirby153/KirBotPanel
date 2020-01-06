@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CommandAlias;
 use App\Models\CustomCommand;
 use App\Models\Guild;
+use App\Models\GuildSettings;
 use App\Models\Infraction;
 use App\Models\LogSetting;
 use App\Models\Role;
@@ -378,6 +379,15 @@ class ApiController extends Controller
             $json = json_decode(Redis::get($key));
             $json->id = str_replace("raid:$id:", "", $key);
             $data[] = $json;
+        }
+        return $data;
+    }
+
+    public function getSettings(Guild $guild)
+    {
+        $data = [];
+        foreach(GuildSettings::whereGuild($guild->id)->get() as $setting) {
+            $data[$setting->key] = $setting->value;
         }
         return $data;
     }

@@ -56,25 +56,29 @@ declare interface CommandAlias {
     clearance: number
 }
 
+declare interface User {
+    id: string,
+    username: string,
+    admin: number,
+    created_at: string,
+    updated_at: string
+}
+
+declare interface Server {
+    id: string,
+    name: string,
+    icon_id: string | null,
+    settings: ServerSetting[],
+    channels: Channel[],
+    roles: Role[],
+    readonly: boolean,
+    owner: boolean,
+    admin: boolean
+}
+
 declare interface Panel {
-    user?: {
-        id: string,
-        username: string,
-        admin: number,
-        created_at: string,
-        updated_at: string
-    }
-    Server: {
-        id: string,
-        name: string,
-        icon_id: string|null,
-        settings: ServerSetting[],
-        channels: Channel[],
-        roles: Role[],
-        readonly: boolean,
-        owner: boolean,
-        admin: boolean
-    }
+    user: User | null
+    Server: Server
 }
 
 declare interface Window {

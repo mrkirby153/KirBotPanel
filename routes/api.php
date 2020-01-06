@@ -19,7 +19,8 @@ Route::get('/{server}/queue', 'Dashboard\MusicController@getQueueJson');
 Route::get('/user', 'ApiController@getCurrentUser');
 Route::get('/log-events', 'ApiController@getLogEvents');
 
-Route::group(['prefix' => '/guild/{guild}'], function () {
+Route::group(['prefix' => '/guild/{guild}', 'middleware' => 'can:view,guild'], function () {
+    Route::get('/settings', 'ApiController@getSettings');
     Route::patch('/setting', 'ApiController@apiSetting');
     Route::get('/log-settings', 'ApiController@getLogSettings');
     Route::put('/log-settings', 'ApiController@createLogSettings');

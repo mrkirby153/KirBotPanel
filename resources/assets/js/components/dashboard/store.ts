@@ -3,7 +3,7 @@ import {applyMiddleware, compose, createStore, Middleware, Store as ReduxStore} 
 import makeReducers from "./reducers";
 import createSagaMiddleware from 'redux-saga';
 import {createLogger} from 'redux-logger';
-
+import rootSaga from "./saga";
 
 interface Store extends ReduxStore {
     dynamicReducers: object
@@ -33,6 +33,8 @@ export default function configureStore(tabs: Tab[]) {
     const store: Store = createStore(makeReducers(), composeEnhancers);
     store.dynamicReducers = {};
     store.dynamicSagas = {};
+
+    sagaMiddleware.run(rootSaga);
 
     // Tab registration
     tabs.forEach(tab => {
