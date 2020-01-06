@@ -22,7 +22,6 @@ function* setSetting(action) {
 }
 
 function* persistSetting(action) {
-    yield delay(500);
     const payload: SetSettingAction = action.payload;
     try {
         yield call(axios.patch, '/api/guild/' + payload.guild + '/setting', {
@@ -37,9 +36,7 @@ function* persistSetting(action) {
 }
 
 export default function* rootSaga() {
-    yield all([
-        takeLatest(getType(Actions.getSettings), getSettings),
-        takeEvery(getType(Actions.setSetting), setSetting),
-        takeLatest(Actions.persistSetting, persistSetting)
-    ]);
+    yield takeLatest(getType(Actions.getSettings), getSettings);
+    yield takeEvery(getType(Actions.setSetting), setSetting);
+    yield debounce(500, getType(Actions.persistSetting), persistSetting);
 }

@@ -1,10 +1,10 @@
-import {all, call, put, select, takeEvery, takeLatest} from 'redux-saga/effects';
+import {call, put, select, takeEvery, takeLatest} from 'redux-saga/effects';
 import axios from 'axios';
+import * as Actions from "./actions";
 import {createLogSettingOk, getLogEventsOk, getLogSettingsOk} from "./actions";
 import {LogSetting} from "./types";
 import ld_find from 'lodash/find';
 import {getType} from "typesafe-actions";
-import * as Actions from './actions';
 
 function* getLogs() {
     try {
@@ -59,11 +59,9 @@ function* createLogSettings(action) {
 }
 
 export default function* generalSaga() {
-    return yield all([
-        takeEvery(getType(Actions.getLogEvents), getLogs),
-        takeEvery(getType(Actions.getLogSettings), getLogSettings),
-        takeLatest(getType(Actions.saveLogSettings), saveLogSettings),
-        takeLatest(getType(Actions.deleteLogSetting), deleteLogSettings),
-        takeLatest(getType(Actions.createLogSetting), createLogSettings)
-    ])
+    yield takeEvery(getType(Actions.getLogEvents), getLogs);
+    yield takeEvery(getType(Actions.getLogSettings), getLogSettings);
+    yield takeLatest(getType(Actions.saveLogSettings), saveLogSettings);
+    yield takeLatest(getType(Actions.deleteLogSetting), deleteLogSettings);
+    yield takeLatest(getType(Actions.createLogSetting), createLogSettings);
 }
