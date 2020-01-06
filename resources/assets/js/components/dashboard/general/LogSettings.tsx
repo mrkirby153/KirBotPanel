@@ -1,7 +1,8 @@
-import React, {ChangeEvent, ReactElement, useEffect, useState} from 'react';
+import React, {ChangeEvent, ReactElement, useCallback, useEffect, useState} from 'react';
 import Modal from "../../Modal";
 import ld_find from 'lodash/find';
 import ld_indexof from 'lodash/indexOf';
+import ld_debounce from 'lodash/debounce';
 import {DashboardInput, DashboardSelect} from "../../DashboardInput";
 import {Events, LogMassSelectType, LogMode, LogSetting} from "./types";
 import {useDispatch, useSelector} from 'react-redux';
@@ -39,6 +40,10 @@ const LogChannel: React.FC<LogChannelProps> = (props) => {
         return null;
     }
 
+    const save = () => {
+        dispatch(saveLogSettings(props.id));
+    };
+
     const explodeEvents = (num: number, noMsg: string): {
         friendly: string,
         raw: Array<string>
@@ -56,8 +61,12 @@ const LogChannel: React.FC<LogChannelProps> = (props) => {
 
     const onClose = () => {
         isEditing(false);
-        dispatch(saveLogSettings(props.id))
+        save()
     };
+
+    const debouncedSave = useCallback(ld_debounce(() => {
+        save()
+    }, 2000), []);
 
     const onCheck = (event: ChangeEvent<HTMLInputElement>) => {
         const action = event.target.dataset.action;
@@ -67,7 +76,8 @@ const LogChannel: React.FC<LogChannelProps> = (props) => {
                 mode: mode,
                 number: parseInt(action),
                 enabled: event.target.checked
-            }))
+            }));
+            debouncedSave();
         }
     };
 
@@ -161,7 +171,7 @@ const LoggingSettings: React.FC = (props) => {
 
     let logChannels = settings.map(setting => (<LogChannel id={setting.id} key={setting.id}/>));
 
-    let [logTimezone, setLogTimezone] = useGuildSetting(window.Panel.Server.id, 'log_timezone', 'UTC');
+    let [logTimezone, setLogTimezone] = useGuildSetting(window.Panel.Server.id, 'log_timezone', 'UTC', true);
 
     return (
         <div className="row">
@@ -188,7 +198,7 @@ const LoggingSettings: React.FC = (props) => {
                         <div className="form-group">
                             <label htmlFor="log_timezone"><b>Log Timezone</b></label>
                             <DashboardInput type="text" className="form-control" name="log_timezone" id="log_timezone"
-                                            value={logTimezone} onChange={e => setLogTimezone(e.target.value, true)}/>
+                                            value={logTimezone} onChange={e => setLogTimezone(e.target.value)}/>
                         </div>
                     </div>
                 </div>
