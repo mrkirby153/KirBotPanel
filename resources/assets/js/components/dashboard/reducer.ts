@@ -28,6 +28,14 @@ const reducer: Reducer<RootReducerState, DashboardAction> = (state = defaultStat
                 ...state,
                 settings: action.payload
             };
+        case getType(Actions.setSetting):
+            return {
+                ...state,
+                settings: {
+                    ...state.settings,
+                    [action.payload.key]: action.payload.value
+                }
+            };
         default:
             return state;
     }

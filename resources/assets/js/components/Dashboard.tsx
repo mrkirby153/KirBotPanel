@@ -4,7 +4,7 @@ import tabs from './dashboard/tabs';
 import ErrorBoundary from "./ErrorBoundary";
 import {connect} from 'react-redux';
 import {bindActionCreators} from "redux";
-import {getUser, getSettings} from "./dashboard/actions";
+import {getUser, getSettings, setSetting} from "./dashboard/actions";
 
 function DashLink(props: NavLinkProps) {
     let p = Object.assign({}, props);
@@ -16,6 +16,7 @@ function DashLink(props: NavLinkProps) {
 interface PropsFromDispatch {
     getUser: typeof getUser
     getSettings: typeof getSettings
+    setSetting: typeof setSetting
 }
 
 type AllProps = PropsFromDispatch & RouteComponentProps
@@ -118,7 +119,8 @@ class Dashboard extends Component<AllProps, {}> {
 const actionCreators = dispatch => {
     return bindActionCreators({
         getUser,
-        getSettings
+        getSettings,
+        setSetting,
     }, dispatch);
 };
 
