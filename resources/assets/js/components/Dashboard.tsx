@@ -4,7 +4,7 @@ import tabs from './dashboard/tabs';
 import ErrorBoundary from "./ErrorBoundary";
 import {connect} from 'react-redux';
 import {bindActionCreators} from "redux";
-import {getUser, getSettings, setSetting} from "./dashboard/actions";
+import {getSettings, getUser, setSetting} from "./dashboard/actions";
 
 function DashLink(props: NavLinkProps) {
     let p = Object.assign({}, props);
@@ -14,6 +14,7 @@ function DashLink(props: NavLinkProps) {
 
 
 interface PropsFromDispatch {
+    settingsLoaded: boolean
     getUser: typeof getUser
     getSettings: typeof getSettings
     setSetting: typeof setSetting
@@ -83,30 +84,32 @@ class Dashboard extends Component<AllProps, {}> {
     render() {
         return (
             <ErrorBoundary>
-                <div className="row mt-2">
-                    <div className="col-lg-2 col-md-12">
-                        <div className="mb-3 pb-2 card">
-                            <div className="card-header">
-                                {window.Panel.Server.name}
-                            </div>
-                            <div className="card-body d-flex flex-column">
-                                <img className="m-auto server-image" src={Dashboard.getServerIcon()}
-                                     alt={window.Panel.Server.name}/>
-                                <ul className="nav nav-pills nav-fill flex-column mt-3 dashboard-sidebar">
-                                    {Dashboard.getDashLinks()}
-                                </ul>
+                <div className={!this.props.settingsLoaded? 'busy' : ''}>
+                    <div className="row mt-2">
+                        <div className="col-lg-2 col-md-12">
+                            <div className="mb-3 pb-2 card">
+                                <div className="card-header">
+                                    {window.Panel.Server.name}
+                                </div>
+                                <div className="card-body d-flex flex-column">
+                                    <img className="m-auto server-image" src={Dashboard.getServerIcon()}
+                                         alt={window.Panel.Server.name}/>
+                                    <ul className="nav nav-pills nav-fill flex-column mt-3 dashboard-sidebar">
+                                        {Dashboard.getDashLinks()}
+                                    </ul>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="col-lg-10 col-md-12 pb-sm-2">
-                        <div className="card">
-                            <div className="card-header">
-                                {this.getRouteName()}
-                            </div>
-                            <div className="card-body">
-                                <Switch>
-                                    {Dashboard.generateRoutes()}
-                                </Switch>
+                        <div className="col-lg-10 col-md-12 pb-sm-2">
+                            <div className="card">
+                                <div className="card-header">
+                                    {this.getRouteName()}
+                                </div>
+                                <div className="card-body">
+                                    <Switch>
+                                        {Dashboard.generateRoutes()}
+                                    </Switch>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -124,5 +127,11 @@ const actionCreators = dispatch => {
     }, dispatch);
 };
 
-const withConnect = connect(null, actionCreators)(Dashboard);
+const mapStateToProps = state => {
+    return {
+        settingsLoaded: state.app.settingsLoaded
+    }
+};
+
+const withConnect = connect(mapStateToProps, actionCreators)(Dashboard);
 export default withRouter(withConnect);

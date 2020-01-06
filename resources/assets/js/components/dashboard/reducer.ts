@@ -6,12 +6,14 @@ interface RootReducerState {
     user: User | null,
     settings: {
         [key: string]: any
-    }
+    },
+    settingsLoaded: boolean
 }
 
 const defaultState: RootReducerState = {
     user: null,
-    settings: {}
+    settings: {},
+    settingsLoaded: false
 };
 
 type DashboardAction = ActionType<typeof Actions>
@@ -26,7 +28,8 @@ const reducer: Reducer<RootReducerState, DashboardAction> = (state = defaultStat
         case getType(Actions.getSettingsOk):
             return {
                 ...state,
-                settings: action.payload
+                settings: action.payload,
+                settingsLoaded: true
             };
         case getType(Actions.setSetting):
             return {
