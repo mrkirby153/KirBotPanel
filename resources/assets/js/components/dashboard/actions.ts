@@ -8,3 +8,4 @@ export const getSettingsOk = createAction('GET_SETTINGS_OK', (settings: { [key: 
 export const setSetting = createAction('SET_SETTING', (guild: string, key: string, value: any, persist: boolean = false): SetSettingAction => {
     return {guild, key, value, persist};
 })();
+export const persistSetting = createAction('PERSIST_SETTING', (action: SetSettingAction) => action)();

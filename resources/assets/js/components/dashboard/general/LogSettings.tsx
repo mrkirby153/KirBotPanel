@@ -1,33 +1,21 @@
-import React, {ChangeEvent, Component, ReactElement, useState} from 'react';
+import React, {ChangeEvent, ReactElement, useEffect, useState} from 'react';
 import Modal from "../../Modal";
-import SettingsRepository from '../../../settings_repository'
 import ld_find from 'lodash/find';
 import ld_indexof from 'lodash/indexOf';
-import ld_debounce from 'lodash/debounce';
 import {DashboardInput, DashboardSelect} from "../../DashboardInput";
 import {Events, LogMassSelectType, LogMode, LogSetting} from "./types";
-import {connect, useDispatch, useSelector} from 'react-redux';
-import {bindActionCreators} from "redux";
+import {useDispatch, useSelector} from 'react-redux';
 import {
     createLogSetting,
     deleteLogSetting,
+    getLogEvents,
     getLogSettings,
     logMassSelect,
     onLogCheckChange,
     saveLogSettings
 } from "./actions";
 import ConfirmButton from "../../ConfirmButton";
-
-interface LogSettingsProps {
-    log_events: Events,
-    logSettings: LogSetting[]
-    getLogSettings: typeof getLogSettings
-    createLogSetting: typeof createLogSetting
-}
-
-interface LoggingSettingsState {
-    log_timezone: string
-}
+import {useGuildSetting} from "../utils/hooks";
 
 interface LogChannelProps {
     id: string
@@ -47,7 +35,7 @@ const LogChannel: React.FC<LogChannelProps> = (props) => {
 
     const logEvents: Events = useSelector(state => state.general.logActions);
 
-    if(!settings) {
+    if (!settings) {
         return null;
     }
 
@@ -73,7 +61,7 @@ const LogChannel: React.FC<LogChannelProps> = (props) => {
 
     const onCheck = (event: ChangeEvent<HTMLInputElement>) => {
         const action = event.target.dataset.action;
-        if(action) {
+        if (action) {
             dispatch(onLogCheckChange({
                 id: props.id,
                 mode: mode,
@@ -96,7 +84,8 @@ const LogChannel: React.FC<LogChannelProps> = (props) => {
             const checkboxId = `option_${props.id}_${key}`;
             checkboxes.push(
                 <div className="custom-control custom-checkbox" key={key}>
-                    <input type="checkbox" className="custom-control-input" id={checkboxId} checked={checked} onChange={onCheck} data-action={logEvents[key]}/>
+                    <input type="checkbox" className="custom-control-input" id={checkboxId} checked={checked}
+                           onChange={onCheck} data-action={logEvents[key]}/>
                     <label className="custom-control-label" htmlFor={checkboxId}>{key}</label>
                 </div>
             )
@@ -120,23 +109,35 @@ const LogChannel: React.FC<LogChannelProps> = (props) => {
                     </button>
                     <ConfirmButton className="btn btn-danger"
                                    onConfirm={() => dispatch(deleteLogSetting(props.id))}
-                                   confirmText={<React.Fragment><i className="fas fa-times"/> Confirm?</React.Fragment>}>
+                                   confirmText={<React.Fragment><i
+                                       className="fas fa-times"/> Confirm?</React.Fragment>}>
                         <i className="fas fa-times"/> Delete
                     </ConfirmButton>
                 </div>
             </div>
             <Modal title={`Edit #${settings.channel.channel_name}`} open={editing} onClose={onClose}>
                 <div className="btn-group">
-                    <button className={"btn btn-primary " + (mode == LogMode.Include ? 'active' : '')} onClick={() => setMode(LogMode.Include)}>Include</button>
-                    <button className={"btn btn-primary " + (mode == LogMode.Exclude ? 'active' : '')} onClick={() => setMode(LogMode.Exclude)}>Exclude</button>
+                    <button className={"btn btn-primary " + (mode == LogMode.Include ? 'active' : '')}
+                            onClick={() => setMode(LogMode.Include)}>Include
+                    </button>
+                    <button className={"btn btn-primary " + (mode == LogMode.Exclude ? 'active' : '')}
+                            onClick={() => setMode(LogMode.Exclude)}>Exclude
+                    </button>
                 </div>
                 <p className="mt-1">
-                    Below are log events that can be {mode}d from the log channel. Leave blank to {mode == LogMode.Include? 'include all events' : 'exclude no events'}
+                    Below are log events that can be {mode}d from the log channel. Leave blank
+                    to {mode == LogMode.Include ? 'include all events' : 'exclude no events'}
                 </p>
                 <div className="btn-group btn-group-sm">
-                    <button className="btn btn-secondary" onClick={() => dispatchMassSelect(LogMassSelectType.All)}>Select All</button>
-                    <button className="btn btn-secondary" onClick={() => dispatchMassSelect(LogMassSelectType.None)}>Select None</button>
-                    <button className="btn btn-secondary" onClick={() => dispatchMassSelect(LogMassSelectType.Invert)}>Invert Selection</button>
+                    <button className="btn btn-secondary"
+                            onClick={() => dispatchMassSelect(LogMassSelectType.All)}>Select All
+                    </button>
+                    <button className="btn btn-secondary"
+                            onClick={() => dispatchMassSelect(LogMassSelectType.None)}>Select None
+                    </button>
+                    <button className="btn btn-secondary"
+                            onClick={() => dispatchMassSelect(LogMassSelectType.Invert)}>Invert Selection
+                    </button>
                 </div>
                 {checkboxes}
             </Modal>
@@ -144,94 +145,58 @@ const LogChannel: React.FC<LogChannelProps> = (props) => {
     )
 };
 
-class LoggingSettings extends Component<LogSettingsProps, LoggingSettingsState> {
+const LoggingSettings: React.FC = (props) => {
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(getLogSettings());
+        dispatch(getLogEvents());
+    }, []);
 
-    constructor(props: any) {
-        super(props);
-        this.state = {
-            log_timezone: 'UTC'
-        };
-        this.onChange = this.onChange.bind(this);
-        this.saveSettings = ld_debounce(this.saveSettings, 300);
-    }
+    const settings: LogSetting[] = useSelector(state => state.general.logSettings);
 
-    onChange(event) {
-        const {name, value, type, checked} = event.target;
-        // @ts-ignore
-        type === "checkbox" ? this.setState({[name]: checked}) : this.setState({[name]: value});
-        type === "checkbox" ? this.saveSettings(name, checked) : this.saveSettings(name, value);
-    }
+    const existingIds = settings.map(s => s.channel_id);
+    let textChannelElements: ReactElement[] = window.Panel.Server.channels.filter(chan => chan.type == 'TEXT')
+        .filter(chan => ld_indexof(existingIds, chan.id) == -1)
+        .map(channel => <option key={channel.id} value={channel.id}>#{channel.channel_name}</option>);
 
-    saveSettings(key, value) {
-        SettingsRepository.setSetting(key, value, true);
-    }
+    let logChannels = settings.map(setting => (<LogChannel id={setting.id} key={setting.id}/>));
 
-    componentDidMount(): void {
-        this.props.getLogSettings();
-    }
+    let [logTimezone, setLogTimezone] = useGuildSetting(window.Panel.Server.id, 'log_timezone', 'UTC');
 
-
-    render() {
-        let textChannelElements: ReactElement[] = [];
-        let existingIds = this.props.logSettings.map(s => s.channel_id);
-        window.Panel.Server.channels.filter(chan => chan.type == 'TEXT').filter(chan => ld_indexof(existingIds, chan.id) == -1).forEach(channel => {
-            textChannelElements.push(<option key={channel.id} value={channel.id}>#{channel.channel_name}</option>);
-        });
-
-        let logChannels = this.props.logSettings.map(fn => (
-            <LogChannel id={fn.id} key={fn.id}/>
-        ));
-
-        return (
-            <div className="row">
-                <div className="col-12">
-                    <h2>Logging</h2>
-                    <p>
-                        <b>Include:</b> A list of all events that are included in the log. <i>Leave blank to include
-                        all events</i><br/>
-                        <b>Exclude:</b> A list of all events that are excluded from the log. <i>Leave blank to
-                        exclude nothing</i>
-                    </p>
-                    <div className="form-row">
-                        <div className="col-6">
-                            <div className="form-group">
-                                <label htmlFor="channelAdd"><b>Add a channel</b></label>
-                                <DashboardSelect className="form-control" name="channelAdd" id="channelAdd" value={""}
-                                                 onChange={e => this.props.createLogSetting(e.target.value)}>
-                                    <option value={""} disabled>Add a channel...</option>
-                                    {textChannelElements}
-                                </DashboardSelect>
-                            </div>
-                        </div>
-                        <div className="col-6">
-                            <div className="form-group">
-                                <label htmlFor="log_timezone"><b>Log Timezone</b></label>
-                                <DashboardInput type="text" className="form-control" name="log_timezone"
-                                                id="log_timezone" value={this.state.log_timezone}
-                                                onChange={this.onChange}/>
-                            </div>
+    return (
+        <div className="row">
+            <div className="col-12">
+                <h2>Logging</h2>
+                <p>
+                    <b>Include: </b>A list of all events that are included in the log. <i>Leave blank to include all
+                    events</i><br/>
+                    <b>Exclude: </b>A list of all events that are excluded from the log. <i>Leave blank to exclude
+                    nothing</i>
+                </p>
+                <div className="form-row">
+                    <div className="col-6">
+                        <div className="form-group">
+                            <label htmlFor="channelAdd"><b>Add a channel</b></label>
+                            <DashboardSelect className="form-control" name="channelAdd" id="channelAdd" value={""}
+                                             onChange={e => dispatch(createLogSetting(e.target.value))}>
+                                <option value={""} disabled>Add a channel...</option>
+                                {textChannelElements}
+                            </DashboardSelect>
                         </div>
                     </div>
-                    <div className="log-channels">
-                        {logChannels}
+                    <div className="col-6">
+                        <div className="form-group">
+                            <label htmlFor="log_timezone"><b>Log Timezone</b></label>
+                            <DashboardInput type="text" className="form-control" name="log_timezone" id="log_timezone"
+                                            value={logTimezone} onChange={e => setLogTimezone(e.target.value, true)}/>
+                        </div>
                     </div>
                 </div>
+                <div className="log-channels">
+                    {logChannels}
+                </div>
             </div>
-        );
-    }
-}
-
-const actionCreators = dispatch => {
-    return bindActionCreators({
-        getLogSettings,
-        createLogSetting
-    }, dispatch);
+        </div>
+    )
 };
-
-const mapStateToProps = state => {
-    return {
-        log_events: state.general.logActions,
-        logSettings: state.general.logSettings
-    }
-};
-export default connect(mapStateToProps, actionCreators)(LoggingSettings)
+export default LoggingSettings;
