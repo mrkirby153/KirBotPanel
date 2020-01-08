@@ -8,6 +8,8 @@ import {DashboardInput, DashboardSelect} from "../../DashboardInput";
 import Field from "../../Field";
 import ConfirmButton from "../../ConfirmButton";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {getType} from "typesafe-actions";
+import {useReduxListener} from "../utils/hooks";
 
 interface AddingComponentProps {
     onClose(e?: React.MouseEvent<HTMLButtonElement>): void
@@ -20,6 +22,10 @@ const AddingComponent: React.FC<AddingComponentProps> = (props) => {
     const [permission, setPermission] = useState<PanelPermissionType>(PanelPermissionType.VIEW);
     const permissions: PanelPermission[] = useSelector(store => store.permissions.panelPermissions);
 
+    useReduxListener(getType(Actions.createPanelPermissionOk), () => {
+        props.onClose();
+    });
+
     const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (ld_find(permissions, {user_id: id}) != null) {
@@ -29,7 +35,6 @@ const AddingComponent: React.FC<AddingComponentProps> = (props) => {
         if (id.match(/^\d+$/)) {
             if (id.match(/^\d{17,18}$/)) {
                 dispatch(Actions.createPanelPermission(id, permission));
-                props.onClose();
             } else {
                 setErrors('ID must be a valid snowflake');
             }

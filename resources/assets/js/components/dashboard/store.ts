@@ -4,6 +4,7 @@ import makeReducers from "./reducers";
 import createSagaMiddleware from 'redux-saga';
 import {createLogger} from 'redux-logger';
 import rootSaga from "./saga";
+import reducerListener from './reducerListener';
 
 interface Store extends ReduxStore {
     dynamicReducers: object
@@ -13,7 +14,7 @@ interface Store extends ReduxStore {
 export default function configureStore(tabs: Tab[]) {
 
     const sagaMiddleware = createSagaMiddleware();
-    const middlewares: Middleware[] = [sagaMiddleware];
+    const middlewares: Middleware[] = [sagaMiddleware, reducerListener];
 
     if(process.env.NODE_ENV != 'production') {
         const logger = createLogger({

@@ -11,14 +11,14 @@ let ConfirmButton = (props, ref) => {
 
     const [timer, setTimer] = useState<number>(-1);
 
-    const {confirmText, timeout, ...rest} = props;
+    const {confirmText, timeout, onConfirm, ...rest} = props;
 
     const onClick = (event) => {
         if (confirm) {
             if (timer != -1)
                 window.clearTimeout(timer);
             isConfirming(false);
-            props.onConfirm(event);
+            onConfirm(event);
         } else {
             isConfirming(true);
             const id = window.setTimeout(() => {

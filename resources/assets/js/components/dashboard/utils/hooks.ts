@@ -1,5 +1,8 @@
 import {useDispatch, useSelector} from 'react-redux';
 import {setSetting} from "../actions";
+import {ActionType} from "typesafe-actions";
+import {useEffect} from "react";
+import {addEventListener, removeEventListener} from "../reducerListener";
 
 export function useGuildSetting<T>(guild: string, key: string, defaultValue: T, autoPersist: boolean = false): [T, ((value: T) => void), () => void] {
     const dispatch = useDispatch();
@@ -18,4 +21,13 @@ export function useGuildSetting<T>(guild: string, key: string, defaultValue: T, 
     } else {
         return [storeValue, set, save];
     }
+}
+
+export function useReduxListener<T>(key: string | string[], func: (action: ActionType<T>) => void) {
+    useEffect(() => {
+        let id = addEventListener(key, func);
+        return function () {
+            removeEventListener(id);
+        }
+    }, []);
 }
