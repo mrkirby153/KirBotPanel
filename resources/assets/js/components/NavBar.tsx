@@ -56,6 +56,7 @@ function NavBarLeft(props: any) {
         <ul className="navbar-nav mr-auto">
             <NavBarLink href="/" title="Home"/>
             <NavBarLink href="/servers" title="Manage Servers"/>
+            <li className="nav-item"><a href="/docs" target="_blank" className="nav-link">Documentation</a></li>
         </ul>
     )
 }

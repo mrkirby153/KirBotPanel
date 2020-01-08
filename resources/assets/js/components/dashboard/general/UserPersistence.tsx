@@ -1,143 +1,130 @@
-import React, {Component, ReactElement} from 'react';
-import Field from "../../Field";
-import SettingsRepository from "../../../settings_repository";
-import _ from 'lodash';
-import {DashboardSelect, DashboardSwitch} from "../../DashboardInput";
+import React, {ReactElement} from 'react';
+import {DashboardSelect} from "../../DashboardInput";
+import ld_indexOf from 'lodash/indexOf';
+import ld_find from 'lodash/find';
+import ld_without from 'lodash/without';
+import {useGuildSetting} from "../utils/hooks";
+import Switch, {SwitchProps} from "../../Switch";
 
-
-interface PersistState {
-    roles: string[],
-    mode: number
+enum Persistence {
+    Enabled = 1, Mute = 2, Deafen = 4, Nick = 8, Roles = 16
 }
 
-export default class UserPersistence extends Component<{}, PersistState> {
-    constructor(props) {
-        super(props);
-        this.state = {
-            roles: SettingsRepository.getSetting("persist_roles", []),
-            mode: SettingsRepository.getSetting("user_persistence", 0)
-        };
+interface PersistenceToggleProps extends SwitchProps {
+    mode: Persistence,
+    field: number
+}
 
-        this.handleChange = this.handleChange.bind(this);
-        this.localizedRoles = this.localizedRoles.bind(this);
-        this.removeRole = this.removeRole.bind(this);
-        this.handleChecked = this.handleChecked.bind(this);
-    }
+const PersistenceToggle: React.FC<PersistenceToggleProps> = (props) => {
+    let {mode, field, ...rest} = props;
+    return <Switch data-mode={mode} checked={(field & mode) > 0} {...rest}/>
+};
+const UserPersistence: React.FC = () => {
 
-    handleChange(e) {
-        let role = e.target.value;
-        let roles = [...this.state.roles];
-        roles.push(role);
-        this.setState({
-            roles: roles
-        });
-        SettingsRepository.setSetting("persist_roles", roles, true);
-    }
+    const [persistedRoles, setPersistedRoles] = useGuildSetting<string[]>(window.Panel.Server.id, 'persist_roles', [], true);
+    const [persistMode, setPersistMode] = useGuildSetting(window.Panel.Server.id, 'user_persistence', 0, true);
 
-    handleChecked(e) {
-        let newMode = this.state.mode;
-        let target = e.target;
-        if (target.dataset.mode == "1" && !target.checked) {
+    const availableRoles = window.Panel.Server.roles.filter(role => ld_indexOf(persistedRoles, role.id) == -1 && role.name != "@everyone").map(role => {
+        return (
+            <option value={role.id} key={role.id}>{role.name}</option>
+        )
+    });
+
+    let rolePersistenceEnabled = (persistMode & Persistence.Enabled) > 0 && (persistMode & Persistence.Roles) > 0;
+
+    const localizedRoles = persistedRoles.map(role => ld_find(window.Panel.Server.roles, {id: role})).filter(e => e != null) as Role[];
+
+    const addPersistenceRole = (e) => {
+        let roles = [e.target.value, ...persistedRoles];
+        setPersistedRoles(roles);
+    };
+
+    const removePersistenceRole = (id: string) => {
+        setPersistedRoles(ld_without(persistedRoles, id))
+    };
+
+    const handlePersistenceToggle = (e) => {
+        let newMode = persistMode;
+        let mode = e.target.dataset.mode as number;
+        if (mode == Persistence.Enabled && !e.target.checked) {
             newMode = 0;
         } else {
-            if (target.checked) {
-                newMode |= 1;
-                newMode |= target.dataset.mode
+            if (e.target.checked) {
+                newMode |= Persistence.Enabled; // If we check any of the boxes, we want to enable persistence
+                newMode |= mode;
             } else {
-                newMode &= ~target.dataset.mode
+                newMode &= ~mode;
             }
         }
-        this.setState({
-            mode: newMode
+        setPersistMode(newMode);
+    };
+
+    const persistedRoleElements: ReactElement[] = [];
+    if (!rolePersistenceEnabled) {
+        persistedRoleElements.push(<div className="role" key={"disabled"}><i>Role persistence is disabled</i></div>)
+    } else if (persistedRoles.length == 0) {
+        persistedRoleElements.push(<div className="role" key={"none"}><i>All Roles</i></div>)
+    } else {
+        localizedRoles.forEach(role => {
+            const el = (
+                <div className="role" key={role.id}>
+                    {role.name} {!window.Panel.Server.readonly &&
+                <span onClick={e => removePersistenceRole(role.id)}><i className="fas fa-times x-icon"/></span>}
+                </div>
+            );
+            persistedRoleElements.push(el)
         });
-        SettingsRepository.setSetting("user_persistence", newMode, true);
     }
 
-    removeRole(id: string) {
-        let newRoles = _.without(this.state.roles, id);
-        this.setState({
-            roles: newRoles
-        });
-        SettingsRepository.setSetting("persist_roles", newRoles, true);
-    }
-
-    localizedRoles(): Role[] {
-        let arr = this.state.roles.map(fn => _.find(window.Panel.Server.roles, {id: fn})).filter(e => e != null);
-        return arr as Role[]
-    }
-
-    render() {
-        let persistenceEnabled = (this.state.mode & 1) > 0 && (this.state.mode & 16) > 0;
-        let selectRoles: ReactElement[] = [];
-        window.Panel.Server.roles.forEach(role => {
-            if (_.indexOf(this.state.roles, role.id) != -1 || role.name == "@everyone") {
-                return;
-            }
-            selectRoles.push(<option value={role.id} key={role.id}>{role.name}</option>)
-        });
-
-        let persistRoles: ReactElement[] = [];
-        this.localizedRoles().forEach(role => {
-            persistRoles.push(<div className="role" key={role.id}>{role.name} {!window.Panel.Server.readonly && <span
-                onClick={e => this.removeRole(role.id)}><i className="fas fa-times x-icon"/></span>}
-            </div>)
-        });
-
-        if (this.state.roles.length == 0) {
-            persistRoles.push(<div className="role" key={"no_roles"}><i>All roles</i></div>)
-        }
-
-        if (!persistenceEnabled) {
-            persistRoles = [<div className="role" key={"disabled"}><i>Role persistence is disabled.</i></div>]
-        }
-
-        return (
-            <div>
-                <div className="row">
-                    <div className="col-12">
-                        <h2>User Persistence</h2>
-                        <p>
-                            When enabled, users' roles, nicknames, and voice state will be restored on join. This
-                            does <b>NOT</b> affect per-channel overrides
-                        </p>
+    return (
+        <React.Fragment>
+            <div className="row">
+                <div className="col-12">
+                    <h2>User Persistence</h2>
+                    <p>
+                        When enabled, users' roles, nicknames, and voice state will be restored on join. This
+                        does <b>NOT</b> affect per channel overrides
+                    </p>
+                </div>
+            </div>
+            <div className="row">
+                <div className="col-lg-6 col-md-12">
+                    <PersistenceToggle label="Enable Persistence" id="enablePersistence" mode={Persistence.Enabled}
+                                       field={persistMode} onClick={handlePersistenceToggle}/>
+                    <div className="mt-1">
+                        <PersistenceToggle label="Persist Mute" id="persistMute" switchSize="small"
+                                           mode={Persistence.Mute} field={persistMode}
+                                           onClick={handlePersistenceToggle}/>
+                        <PersistenceToggle label="Persist Roles" id="persistRoles" switchSize="small"
+                                           mode={Persistence.Roles} field={persistMode}
+                                           onClick={handlePersistenceToggle}/>
+                        <PersistenceToggle label="Persist Deafen" id="persistDeafen" switchSize="small"
+                                           mode={Persistence.Deafen} field={persistMode}
+                                           onClick={handlePersistenceToggle}/>
+                        <PersistenceToggle label="Persist Nickname" id="persistNick" switchSize="small"
+                                           mode={Persistence.Nick} field={persistMode}
+                                           onClick={handlePersistenceToggle}/>
                     </div>
                 </div>
-                <div className="row">
-                    <div className="col-lg-6 col-md-12">
-                        <DashboardSwitch label="Enable Persistence" id="enablePersistence" data-mode="1"
-                                         checked={(this.state.mode & 1) > 0} onChange={this.handleChecked}/>
-                        <div className="mt-1">
-                            <DashboardSwitch label="Persist Mute" id="persistMute" switchSize="small" data-mode="2"
-                                             checked={(this.state.mode & 2) > 0} onChange={this.handleChecked}/>
-                            <DashboardSwitch label="Persist Roles" id="persistRoles" switchSize="small" data-mode="16"
-                                             checked={(this.state.mode & 16) > 0} onChange={this.handleChecked}/>
-                            <DashboardSwitch label="Persist Deafen" id="persistDeafen" switchSize="small" data-mode="4"
-                                             checked={(this.state.mode & 4) > 0} onChange={this.handleChecked}/>
-                            <DashboardSwitch label="Persist Nickname" id="persistNick" switchSize="small" data-mode="8"
-                                             checked={(this.state.mode & 8) > 0} onChange={this.handleChecked}/>
-                        </div>
-                    </div>
-                    <div className="col-lg-6 col-md-12">
-                        <p>
-                            The following roles are persistent roles. These roles will be restored to the user when they
-                            re-join.<br/>
-                            If no roles are selected, all roles will persist.
-                        </p>
-                        <Field>
-                            <DashboardSelect className="form-control" value={""} onChange={this.handleChange}
-                                             disabled={!persistenceEnabled}>
-                                <option value={""} disabled={true}>Persist a role</option>
-                                {selectRoles}
-                            </DashboardSelect>
-                        </Field>
-
-                        <div className="roles">
-                            {persistRoles}
-                        </div>
+                <div className="col-lg-6 col-md-12">
+                    <p>
+                        The following roles are persistent roles. These roles will be restored to the user when
+                        they re-join.<br/>
+                        If no roles are selected, all roles will persist. The muted role is persistent and
+                        cannot be changed
+                    </p>
+                    <DashboardSelect className="form-control" value={""} disabled={!rolePersistenceEnabled}
+                                     onChange={addPersistenceRole}>
+                        <option value={""} disabled={true}>Select a role...</option>
+                        {availableRoles}
+                    </DashboardSelect>
+                    <div className="roles">
+                        {persistedRoleElements}
                     </div>
                 </div>
             </div>
-        );
-    }
+        </React.Fragment>
+    )
+};
 
-}
+export default UserPersistence;

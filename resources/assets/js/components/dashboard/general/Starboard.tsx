@@ -1,167 +1,88 @@
-import React, {Component, ReactElement} from 'react';
-import Field from "../../Field";
-import SettingsRepository from "../../../settings_repository";
-import _ from 'lodash';
+import React from 'react';
+import {useGuildSetting} from "../utils/hooks";
 import {DashboardInput, DashboardSelect, DashboardSwitch} from "../../DashboardInput";
+import Field from "../../Field";
 
+const QuoteSettings: React.FC = () => {
+    const [enabled, setEnabled] = useGuildSetting(window.Panel.Server.id, 'quotes_enabled', 0, true);
+    const [cmdPrefix] = useGuildSetting(window.Panel.Server.id, 'cmd_discriminator', '!');
 
-interface StarboardState {
-    channel_id: string,
-    enabled: boolean,
-    gild_count: number,
-    self_star: boolean,
-    star_count: number
-}
+    return (
+        <div className="row">
+            <div className="col-12">
+                <p>The starboard is disabled. Users can react with 🗨️ to create quotes.</p>
+                <p>Quotes can be retrieved with the command <code>{cmdPrefix}quote {"<id>"}</code></p>
+            </div>
+            <div className="col-12">
+                <DashboardSwitch label="Enable Quoting" id="enable-quotes" checked={enabled == 1}
+                                 onChange={e => setEnabled(e.target.checked ? 1 : 0)}/>
+            </div>
+        </div>
+    )
+};
 
-class Starboard extends Component<{}, StarboardState> {
-    constructor(props) {
-        super(props);
-        this.state = {
-            channel_id: SettingsRepository.getSetting("starboard_channel_id", ""),
-            enabled: SettingsRepository.getSetting("starboard_enabled", 0) == 1,
-            gild_count: SettingsRepository.getSetting("starboard_gild_count", 0),
-            self_star: SettingsRepository.getSetting("starboard_self_star", 0) == 1,
-            star_count: SettingsRepository.getSetting("starboard_star_count", 0)
-        };
+const StarboardSettings: React.FC = () => {
 
-        this.onChange = this.onChange.bind(this);
+    const [channel, setChannel] = useGuildSetting(window.Panel.Server.id, 'starboard_channel_id', '', true);
+    const [gildCount, setGildCount] = useGuildSetting(window.Panel.Server.id, 'starboard_gild_count', 0, true);
+    const [selfStar, setSelfStar] = useGuildSetting(window.Panel.Server.id, 'starboard_self_star', 0, true);
+    const [starCount, setStarCount] = useGuildSetting(window.Panel.Server.id, 'starboard_star_count', 0, true);
 
-        // Save the settings debounced so we don't murder the backend
-        this.setSetting = _.debounce(this.setSetting, 300);
-    }
-
-    onChange(e) {
-        let {name, value, type, checked} = e.target;
-        // @ts-ignore
-        type === "checkbox" ? this.setState({[name]: checked}) : this.setState({[name]: value});
-
-        type === "checkbox" ? this.setSetting(name, checked) : this.setSetting(name, value);
-    }
-
-    setSetting(key, value) {
-        SettingsRepository.setSetting("starboard_" + key, value, true);
-    }
-
-    render() {
-        let starboardChannelSelectors: ReactElement[] = [];
-        window.Panel.Server.channels.filter(chan => chan.type == "TEXT").forEach(chan => {
-            starboardChannelSelectors.push(<option key={chan.id} value={chan.id}>#{chan.channel_name}</option>)
-        });
-        return (
+    const channels = window.Panel.Server.channels.filter(chan => chan.type == "TEXT").map(chan => <option value={chan.id}
+                                                                      key={chan.id}>#{chan.channel_name}</option>);
+    return (
+        <React.Fragment>
             <div className="row">
                 <div className="col-12">
                     <Field>
                         <label>Starboard Channel</label>
-                        <DashboardSelect className="form-control" name="channel_id" onChange={this.onChange}
-                                value={this.state.channel_id}>
-                            <option disabled={true} value={""}>Select a channel</option>
-                            {starboardChannelSelectors}
+                        <DashboardSelect className="form-control" name="channel_id" value={channel}
+                                         onChange={e => setChannel(e.target.value)}>
+                            <option disabled value={""}>Select a channel</option>
+                            {channels}
                         </DashboardSelect>
                     </Field>
                 </div>
+            </div>
+            <div className="row align-items-end">
                 <div className="col-4">
                     <Field help="The amount of stars for a post to show up on the starboard">
                         <label>Star Count</label>
-                        <DashboardInput type="number" min={0} className="form-control" name="star_count" onChange={this.onChange}
-                               value={this.state.star_count}/>
+                        <DashboardInput type="number" min={0} className="form-control" name="star_count"
+                                        value={starCount} onChange={e => setStarCount(parseInt(e.target.value))}/>
                     </Field>
                 </div>
                 <div className="col-4">
-                    <Field help="The amount of stars required to gild the post">
+                    <Field help="The amount of stars required to gild a post">
                         <label>Gild Count</label>
-                        <DashboardInput type="number" min={0} className="form-control" name="gild_account"
-                               onChange={this.onChange} value={this.state.gild_count}/>
+                        <DashboardInput type="number" min={starCount} className="form-control" name="gild_count"
+                                        value={gildCount} onChange={e => setGildCount(parseInt(e.target.value))}/>
                     </Field>
                 </div>
                 <div className="col-4">
-                    <Field help="If self staring is enabled, users can star their own messages">
-                        <DashboardSwitch label="Self Star" id="self-star" name="self_star" onChange={this.onChange}
-                                checked={this.state.self_star}/>
+                    <Field help="If self starring is enabled, users can star their own messages">
+                        <DashboardSwitch label="Self Star" id="self-star" name="self_star" checked={selfStar == 1}
+                                         onChange={e => setSelfStar(e.target.checked ? 1 : 0)}/>
                     </Field>
                 </div>
             </div>
-        );
-    }
-}
+        </React.Fragment>
+    )
+};
 
-interface QuotesState {
-    enabled: boolean
-}
+const Starboard: React.FC = () => {
+    const [starboardEnabled, enableStarboard] = useGuildSetting(window.Panel.Server.id, 'starboard_enabled', 0, true);
 
-class Quotes extends Component<{}, QuotesState> {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            enabled: SettingsRepository.getSetting("quotes_enabled", 0) == 1
-        };
-
-        this.updateQuotesEnabled = this.updateQuotesEnabled.bind(this);
-    }
-
-    updateQuotesEnabled(e) {
-        this.setState({
-            enabled: e.target.checked
-        });
-        SettingsRepository.setSetting("quotes_enabled", e.target.checked, true);
-    }
-
-    render() {
-        let quoteCmd = SettingsRepository.getSetting("cmd_discriminator", "!") + "quote <id>";
-        return (
-            <div className="row">
-                <div className="col-12">
-                    <p>The starboard is disabled. Users can react with 🗨 to create quotes.</p>
-                    <p>Quotes can be retrieved with the command <code>{quoteCmd}</code></p>
-                </div>
-                <div className="col-12">
-                    <DashboardSwitch label="Enable Quoting" id="enable-quotes" checked={this.state.enabled}
-                            onChange={this.updateQuotesEnabled}/>
-                </div>
-            </div>
-        )
-    }
-}
-
-
-interface StarboardWrapperState {
-    enabled: boolean,
-}
-
-export default class StarboardWrapper extends Component<{}, StarboardWrapperState> {
-    constructor(props) {
-        super(props);
-        this.state = {
-            enabled: SettingsRepository.getSetting("starboard_enabled", 0) == 1
-        };
-
-        this.changeStarboard = this.changeStarboard.bind(this);
-    }
-
-    changeStarboard(e) {
-        let checked = e.target.checked;
-        this.setState({
-            enabled: checked
-        });
-        SettingsRepository.setSetting("starboard_enabled", checked, true);
-    }
-
-    render() {
-        let toDisplay = this.state.enabled ? <Starboard/> : <Quotes/>;
-        return (
-            <div>
-                <div className="row">
-                    <div className="col-12">
-                        <h2>Starboard</h2>
-                        <p>
-                            If the starboard is enabled, reacting via 🗨️ will no longer create new quotes.
-                        </p>
-                        <DashboardSwitch label="Enable Starboard" id="enable-starboard" onChange={this.changeStarboard}
-                                checked={this.state.enabled}/>
-                    </div>
-                </div>
-                {toDisplay}
-            </div>
-        )
-    }
-}
+    return (
+        <React.Fragment>
+            <h2>Starboard</h2>
+            {starboardEnabled == 1 && <p>
+                The starboard is enabled. Quotes can no longer be created
+            </p>}
+            <DashboardSwitch label="Enable Starboard" id="enable-starboard" checked={starboardEnabled == 1}
+                             onChange={e => enableStarboard(e.target.checked ? 1 : 0)}/>
+            {starboardEnabled == 1 ? <StarboardSettings/> : <QuoteSettings/>}
+        </React.Fragment>
+    )
+};
+export default Starboard;

@@ -52,6 +52,8 @@ class ApiController extends Controller
         'anti_raid_enabled',
         'log_timezone',
         'command_silent_fail',
+        'bot_nick',
+        'muted_role',
     ];
 
     public function __construct()
@@ -117,15 +119,6 @@ class ApiController extends Controller
             'excluded' => $settings->excluded
         ]));
         return $settings->load('channel');
-    }
-
-    public function setBotNick(Request $request, Guild $guild)
-    {
-        $this->authorize('update', $guild);
-        $request->validate([
-            'nick' => 'max:32'
-        ]);
-        SettingsRepository::set($guild, 'bot_nick', $request->input('nick'));
     }
 
     public function setMutedRole(Request $request, Guild $guild)

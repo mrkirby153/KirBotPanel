@@ -26,8 +26,6 @@ Route::group(['prefix' => '/guild/{guild}', 'middleware' => 'can:view,guild'], f
     Route::put('/log-settings', 'ApiController@createLogSettings');
     Route::patch('/log-settings/{settings}', 'ApiController@updateLogSettings');
     Route::delete('/log-settings/{settings}', 'ApiController@deleteLogSettings');
-    Route::post('/bot-nick', 'ApiController@setBotNick');
-    Route::post('/muted-role', 'ApiController@setMutedRole');
 
     Route::get('/permissions/panel', 'ApiController@getPanelPermissions');
     Route::patch('/permissions/panel/{permission}', 'ApiController@updatePanelPermission');

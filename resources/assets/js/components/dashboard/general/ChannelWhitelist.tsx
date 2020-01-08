@@ -1,90 +1,66 @@
-import React, {Component, ReactElement} from 'react';
-import Field from "../../Field";
-import SettingsRepository from "../../../settings_repository";
-import _ from 'lodash';
+import React from 'react';
 import {DashboardSelect} from "../../DashboardInput";
+import {useGuildSetting} from "../utils/hooks";
+import ld_without from 'lodash/without';
+import ld_find from 'lodash/find';
+import ld_indexOf from 'lodash/indexOf';
 
 
-interface WhitelistState {
-    whitelist: string[]
-}
+const ChannelWhitelist: React.FC = () => {
 
-export default class ChannelWhitelist extends Component<{}, WhitelistState> {
+    const [channels, setChannels] = useGuildSetting<string[]>(window.Panel.Server.id, 'cmd_whitelist', [], true);
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            whitelist: SettingsRepository.getSetting("cmd_whitelist", [])
-        };
+    const addChannel = (e) => {
+        let newChannels = [...channels, e.target.value];
+        setChannels(newChannels);
+    };
 
-        this.addChannel = this.addChannel.bind(this);
-        this.localizeChannels = this.localizeChannels.bind(this);
-        this.removeChannel = this.removeChannel.bind(this);
-    }
+    const removeChannel = (id: string) => {
+        setChannels(ld_without(channels, id))
+    };
 
-    addChannel(e) {
-        let channels = [...this.state.whitelist];
-        channels.push(e.target.value);
-        this.setState({
-            whitelist: channels
-        });
-        SettingsRepository.setSetting('cmd_whitelist', channels, true);
-    }
+    const localizedChannels = channels.map(chan => ld_find(window.Panel.Server.channels, {id: chan})).filter(e => e != null) as Channel[];
 
-    removeChannel(id:string) {
-        let newState = _.without(this.state.whitelist, id);
-        this.setState({
-            whitelist: newState
-        });
-        SettingsRepository.setSetting('cmd_whitelist', newState, true)
-    }
+    const channelSelect = window.Panel.Server.channels.filter(chan => chan.type == "TEXT" && ld_indexOf(channels, chan.id) == -1).map(channel => {
+        return <option key={channel.id} value={channel.id}>#{channel.channel_name}</option>
+    });
 
-    localizeChannels(): Channel[] {
-        return this.state.whitelist.map(chan => {
-            return _.find(window.Panel.Server.channels, {id: chan});
-        }).filter(e => e != null) as Channel[];
-    }
-
-    render() {
-        let channelSelect: ReactElement[] = [];
-        window.Panel.Server.channels.filter(chan => chan.type == "TEXT")
-            .filter(c => _.indexOf(this.state.whitelist, c.id) == -1).forEach(c => {
-            channelSelect.push(<option key={c.id} value={c.id}>#{c.channel_name}</option>)
-        });
-
-        let whitelistChannels: ReactElement[] = [];
-        this.localizeChannels().forEach(c => {
-            whitelistChannels.push(
-                <div className="channel" key={c.id}>
-                    #{c.channel_name} {!window.Panel.Server.readonly && <span className="x-icon" onClick={_ => this.removeChannel(c.id)}><i className="fas fa-times"/></span>}
-                </div>
-            )
-        });
+    const whitelistedChannels = localizedChannels.map(chan => {
         return (
+            <div className="channel" key={chan.id}>
+                #{chan.channel_name} {!window.Panel.Server.readonly &&
+            <span className="x-icon" onClick={() => removeChannel(chan.id)}><i className="fas fa-times"/></span>}
+            </div>
+        )
+    });
+
+    return (
+        <React.Fragment>
             <div className="row">
                 <div className="col-12">
                     <h2>Channel Whitelist</h2>
                     <p>
                         Channels specified here are the only channels that bot commands can be run in. The bot will
-                        ignore most commands in any other channels.
+                        ignore
+                        most commands in any other channel. Most moderation commands can be run anywhere. <br/>
                         <em>Leave blank to disable the whitelist</em>
                     </p>
                 </div>
+            </div>
+            <div className="row">
                 <div className="col-6">
                     <div className="channel-whitelist">
-                        {whitelistChannels}
+                        {whitelistedChannels}
                     </div>
                 </div>
                 <div className="col-6">
-                    <Field>
-                        <DashboardSelect className="form-control" value={""} onChange={this.addChannel}>
-                            <option disabled value={""}>Add a channel</option>
-                            {channelSelect}
-                        </DashboardSelect>
-                    </Field>
+                    <DashboardSelect className="form-control" value={""} onChange={addChannel}>
+                        <option disabled value={""}>Add a channel</option>
+                        {channelSelect}
+                    </DashboardSelect>
                 </div>
             </div>
-        );
-    }
-
-}
+        </React.Fragment>
+    )
+};
+export default ChannelWhitelist;

@@ -1,61 +1,27 @@
-import React, {Component, ReactElement} from 'react'
-import Form from "../../Form";
-import Field from "../../Field";
-import SettingsRepository from "../../../settings_repository";
-import axios from 'axios';
+import React, {ReactElement} from 'react'
 import {DashboardSelect} from "../../DashboardInput";
+import {useGuildSetting} from "../utils/hooks";
 
-interface MutedState {
-    success: boolean
-    changed: boolean
-    selected: string
-}
+const MutedRole: React.FC = () => {
 
-export default class MutedRole extends Component<{}, MutedState> {
+    const [mutedRole, setMutedRole] = useGuildSetting(window.Panel.Server.id, 'muted_role', '', true);
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            success: false,
-            changed: false,
-            selected: SettingsRepository.getSetting('muted_role', '')
-        };
+    const roles: ReactElement[] = [];
+    window.Panel.Server.roles.forEach(role => {
+        roles.push(<option value={role.id} key={role.id}>{role.name}</option>)
+    });
 
-        this.onChange = this.onChange.bind(this);
-    }
-
-    onChange(event) {
-        this.setState({
-            changed: true,
-            selected: event.target.value
-        });
-        axios.post('/api/guild/'+window.Panel.Server.id+'/muted-role', {
-            role: event.target.value
-        });
-    }
-
-    render() {
-        let roles: ReactElement[] = [];
-        window.Panel.Server.roles.forEach(role => {
-            roles.push(<option value={role.id} key={role.id}>{role.name}</option>)
-        });
-        return (
-            <div>
-                <h2>Muted Role</h2>
-                <p>
-                    Select the role that will be applied to the user if they are muted
-                </p>
-                <Form busy={false}>
-                    <Field success={this.state.success? "Muted role updated!" : null}
-                           errors={this.state.selected == "" && this.state.changed ? "No muted role has been selected. Mutes will not work" : null}>
-                        <DashboardSelect className="form-control" onChange={this.onChange} value={this.state.selected}>
-                            <option value={""}>None</option>
-                            {roles}
-                        </DashboardSelect>
-                    </Field>
-                </Form>
-            </div>
-        );
-    }
-
-}
+    return (
+        <React.Fragment>
+            <h2>Muted Role</h2>
+            <p>
+                Select the role that will be applied to the user if they are muted
+            </p>
+            <DashboardSelect className="form-control" onChange={e => setMutedRole(e.target.value)} value={mutedRole}>
+                <option value={""}>None</option>
+                {roles}
+            </DashboardSelect>
+        </React.Fragment>
+    )
+};
+export default MutedRole;
