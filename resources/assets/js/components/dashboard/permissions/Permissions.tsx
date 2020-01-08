@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import PanelPermissions from "./PanelPermissions";
 import RolePermissions from "./RolePermissions";
 import {Tab} from "../tabs";
+import reducer from "./reducer";
+import rootSaga from "./saga";
 
 class Permissions extends Component {
 
@@ -30,6 +32,8 @@ const tab: Tab = {
         path: '/permissions',
         component: Permissions
     },
-    icon: 'user-shield'
+    icon: 'user-shield',
+    reducer: reducer,
+    saga: rootSaga
 };
 export default tab;
