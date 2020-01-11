@@ -221,13 +221,12 @@ class ApiController extends Controller
     {
         $this->authorize('update', $guild);
         $request->validate([
-            'server' => 'required|exists:guild,id',
             'role_id' => 'required|exists:roles,id',
             'permission_level' => 'required|numeric'
         ]);
 
         $perm = new RolePermission();
-        $perm->server_id = $request->input('server');
+        $perm->server_id = $guild->id;
         $perm->role_id = $request->input('role_id');
         $perm->permission_level = $request->input('permission_level');
         $perm->save();

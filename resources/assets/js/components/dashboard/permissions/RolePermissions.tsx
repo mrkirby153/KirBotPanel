@@ -1,237 +1,141 @@
-import React, {Component, ReactElement} from 'react';
-import axios from 'axios';
-import _ from 'lodash';
-import Field from "../../Field";
+import React, {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import * as Actions from './actions';
+import {RoleClearance} from "./types";
 import {DashboardInput, DashboardSelect} from "../../DashboardInput";
-
-
-interface RolePermissionState {
-    permissions: RoleClearance[],
-    adding: boolean
-}
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import ConfirmButton from "../../ConfirmButton";
+import Field from "../../Field";
+import {useReduxListener} from "../utils/hooks";
+import {getType} from "typesafe-actions";
 
 interface AddingComponentProps {
-    onSubmit: Function,
-    onCancel: Function,
-    toExclude: String[]
+    onClose(): void
 }
 
-interface AddingComponentState {
-    role: string,
-    clearance: number
-}
+const AddingComponent: React.FC<AddingComponentProps> = (props) => {
+    const dispatch = useDispatch();
 
-class AddingComponent extends Component<AddingComponentProps, AddingComponentState> {
+    const [clearance, setClearance] = useState(0);
+    const [roleId, setRoleId] = useState("");
+    const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        dispatch(Actions.createRoleClearance(roleId, clearance));
+    };
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            role: '',
-            clearance: 0
-        };
+    const existingPermissions: string[] = useSelector(state => state.permissions.roleClearances).map(role => role.role_id);
 
-        this.onChange = this.onChange.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
-    }
+    useReduxListener(getType(Actions.createRoleClearanceOk), () => {
+        props.onClose();
+    });
 
-    onChange(evt) {
-        let {name, value} = evt.target;
-        // @ts-ignore
-        this.setState({[name]: value});
-    }
+    const roleSelections = window.Panel.Server.roles.filter(role => existingPermissions.indexOf(role.id) == -1 && role.name != "@everyone").map(role => {
+        return <option value={role.id} key={role.id}>{role.name}</option>
+    });
 
-    onSubmit() {
-        this.props.onSubmit(this.state);
-    }
-
-    render() {
-        let roles: ReactElement[] = [];
-        window.Panel.Server.roles.filter(role => _.indexOf(this.props.toExclude, role.id) == -1 && role.id != window.Panel.Server.id).forEach(role => {
-            roles.push(<option key={role.id} value={role.id}>{role.name}</option>)
-        });
-        return (
-            <th colSpan={3}>
-                <form onSubmit={this.onSubmit}>
-                    <div className="form-row">
-                        <div className="col-md-3">
-                            <Field>
-                                <label htmlFor="roleId">Role</label>
-                                <DashboardSelect className="form-control" value={this.state.role} name="role"
-                                                 onChange={this.onChange}>
-                                    <option value={""} disabled>Select a role</option>
-                                    {roles}
-                                </DashboardSelect>
-                            </Field>
-                        </div>
-                        <div className="col-md-3">
-                            <Field>
-                                <label htmlFor="clearance">Clearance</label>
-                                <DashboardInput type="number" className="form-control" value={this.state.clearance}
-                                                name="clearance" onChange={this.onChange}/>
-                            </Field>
+    return (
+        <th colSpan={3}>
+            <form onSubmit={onFormSubmit}>
+                <div className="form-row">
+                    <div className="col-md-3">
+                        <Field>
+                            <label htmlFor="roleId">Role</label>
+                            <DashboardSelect className="form-control" name="roleId" value={roleId}
+                                             onChange={e => setRoleId(e.target.value)}>
+                                <option value={""} disabled>Select a role</option>
+                                {roleSelections}
+                            </DashboardSelect>
+                        </Field>
+                    </div>
+                    <div className="col-md-3">
+                        <Field>
+                            <label htmlFor="clearance">Clearance</label>
+                            <DashboardInput type="number" className="form-control" name="clearance" value={clearance}
+                                            onChange={e => setClearance(parseInt(e.target.value))}/>
+                        </Field>
+                    </div>
+                </div>
+                <div className="form-row">
+                    <div className="col-12">
+                        <div className="btn-group">
+                            <button className="btn btn-success" type="submit"><FontAwesomeIcon icon={"check"}/> Save
+                            </button>
+                            <button className="btn btn-warning" type="button" onClick={() => props.onClose()}>
+                                <FontAwesomeIcon icon={"times"}/> Cancel
+                            </button>
                         </div>
                     </div>
-                    <div className="form-row">
-                        <div className="col-12">
-                            <div className="btn-group">
-                                <button className="btn btn-success" type="submit"><i
-                                    className="fa fa-check"/> Save
-                                </button>
-                                <button className="btn btn-warning" type="button"
-                                        onClick={e => this.props.onCancel(e)}><i
-                                    className="fas fa-times"/> Cancel
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </th>
-        );
-    }
+                </div>
+            </form>
+        </th>
+    )
+};
 
-}
+const RolePermissions: React.FC = () => {
 
-export default class RolePermissions extends Component<{}, RolePermissionState> {
-    constructor(props) {
-        super(props);
-        this.state = {
-            permissions: [],
-            adding: false
-        };
+    const dispatch = useDispatch();
 
-        this.getRolePermissions = this.getRolePermissions.bind(this);
-        this.saveRolePermissions = _.debounce(this.saveRolePermissions.bind(this), 300);
-        this.modifyRolePermissions = this.modifyRolePermissions.bind(this);
-        this.createRolePermissions = this.createRolePermissions.bind(this);
-        this.deleteRolePermissions = this.deleteRolePermissions.bind(this);
-        this.setAdding = this.setAdding.bind(this);
-    }
+    useEffect(() => {
+        dispatch(Actions.getRoleClearance())
+    }, []);
 
-    componentDidMount(): void {
-        this.getRolePermissions();
-    }
+    const permissions: RoleClearance[] = useSelector(store => store.permissions.roleClearances);
 
-    getRolePermissions() {
-        axios.get('/api/guild/' + window.Panel.Server.id + '/permissions/role').then(resp => {
-            this.setState({
-                permissions: resp.data
-            })
-        })
-    }
+    const [adding, setAdding] = useState(false);
 
-    modifyRolePermissions(evt) {
-        let {name, value} = evt.target;
-        let roles = [...this.state.permissions];
-        let idx = _.findIndex(roles, {id: name});
-        if (idx == null) {
-            return;
-        }
-        roles[idx].permission_level = value;
-        this.setState({
-            permissions: roles
-        });
-        this.saveRolePermissions(roles[idx].id);
-    }
-
-    saveRolePermissions(id) {
-        let idx = _.findIndex(this.state.permissions, {id: id});
-        if (idx == -1) {
-            console.warn('Attempting to save a role permission that doesn\'t exist');
-            return;
-        }
-        axios.patch('/api/guild/' + window.Panel.Server.id + '/permissions/role/' + id, {
-            permission: this.state.permissions[idx].permission_level
-        });
-    }
-
-    createRolePermissions(role, value) {
-        axios.put('/api/guild/' + window.Panel.Server.id + '/permissions/role', {
-            server: window.Panel.Server.id,
-            role_id: role,
-            permission_level: value
-        }).then(resp => {
-            let roles = [...this.state.permissions];
-            roles.push(resp.data);
-            this.setState({
-                permissions: roles
-            })
-        });
-    }
-
-    deleteRolePermissions(id) {
-        axios.delete('/api/guild/' + window.Panel.Server.id + '/permissions/role/' + id).then(resp => {
-            let roles = [...this.state.permissions].filter(e => e.id != id);
-            this.setState({
-                permissions: roles
-            })
-        })
-    }
-
-    setAdding(val) {
-        this.setState({
-            adding: val
-        })
-    }
-
-    render() {
-        let permissions: ReactElement[] = [];
-        this.state.permissions.forEach(perm => {
-            permissions.push(
-                <tr key={perm.id}>
-                    <td>{perm.role_id} ({perm.name})</td>
-                    <td>
-                        <form onSubmit={e => e.preventDefault()}>
-                            <Field>
-                                <DashboardInput type="number" className="form-control" name={perm.id}
-                                                value={perm.permission_level} onChange={this.modifyRolePermissions}
-                                                onBlur={() => this.saveRolePermissions(perm.id)}/>
-                            </Field>
-                        </form>
-                    </td>
-                    <td>
-                        <button className="btn btn-danger" onClick={() => this.deleteRolePermissions(perm.id)}
-                                disabled={window.Panel.Server.readonly}><i
-                            className="fas fa-times"/> Delete
-                        </button>
-                    </td>
-                </tr>
-            )
-        });
+    let permissionElements = permissions.map(permission => {
         return (
-            <div>
-                <h1>Role Permissions</h1>
-                The below tables controls clearance level for roles. If a user has multiple roles, their effective
-                permission will be of the highest clearance level
+            <tr key={permission.id}>
+                <td>{permission.role_id} ({permission.name})</td>
+                <td>
+                    <DashboardInput type="number" className="form-control" name={permission.id}
+                                    value={permission.permission_level}
+                                    onChange={e => dispatch(Actions.modifyRoleClearance(permission.id, parseInt(e.target.value)))}/>
+                </td>
+                <td>
+                    <ConfirmButton className="btn btn-danger" disabled={window.Panel.Server.readonly} onConfirm={() => {
+                        dispatch(Actions.deleteRoleClearance(permission.id))
+                    }}><FontAwesomeIcon icon={"times"}/> Delete</ConfirmButton>
+                </td>
+            </tr>
+        )
+    });
 
-                <div className="table-responsive">
-                    <table className="table mt-2">
-                        <thead className="thead-light">
-                        <tr>
-                            <th scope="col">Role</th>
-                            <th scope="col">Clearance Level</th>
-                            <th scope="col">Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {permissions}
-                        </tbody>
-                        <tfoot>
-                        <tr>
-                            {this.state.adding ? <AddingComponent onSubmit={e => {
-                                this.createRolePermissions(e.role, e.clearance);
-                                this.setAdding(false);
-                            }} onCancel={() => {
-                                this.setAdding(false);
-                            }} toExclude={this.state.permissions.map(p => p.role_id)}/> : !window.Panel.Server.readonly && <th colSpan={3}>
-                                <button className="btn btn-success" onClick={() => this.setAdding(true)}><i
-                                    className="fas fa-plus"/> Add
-                                </button>
-                            </th>}
-                        </tr>
-                        </tfoot>
-                    </table>
+    return (
+        <React.Fragment>
+            <div className="row">
+                <div className="col-12">
+                    <h1>Role Permissions</h1>
+                    The below table controls clearance level for roles. If a user has multiple roles, their effective
+                    clearance will be of the highest clearance level.
                 </div>
             </div>
-        );
-    }
-}
+            <div className="row">
+                <div className="col-12">
+                    <div className="table-responsive">
+                        <table className="table mt-2">
+                            <thead className="thead-light">
+                            <tr>
+                                <th scope="col">Role</th>
+                                <th scope="col">Clearance Level</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {permissionElements}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                {adding ? <AddingComponent onClose={() => setAdding(false)}/> :
+                                    <button className="btn btn-success" onClick={() => setAdding(true)}><FontAwesomeIcon
+                                        icon={"plus"}/> Add</button>}
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </React.Fragment>
+    )
+};
+export default RolePermissions

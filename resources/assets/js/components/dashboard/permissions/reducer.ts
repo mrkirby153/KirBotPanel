@@ -3,14 +3,16 @@ import {ActionType, getType} from "typesafe-actions";
 import * as Actions from './actions';
 import ld_filter from 'lodash/filter';
 import ld_find from 'lodash/find';
-import {PanelPermission} from "./types";
+import {PanelPermission, RoleClearance} from "./types";
 
 interface PermissionReducerState {
     panelPermissions: PanelPermission[]
+    roleClearances: RoleClearance[]
 }
 
 const defaultState: PermissionReducerState = {
     panelPermissions: [],
+    roleClearances: []
 };
 
 type PermissionAction = ActionType<typeof Actions>
@@ -41,6 +43,31 @@ const reducer: Reducer<PermissionReducerState, PermissionAction> = (state = defa
             return {
                 ...state,
                 panelPermissions: permissions
+            };
+        case getType(Actions.getRoleClearanceOk):
+            return {
+                ...state,
+                roleClearances: action.payload
+            };
+        case getType(Actions.deleteRoleClearance):
+            return {
+                ...state,
+                roleClearances: ld_filter(state.roleClearances, clearance => clearance.id != action.payload)
+            };
+        case getType(Actions.modifyRoleClearance):
+            let clearances = [...state.roleClearances];
+            let targetRole = ld_find(clearances, {id: action.payload.id});
+            if (targetRole) {
+                targetRole.permission_level = action.payload.clearance;
+            }
+            return {
+                ...state,
+                roleClearances: clearances
+            };
+        case getType(Actions.createRoleClearanceOk):
+            return {
+                ...state,
+                roleClearances: [...state.roleClearances, action.payload]
             };
         default:
             return state
