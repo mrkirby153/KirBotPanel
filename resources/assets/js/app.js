@@ -1,5 +1,7 @@
 import NavBar from './components/NavBar';
-import Dashboard from './components/dashboard';
+
+// We have to do it like this because macOS is case insensitive and will import the wrong component
+import Dashboard from './components/dashboard/index';
 import AdminSettings from './components/admin/AdminSettings';
 import ReactDOM from 'react-dom';
 import React from 'react';
