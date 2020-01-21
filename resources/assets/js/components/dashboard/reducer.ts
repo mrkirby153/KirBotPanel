@@ -2,7 +2,7 @@ import {ActionType, getType} from "typesafe-actions";
 import * as Actions from './actions';
 import {Reducer} from "redux";
 
-interface RootReducerState {
+export interface RootReducerState {
     user: User | null,
     settings: {
         [key: string]: any

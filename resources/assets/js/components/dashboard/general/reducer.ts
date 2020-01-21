@@ -1,17 +1,17 @@
 import {Reducer} from "redux";
 import * as Actions from './actions';
-import {LogEventPayload, LogMassSelectPayload, LogMassSelectType, LogMode, LogSetting} from "./types";
+import {Events, LogEventPayload, LogMassSelectPayload, LogMassSelectType, LogMode, LogSetting} from "./types";
 import ld_findIndex from 'lodash/findIndex';
 import ld_filter from 'lodash/filter';
 import {ActionType, getType} from "typesafe-actions";
 
-interface GeneralReducerState {
-    logActions: Array<String>
+export interface GeneralReducerState {
+    logActions: Events
     logSettings: LogSetting[]
 }
 
 const defaultState: GeneralReducerState = {
-    logActions: [],
+    logActions: {},
     logSettings: []
 };
 

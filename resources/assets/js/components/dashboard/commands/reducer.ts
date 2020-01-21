@@ -5,7 +5,7 @@ import {CustomCommand} from "./types";
 import ld_findIndex from 'lodash/findIndex';
 import {JsonRequestErrors} from "../types";
 
-interface CommandReducerState {
+export interface CommandReducerState {
     commands: CustomCommand[],
     saveCommandInProg: boolean,
     saveCommandErrors: JsonRequestErrors

@@ -5,7 +5,7 @@ import ld_filter from 'lodash/filter';
 import ld_find from 'lodash/find';
 import {PanelPermission, RoleClearance} from "./types";
 
-interface PermissionReducerState {
+export interface PermissionReducerState {
     panelPermissions: PanelPermission[]
     roleClearances: RoleClearance[]
 }

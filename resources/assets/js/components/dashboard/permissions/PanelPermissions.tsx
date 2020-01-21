@@ -10,6 +10,8 @@ import ConfirmButton from "../../ConfirmButton";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {getType} from "typesafe-actions";
 import {useReduxListener} from "../utils/hooks";
+import {RootStore} from "../types";
+import {useTypedSelector} from "../reducers";
 
 interface AddingComponentProps {
     onClose(e?: React.MouseEvent<HTMLButtonElement>): void
@@ -20,7 +22,7 @@ const AddingComponent: React.FC<AddingComponentProps> = (props) => {
     const [id, setId] = useState('');
     const [errors, setErrors] = useState<string | null>(null);
     const [permission, setPermission] = useState<PanelPermissionType>(PanelPermissionType.VIEW);
-    const permissions: PanelPermission[] = useSelector(store => store.permissions.panelPermissions);
+    const permissions: PanelPermission[] = useSelector((store: RootStore) => store.permissions.panelPermissions);
 
     useReduxListener(getType(Actions.createPanelPermissionOk), () => {
         props.onClose();
@@ -93,8 +95,8 @@ const PanelPermissions: React.FC = () => {
         dispatch(Actions.getPanelPermissions())
     }, []);
 
-    const permissions: PanelPermission[] = useSelector(state => state.permissions.panelPermissions);
-    const user: User = useSelector(state => state.app.user);
+    const permissions: PanelPermission[] = useTypedSelector(state => state.permissions.panelPermissions);
+    const user: User | null = useTypedSelector(state => state.app.user);
 
     const [adding, setAdding] = useState(false);
 
@@ -103,9 +105,12 @@ const PanelPermissions: React.FC = () => {
     };
 
     const permissionElements = permissions.map(perm => {
-        let ownUser = user.id == perm.user_id;
-        if (user.admin) {
-            ownUser = false;
+        let ownUser = false;
+        if(user) {
+            ownUser = user.id == perm.user_id;
+            if (user.admin) {
+                ownUser = false;
+            }
         }
         let userString = <span className="user">{perm.user_id} {perm.user && '(' + perm.user + ')'}</span>
         return (

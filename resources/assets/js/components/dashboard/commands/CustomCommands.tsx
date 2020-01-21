@@ -1,5 +1,5 @@
 import React, {FormEvent, useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
 import * as Actions from './actions';
 import {CustomCommand} from "./types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -10,7 +10,7 @@ import Field from "../../Field";
 import {DashboardInput, DashboardSwitch} from "../../DashboardInput";
 import {useReduxListener} from "../utils/hooks";
 import {getType} from "typesafe-actions";
-import {JsonRequestErrors} from "../types";
+import {JsonRequestErrors, RootStore} from "../types";
 
 const CustomCommands: React.FC = () => {
     const dispatch = useDispatch();
@@ -26,10 +26,10 @@ const CustomCommands: React.FC = () => {
     const [respectWhitelist, setRespectWhitelist] = useState(false);
     const [clearance, setClearance] = useState(0);
 
-    const commands: CustomCommand[] = useSelector(state => state.commands.commands);
+    const commands: CustomCommand[] = useSelector((state: RootStore)  => state.commands.commands);
 
-    const saving: boolean = useSelector(state => state.commands.saveCommandInProg);
-    const errors: JsonRequestErrors = useSelector(state => state.commands.saveCommandErrors);
+    const saving: boolean = useSelector((state: RootStore) => state.commands.saveCommandInProg);
+    const errors: JsonRequestErrors = useSelector((state: RootStore) => state.commands.saveCommandErrors);
 
     // Close the modal if the command saved successfully
     useReduxListener(getType(Actions.saveCustomCommandOk), () => setModalOpen(false));

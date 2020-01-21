@@ -1,8 +1,8 @@
 import {createAction} from "typesafe-actions";
-import {LogEventPayload, LogMassSelectPayload, LogSetting} from "./types";
+import {Events, LogEventPayload, LogMassSelectPayload, LogSetting} from "./types";
 
 export const getLogEvents = createAction('GENERAL/GET_LOG_EVENTS')();
-export const getLogEventsOk = createAction('GENERAL/GET_LOG_EVENTS_OK', (events: Array<String>) => events)();
+export const getLogEventsOk = createAction('GENERAL/GET_LOG_EVENTS_OK', (events: Events) => events)();
 
 export const getLogSettings = createAction('GENERAL/GET_LOG_SETTINGS')();
 export const getLogSettingsOk = createAction('GENERAL/GET_LOG_SETTINGS_OK', (settings: Array<LogSetting>) => settings)();

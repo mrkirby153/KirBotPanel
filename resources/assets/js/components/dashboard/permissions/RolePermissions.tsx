@@ -8,6 +8,7 @@ import ConfirmButton from "../../ConfirmButton";
 import Field from "../../Field";
 import {useReduxListener} from "../utils/hooks";
 import {getType} from "typesafe-actions";
+import {useTypedSelector} from "../reducers";
 
 interface AddingComponentProps {
     onClose(): void
@@ -23,7 +24,7 @@ const AddingComponent: React.FC<AddingComponentProps> = (props) => {
         dispatch(Actions.createRoleClearance(roleId, clearance));
     };
 
-    const existingPermissions: string[] = useSelector(state => state.permissions.roleClearances).map(role => role.role_id);
+    const existingPermissions: string[] = useTypedSelector(state => state.permissions.roleClearances).map(role => role.role_id);
 
     useReduxListener(getType(Actions.createRoleClearanceOk), () => {
         props.onClose();
@@ -79,7 +80,7 @@ const RolePermissions: React.FC = () => {
         dispatch(Actions.getRoleClearance())
     }, []);
 
-    const permissions: RoleClearance[] = useSelector(store => store.permissions.roleClearances);
+    const permissions: RoleClearance[] = useTypedSelector(store => store.permissions.roleClearances);
 
     const [adding, setAdding] = useState(false);
 

@@ -17,6 +17,7 @@ import {
 } from "./actions";
 import ConfirmButton from "../../ConfirmButton";
 import {useGuildSetting} from "../utils/hooks";
+import {useTypedSelector} from "../reducers";
 
 interface LogChannelProps {
     id: string
@@ -28,13 +29,13 @@ const LogChannel: React.FC<LogChannelProps> = (props) => {
 
     const dispatch = useDispatch();
 
-    const settings: LogSetting = useSelector(state => {
+    const settings: LogSetting | undefined = useTypedSelector(state => {
         return ld_find(state.general.logSettings, l => {
             return l.id == props.id;
         })
     });
 
-    const logEvents: Events = useSelector(state => state.general.logActions);
+    const logEvents: Events = useTypedSelector(state => state.general.logActions);
 
     if (!settings) {
         return null;
@@ -162,7 +163,7 @@ const LoggingSettings: React.FC = (props) => {
         dispatch(getLogEvents());
     }, []);
 
-    const settings: LogSetting[] = useSelector(state => state.general.logSettings);
+    const settings: LogSetting[] = useTypedSelector(state => state.general.logSettings);
 
     const existingIds = settings.map(s => s.channel_id);
     let textChannelElements: ReactElement[] = window.Panel.Server.channels.filter(chan => chan.type == 'TEXT')

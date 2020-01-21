@@ -1,12 +1,13 @@
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {setSetting} from "../actions";
 import {ActionType} from "typesafe-actions";
 import {useEffect} from "react";
 import {addEventListener, removeEventListener} from "../reducerListener";
+import {useTypedSelector} from "../reducers";
 
 export function useGuildSetting<T>(guild: string, key: string, defaultValue: T, autoPersist: boolean = false): [T, ((value: T) => void), () => void] {
     const dispatch = useDispatch();
-    const storeValue: T = useSelector(state => state.app.settings[key]);
+    const storeValue: T = useTypedSelector(state => state.app.settings[key]);
 
     function set(value: T, persist: boolean = autoPersist) {
         dispatch(setSetting(guild, key, value == defaultValue ? null : value, persist))

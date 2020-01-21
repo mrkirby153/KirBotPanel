@@ -1,3 +1,8 @@
+import {CommandReducerState} from "./commands/reducer";
+import {PermissionReducerState} from "./permissions/reducer";
+import {RootReducerState} from "./reducer";
+import {GeneralReducerState} from "./general/reducer";
+
 export interface SetSettingAction {
     guild: string,
     key: string,
@@ -10,4 +15,11 @@ export interface JsonRequestErrors {
     errors: {
         [key: string]: Array<string>
     }
+}
+
+export interface RootStore {
+    app: RootReducerState,
+    commands: CommandReducerState,
+    permissions: PermissionReducerState
+    general: GeneralReducerState
 }
