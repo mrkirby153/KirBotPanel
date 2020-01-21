@@ -273,7 +273,7 @@ class ApiController extends Controller
             'clearance' => 'required|min:0|numeric',
             'respect_whitelist' => 'required|boolean'
         ], [
-            'validation.without_spaces' => 'Spaces are not allowed in command names'
+            'without_spaces' => 'Spaces are not allowed in command names'
         ]);
         $command->name = $request->input('name');
         $command->data = $request->input('description');
@@ -292,7 +292,7 @@ class ApiController extends Controller
             'clearance' => 'required|min:0|numeric',
             'respect_whitelist' => 'required|boolean'
         ], [
-            'validation.without_spaces' => 'Spaces are not allowed in command names'
+            'without_spaces' => 'Spaces are not allowed in command names'
         ]);
 
         if (CustomCommand::whereName(strtolower($request->input('name')))->whereServer($guild->id)->exists()) {

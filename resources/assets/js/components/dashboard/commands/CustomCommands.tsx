@@ -1,257 +1,163 @@
-import React, {Component, ReactElement} from 'react';
-import axios from 'axios';
-import _ from 'lodash';
+import React, {FormEvent, useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import * as Actions from './actions';
+import {CustomCommand} from "./types";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import ConfirmButton from "../../ConfirmButton";
 import Modal from "../../Modal";
-import Field from "../../Field";
 import Form from "../../Form";
-import Switch from "../../Switch";
+import Field from "../../Field";
+import {DashboardInput, DashboardSwitch} from "../../DashboardInput";
+import {useReduxListener} from "../utils/hooks";
+import {getType} from "typesafe-actions";
+import {JsonRequestErrors} from "../types";
+
+const CustomCommands: React.FC = () => {
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(Actions.getCustomCommands())
+    }, []);
+
+    const [modalOpen, setModalOpen] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [commandName, setCommandName] = useState('');
+    const [commandResponse, setCommandResponse] = useState('');
+    const [respectWhitelist, setRespectWhitelist] = useState(false);
+    const [clearance, setClearance] = useState(0);
+
+    const commands: CustomCommand[] = useSelector(state => state.commands.commands);
+
+    const saving: boolean = useSelector(state => state.commands.saveCommandInProg);
+    const errors: JsonRequestErrors = useSelector(state => state.commands.saveCommandErrors);
+
+    // Close the modal if the command saved successfully
+    useReduxListener(getType(Actions.saveCustomCommandOk), () => setModalOpen(false));
+
+    const onModalClose = () => {
+        setModalOpen(false);
+    };
+
+    const editCommand = (command: CustomCommand) => {
+        dispatch(Actions.clearSaveErrors());
+        setEditingId(command.id);
+        setCommandName(command.name);
+        setCommandResponse(command.data);
+        setRespectWhitelist(command.respect_whitelist);
+        setClearance(command.clearance_level);
+        setModalOpen(true);
+    };
+
+    const addCommand = () => {
+        dispatch(Actions.clearSaveErrors());
+        setEditingId(null);
+        setCommandName('');
+        setCommandResponse('');
+        setRespectWhitelist(false);
+        setClearance(0);
+        setModalOpen(true);
+    };
 
 
-interface CustomCommandsState {
-    commands: CustomCommand[],
-    editing: boolean,
-    editing_id: string | null,
-    command_name: string,
-    command_response: string,
-    respect_whitelist: boolean,
-    clearance: number,
-    errors: {},
-    open_modal: boolean
-}
-
-export default class CustomCommands extends Component<{}, CustomCommandsState> {
-    constructor(props) {
-        super(props);
-        this.state = {
-            commands: [],
-            editing: false,
-            editing_id: null,
-            command_name: '',
-            command_response: '',
-            respect_whitelist: false,
-            clearance: -1,
-            errors: {},
-            open_modal: false
-        };
-
-        this.getCustomCommands = this.getCustomCommands.bind(this);
-        this.onChange = this.onChange.bind(this);
-        this.createButton = this.createButton.bind(this);
-        this.cancelEditing = this.cancelEditing.bind(this);
-        this.closeDialog = this.closeDialog.bind(this);
-        this.createCustomCommand = this.createCustomCommand.bind(this);
-        this.updateCustomCommand = this.updateCustomCommand.bind(this);
-    }
-
-    componentDidMount(): void {
-        this.getCustomCommands();
-    }
-
-    getCustomCommands() {
-        axios.get('/api/guild/' + window.Panel.Server.id + '/commands').then(resp => {
-            this.setState({
-                commands: resp.data
-            })
-        })
-    }
-
-    closeDialog() {
-        if (this.state.editing_id != null) {
-            this.updateCustomCommand();
-        } else {
-            this.createCustomCommand();
-        }
-    }
-
-    createCustomCommand() {
-        axios.put('/api/guild/' + window.Panel.Server.id + '/commands', {
-            name: this.state.command_name,
-            description: this.state.command_response,
-            clearance: this.state.clearance,
-            respect_whitelist: this.state.respect_whitelist
-        }).then(resp => {
-            let cmds = [...this.state.commands];
-            cmds.push(resp.data);
-            this.setState({
-                commands: cmds,
-                open_modal: false
-            })
-        }).catch(e => {
-            this.setState({
-                errors: e.response.data.errors
-            })
-        })
-    }
-
-    updateCustomCommand() {
-        axios.patch('/api/guild/' + window.Panel.Server.id + '/commands/' + this.state.editing_id, {
-            name: this.state.command_name,
-            description: this.state.command_response,
-            clearance: this.state.clearance,
-            respect_whitelist: this.state.respect_whitelist
-        }).then(resp => {
-            let cmds = [...this.state.commands];
-            let editing_id = this.state.editing_id;
-            if (editing_id == null)
-                return;
-            let idx = _.findIndex(cmds, {id: editing_id});
-            if (idx != -1) {
-                cmds[idx] = resp.data
-            }
-            this.setState({
-                commands: cmds,
-                open_modal: false
-            })
-        }).catch(e => {
-            this.setState({
-                errors: e.response.data.errors
-            })
-        })
-    }
-
-    deleteCommand(command: string | null) {
-        if (command == null)
-            return;
-        axios.delete('/api/guild/' + window.Panel.Server.id + '/commands/' + command).then(() => {
-            let cmds = [...this.state.commands].filter(c => c.id != command);
-            this.setState({
-                commands: cmds,
-            });
-            this.cancelEditing()
-        })
-    }
-
-    onChange(e) {
-        let {name, value, checked, type} = e.target;
-        if (type == 'checkbox') {
-            value = checked
-        }
-        // Enforce no spaces on the command name
-        if (name == 'command_name' && value.indexOf(' ') != -1) {
-            return;
-        }
-        // @ts-ignore
-        this.setState({[name]: value});
-    }
-
-    createButton() {
-        this.setState({
-            editing: false,
-            command_response: '',
-            command_name: '',
-            clearance: 0,
-            respect_whitelist: false,
-            errors: [],
-            open_modal: true
-        });
-    }
-
-    cancelEditing() {
-        this.setState({
-            editing: false,
-            editing_id: '',
-            open_modal: false
-        })
-    }
-
-    edit(cmd: CustomCommand) {
-        this.setState({
-            editing: true,
-            editing_id: cmd.id,
-            clearance: cmd.clearance_level,
-            command_name: cmd.name,
-            command_response: cmd.data,
-            respect_whitelist: cmd.respect_whitelist,
-            errors: {},
-            open_modal: true
-        })
-    }
-
-    render() {
-        let commands: ReactElement[] = [];
-        this.state.commands.forEach(command => {
-            commands.push(
-                <tr key={command.id}>
-                    <td>{command.name}</td>
-                    <td>{command.data}</td>
-                    <td>{command.clearance_level}</td>
-                    <td>
-                        <div className="btn-group">
-                            <button className="btn btn-info" onClick={() => this.edit(command)} disabled={window.Panel.Server.readonly}><i
-                                className="fas fa-pen"/></button>
-                        </div>
-                    </td>
-                </tr>
-            )
-        });
+    const commandElements = commands.map(command => {
         return (
-            <div>
-                <div className="row">
-                    <div className="col-12">
-                        <h2>Custom Commands</h2>
-                        <p>
-                            The table below is all the commands registered on the server
-                        </p>
-                        <div className="table-responsive">
-                            <table className="table mt-1 table-bordered table-hover">
-                                <thead className="thead-light">
-                                <tr>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Response</th>
-                                    <th scope="col">Clearance</th>
-                                    <th scope="col">Actions</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {commands}
-                                </tbody>
-                                {!window.Panel.Server.readonly && <tfoot>
-                                <tr>
-                                    <td colSpan={4}>
-                                        <button className="btn btn-success" onClick={this.createButton}><i
-                                            className="fas fa-plus"/> New Command
-                                        </button>
-                                    </td>
-                                </tr>
-                                </tfoot>}
-                            </table>
-                        </div>
+            <tr key={command.id}>
+                <td>{command.name}</td>
+                <td>{command.data}</td>
+                <td>{command.clearance_level}</td>
+                <td>
+                    <div className="btn-group">
+                        <button className="btn btn-sm btn-info" disabled={window.Panel.Server.readonly}
+                                onClick={() => editCommand(command)}>
+                            <FontAwesomeIcon icon={"pen"}/>
+                        </button>
+                        <ConfirmButton className="btn btn-sm btn-danger" onConfirm={() => {
+                            dispatch(Actions.deleteCustomCommand(command.id))
+                        }} confirmText={<FontAwesomeIcon icon={"check"}/>}>
+                            <FontAwesomeIcon icon={"times"}/>
+                        </ConfirmButton>
+                    </div>
+                </td>
+            </tr>
+        )
+    });
+
+    const save = (e: FormEvent) => {
+        e.preventDefault();
+        dispatch(Actions.clearSaveErrors());
+        dispatch(Actions.saveCustomCommand({
+            id: editingId,
+            name: commandName,
+            data: commandResponse,
+            clearance_level: clearance,
+            respect_whitelist: respectWhitelist
+        }))
+    };
+
+
+    return (
+        <React.Fragment>
+            <div className="row">
+                <div className="col-12">
+                    <h2>Custom Commands</h2>
+                    <p>
+                        The table below is all the commands registered on the server
+                    </p>
+                    <div className="table-responsive">
+                        <table className="table mt-1 table-bordered table-hover">
+                            <thead className="thead-light">
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Response</th>
+                                <th scope="col">Clearance</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {commandElements}
+                            </tbody>
+                            {!window.Panel.Server.readonly && <tfoot>
+                            <tr>
+                                <td colSpan={4}>
+                                    <button className="btn btn-success" onClick={addCommand}>
+                                        <FontAwesomeIcon icon={"plus"}/> New Command
+                                    </button>
+                                </td>
+                            </tr>
+                            </tfoot>}
+                        </table>
                     </div>
                 </div>
-                <Modal title={this.state.editing ? 'Edit Command' : 'Add Command'} open={this.state.open_modal}>
-                    <Form busy={false}>
-                        <Field help="The command's name" errors={this.state.errors['name']}>
-                            <label>Command Name</label>
-                            <input type="text" className="form-control" name="command_name"
-                                   value={this.state.command_name} onChange={this.onChange}/>
-                        </Field>
-                        <Field help="Respect the command whitelist" errors={this.state.errors['respect_whitelist']}>
-                            <Switch label="Respect Whitelist" id="respectWhitelist" name="respect_whitelist"
-                                    checked={this.state.respect_whitelist} onChange={this.onChange}/>
-                        </Field>
-                        <Field help="What the command returns when executed" errors={this.state.errors['description']}>
-                            <label>Command Response</label>
-                            <textarea className="form-control" name="command_response"
-                                      value={this.state.command_response} onChange={this.onChange}/>
-                        </Field>
-                        <Field errors={this.state.errors['clearance']}>
-                            <label>Clearance</label>
-                            <input type="number" min={0} className="form-control" name="clearance"
-                                   value={this.state.clearance} onChange={this.onChange}/>
-                        </Field>
-                        <hr/>
-                        {this.state.editing ?
-                            <button type="button" className="btn btn-danger"
-                                    onClick={() => this.deleteCommand(this.state.editing_id)}>Delete</button> : null}
-                        <div className="btn-group float-right">
-                            {this.state.editing ?
-                                <button type="button" className="btn btn-secondary"
-                                        onClick={this.cancelEditing}>Cancel</button> : null}
-                            <button type="submit" className="btn btn-primary" onClick={this.closeDialog}>Save</button>
-                        </div>
-                    </Form>
-                </Modal>
             </div>
-        )
-    }
-}
+            <Modal title={(editingId ? 'Edit' : 'Add') + ' Command'} open={modalOpen} onClose={onModalClose}>
+                <Form busy={saving} onSubmit={save}>
+                    <Field help="The command's name" errors={errors.errors['name']}>
+                        <label>Command Name</label>
+                        <DashboardInput type="text" className="form-control" name="command_name" value={commandName}
+                                        onChange={e => setCommandName(e.target.value)} required/>
+                    </Field>
+                    <Field help="Respect the command whitelist" errors={errors.errors['respect_whitelist']}>
+                        <DashboardSwitch label="Respect Whitelist" id="respectWhitelist" checked={respectWhitelist}
+                                         onChange={e => setRespectWhitelist(e.target.checked)}/>
+                    </Field>
+                    <Field help="What the command returns when executed" errors={errors.errors['description']}>
+                        <textarea className="form-control" name="command_response" value={commandResponse}
+                                  onChange={e => setCommandResponse(e.target.value)} required/>
+                    </Field>
+                    <Field errors={errors.errors['clearance']}>
+                        <label>Clearance</label>
+                        <DashboardInput type="number" min={0} className="form-control" name="clearance" required
+                                        value={clearance} onChange={e => setClearance(parseInt(e.target.value))}/>
+                    </Field>
+                    <div className="btn-group float-right">
+                        <button type="button" className="btn btn-danger" onClick={() => setModalOpen(false)}>
+                            <FontAwesomeIcon icon={"times"}/> Cancel
+                        </button>
+                        <button type="submit" className="btn btn-primary"><FontAwesomeIcon icon={"save"}/> Save</button>
+                    </div>
+                </Form>
+            </Modal>
+        </React.Fragment>
+    )
+};
+export default CustomCommands;

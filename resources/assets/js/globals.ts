@@ -23,15 +23,7 @@ declare interface Role {
     updated_at: string
 }
 
-declare interface CustomCommand {
-    id: string,
-    server: string,
-    name: string,
-    data: string,
-    clearance_level: number,
-    type: 'TEXT' | 'JAVASCRIPT',
-    respect_whitelist: boolean
-}
+
 
 declare interface CommandAlias {
     id:string,

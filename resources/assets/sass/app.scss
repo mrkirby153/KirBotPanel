@@ -24,7 +24,6 @@
 }
 
 
-
 .greyscale {
   filter: grayscale(100%);
 }
@@ -40,5 +39,14 @@
   }
   100% {
     transform: rotate(360deg)
+  }
+}
+
+// Fix ugly dropdowns on firefox
+@supports (-moz-appearance: none) {
+  select {
+    -moz-appearance: none;
+    background: transparent url('data:image/gif;base64,R0lGODlhBgAGAKEDAFVVVX9/f9TU1CgmNyH5BAEKAAMALAAAAAAGAAYAAAIODA4hCDKWxlhNvmCnGwUAOw==') right center no-repeat !important;
+    background-position: calc(100% - 10px) center !important;
   }
 }
