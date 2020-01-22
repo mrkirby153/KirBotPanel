@@ -11,14 +11,9 @@ let mix = require('laravel-mix');
  |
  */
 mix.react('resources/assets/js/app.js', 'public/js')
-    .sass('resources/assets/sass/app.scss', 'public/css').extract();
+    .sass('resources/assets/sass/app.scss', 'public/css').extract().sourceMaps(false);
 if (process.env.NODE_ENV === "production") {
     mix.version();
-}
-
-// Generate sourcemaps in development
-if(process.env.NODE_ENV === "development") {
-    mix.sourceMaps();
 }
 
 mix.webpackConfig({

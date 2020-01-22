@@ -7,12 +7,14 @@ import {JsonRequestErrors} from "../types";
 
 export interface CommandReducerState {
     commands: CustomCommand[],
+    aliases: CommandAlias[],
     saveCommandInProg: boolean,
     saveCommandErrors: JsonRequestErrors
 }
 
 const defaultState: CommandReducerState = {
     commands: [],
+    aliases: [],
     saveCommandInProg: false,
     saveCommandErrors: {
         message: '',
@@ -66,6 +68,21 @@ const reducer: Reducer<CommandReducerState, CommandAction> = (state = defaultSta
             return {
                 ...state,
                 commands: action.payload
+            };
+        case getType(Actions.getCommandAliasesOk):
+            return {
+                ...state,
+                aliases: action.payload
+            };
+        case getType(Actions.createCommandAliasOk):
+            return {
+                ...state,
+                aliases: [...state.aliases, action.payload]
+            };
+        case getType(Actions.deleteCommandAlias):
+            return {
+                ...state,
+                aliases: state.aliases.filter(alias => alias.id != action.payload)
             };
         default:
             return state

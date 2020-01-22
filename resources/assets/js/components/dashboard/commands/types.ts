@@ -15,3 +15,19 @@ export interface CustomCommandPayload {
     clearance_level: number,
     respect_whitelist: boolean
 }
+
+export interface CommandAlias {
+    id: string,
+    server_id: string,
+    command: string,
+    alias: string,
+    clearance: number,
+    created_at: string,
+    updated_at: string
+}
+
+export interface CreateCommandAliasPayload {
+    command: string,
+    alias: string | null,
+    clearance: number
+}
