@@ -1,140 +1,91 @@
-import React, {Component} from 'react';
-import SettingsRepository from "../../../settings_repository";
-import _ from 'lodash';
+import React from 'react';
+import {useGuildSetting} from "../utils/hooks";
 import {DashboardSelect} from "../../DashboardInput";
+import ld_find from 'lodash/find';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 
-interface ChannelWhitelistChannelProps {
-    channels: string[]
+enum WhitelistState {
+    OFF = "OFF", WHITELIST = "WHITELIST", BLACKLIST = "BLACKLIST"
 }
 
-class ChannelWhitelistChannels extends Component<{}, ChannelWhitelistChannelProps> {
-    constructor(props) {
-        super(props);
+const ChannelWhitelistChannels: React.FC = () => {
 
-        this.state = {
-            channels: SettingsRepository.getSetting('music_channels', [])
-        };
+    let [channels, setChannels] = useGuildSetting<Array<string>>(window.Panel.Server.id, 'music_channels', [], true);
 
-        this.getChannels = this.getChannels.bind(this);
-        this.removeChannel = this.removeChannel.bind(this);
-        this.addChannel = this.addChannel.bind(this);
-    }
+    let addChannel = (chan: string) => {
+        setChannels([...channels, chan]);
+    };
 
-    getChannels(): { id: string, name: string }[] {
-        return this.state.channels.map(chan => {
-            let c = _.find(window.Panel.Server.channels, {id: chan}) as Channel;
-            if (c == null) {
-                return {
-                    id: chan,
-                    name: 'deleted-channel'
-                }
-            } else {
-                return {
-                    id: chan,
-                    name: c.channel_name
-                }
-            }
-        })
-    }
+    let removeChannel = (chan: string) => {
+        setChannels(channels.filter(c => c != chan))
+    };
 
-    removeChannel(id) {
-        let channels = _.without(this.state.channels, id);
-        this.setState({
-            channels: channels
-        });
-        SettingsRepository.setSetting('music_channels', channels, true);
-    }
+    let availableChannels = window.Panel.Server.channels.filter(c => c.type == 'VOICE' && channels.indexOf(c.id) == -1).map(chan => {
+        return <option key={chan.id} value={chan.id}>{chan.channel_name}</option>
+    });
 
-    addChannel(e) {
-        let {value} = e.target;
-        let channels = [...this.state.channels];
-        channels.push(value);
-        this.setState({
-            channels: channels
-        });
-        SettingsRepository.setSetting('music_channels', channels, true);
-    }
-
-    render() {
-        let availableChannels = window.Panel.Server.channels.filter(c => c.type == 'VOICE' && this.state.channels.indexOf(c.id) == -1).map(c => {
-            return <option key={c.id} value={c.id}>{c.channel_name}</option>
-        });
-        let activeChannels = this.getChannels().map(c => {
-            return <div key={c.id} className="channel">{c.name} {!window.Panel.Server.readonly && <span className="x-icon"
-                                                                      onClick={() => this.removeChannel(c.id)}><i
-                className="fas fa-times"/></span>}
-            </div>
-        });
+    let activeChannels = channels.map(chan => {
+        let c = ld_find(window.Panel.Server.channels, {id: chan}) as Channel;
+        return {id: chan, name: c.channel_name || 'deleted-channel'}
+    }).map(chan => {
         return (
-            <div>
-                <div className="row">
-                    <div className="col-12">
-                        <label><b>Add Channel</b></label>
-                        <DashboardSelect className="form-control" value={''} onChange={this.addChannel}>
-                            <option value={''} disabled={true}>Select a channel</option>
-                            {availableChannels}
-                        </DashboardSelect>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-12">
-                        <div className="channel-whitelist">
-                            {activeChannels}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-}
-
-interface ChannelWhitelistState {
-    mode: 'OFF' | 'WHITELIST' | 'BLACKLIST'
-}
-export default class ChannelWhitelist extends Component<{}, ChannelWhitelistState> {
-    constructor(props) {
-        super(props);
-        this.state = {
-            mode: SettingsRepository.getSetting('music_mode', 'OFF')
-        };
-
-        this.change = this.change.bind(this);
-    }
-
-    change(e) {
-        let {value} = e.target;
-
-        this.setState({
-            mode: value
-        });
-        SettingsRepository.setSetting('music_mode', value, true)
-    }
-
-    render() {
-        let col_name = this.state.mode != 'OFF'? 'col-lg-6 col-md-12' : 'col-12'
-        return (
-            <div className="row">
-                <div className="col-12">
-                    <h2>Channel Whitelist/Blacklist</h2>
-                    <div className="form-row">
-                        <div className={col_name}>
-                            <div className="form-group">
-                                <label><b>Mode</b></label>
-                                <DashboardSelect className="form-control" value={this.state.mode} onChange={this.change}>
-                                    <option value={'OFF'}>Off</option>
-                                    <option value={'WHITELIST'}>Whitelist</option>
-                                    <option value={'BLACKLIST'}>Blacklist</option>
-                                </DashboardSelect>
-                            </div>
-                        </div>
-                        {this.state.mode != 'OFF'? <div className="col-lg-6 col-md-12">
-                            <ChannelWhitelistChannels/>
-                        </div> : null}
-                    </div>
-                </div>
+            <div key={chan.id} className="channel">
+                {chan.name} {!window.Panel.Server.readonly &&
+            <FontAwesomeIcon icon={"times"} className="x-icon" onClick={() => removeChannel(chan.id)}/>}
             </div>
         )
-    }
-}
+    });
+
+    return (
+        <React.Fragment>
+            <div className="row">
+                <div className="col-12">
+                    <label><b>Add Channel</b></label>
+                    <DashboardSelect className="form-control" value={''} onChange={e => addChannel(e.target.value)}>
+                        <option value={''} disabled={true}>Select a channel</option>
+                        {availableChannels}
+                    </DashboardSelect>
+                </div>
+            </div>
+            <div className="row">
+                <div className="col-12">
+                    <div className="channel-whitelist">
+                        {activeChannels}
+                    </div>
+                </div>
+            </div>
+        </React.Fragment>
+    )
+};
+
+const ChannelWhitelist: React.FC = () => {
+
+    let [mode, setMode] = useGuildSetting(window.Panel.Server.id, 'music_mode', WhitelistState.OFF, true);
+
+    let colName = mode != WhitelistState.OFF ? 'col-lg-6 col-md-12' : 'col-12';
+
+    return (
+        <div className="row">
+            <div className="col-12">
+                <h2>Channel Whitelist/Blacklist</h2>
+                <div className="form-row">
+                    <div className={colName}>
+                        <label><b>Mode</b></label>
+                        <DashboardSelect className="form-control" value={mode}
+                                         onChange={e => setMode(WhitelistState[e.target.value])}>
+                            <option value={WhitelistState.OFF}>Off</option>
+                            <option value={WhitelistState.BLACKLIST}>Blacklist</option>
+                            <option value={WhitelistState.WHITELIST}>Whitelist</option>
+                        </DashboardSelect>
+                    </div>
+                    {mode != WhitelistState.OFF &&
+                    <div className="col-lg-6 col-md-12">
+                        <ChannelWhitelistChannels/>
+                    </div>}
+                </div>
+            </div>
+        </div>
+    )
+};
+export default ChannelWhitelist;
