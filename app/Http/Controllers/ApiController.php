@@ -6,7 +6,6 @@ use App\Models\CommandAlias;
 use App\Models\CustomCommand;
 use App\Models\Guild;
 use App\Models\GuildSettings;
-use App\Models\Infraction;
 use App\Models\LogSetting;
 use App\Models\Role;
 use App\Models\RolePermission;
@@ -15,6 +14,8 @@ use App\Utils\Redis\RedisMessage;
 use App\Utils\RedisMessenger;
 use App\Utils\SettingsRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Validation\Rule;
 
@@ -357,10 +358,50 @@ class ApiController extends Controller
         return CommandAlias::whereServerId($guild->id)->get();
     }
 
-    public function getInfractions(Guild $guild)
+    public function getInfractions(Request $request, Guild $guild)
     {
         $this->authorize('view', $guild);
-        return Infraction::whereGuild($guild->id)->get();
+        $sorted = $request->get('sorted', []);
+        $filtered = $request->get('filtered', []);
+        $pageSize = $request->get('pageSize', 20);
+
+        $query = DB::table('infractions')
+            ->where('infractions.guild', $guild->id)
+            ->leftJoin('seen_users AS moderator', 'infractions.issuer', '=', 'moderator.id')
+            -> leftJoin('seen_users AS user', 'infractions.user_id', '=', 'user.id');
+
+        foreach ($filtered as $filter) {
+            $key = $filter['id'];
+            if($key == "mod_id") {
+                $key = "moderator.id";
+            }
+            if($key == "inf_id") {
+                $key = "infractions.id";
+            }
+            $value = $filter['value'];
+            $query = $query->where($key, 'like', '%' . $value . '%');
+        }
+
+        foreach ($sorted as $sort) {
+            $key = $sort['id'];
+            $desc = $sort['desc'];
+            $query = $query->orderBy($key, $desc ? 'desc' : 'asc');
+        }
+
+        return $query->select([
+            'infractions.id as inf_id',
+            'infractions.guild',
+            'infractions.type',
+            'infractions.reason',
+            'infractions.active',
+            'infractions.user_id',
+            'infractions.created_at as inf_created_at',
+            'moderator.username as mod_username',
+            'moderator.discriminator as mod_discrim',
+            'moderator.id as mod_id',
+            'user.username as username',
+            'user.discriminator as discriminator'
+        ])->paginate($pageSize);
     }
 
     public function getRaids(Guild $guild)
@@ -378,7 +419,7 @@ class ApiController extends Controller
     public function getSettings(Guild $guild)
     {
         $data = [];
-        foreach(GuildSettings::whereGuild($guild->id)->get() as $setting) {
+        foreach (GuildSettings::whereGuild($guild->id)->get() as $setting) {
             $data[$setting->key] = $setting->value;
         }
         return $data;

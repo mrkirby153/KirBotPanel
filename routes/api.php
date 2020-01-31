@@ -44,7 +44,7 @@ Route::group(['prefix' => '/guild/{guild}', 'middleware' => 'can:view,guild'], f
     Route::put('/commands', 'ApiController@createCustomCommand');
     Route::delete('/commands/{command}', 'ApiController@deleteCustomCommand');
     Route::patch('/commands/{command}', 'ApiController@updateCustomCommand');
-    Route::get('/infractions', 'ApiController@getInfractions');
+    Route::post('/infractions', 'ApiController@getInfractions');
     Route::get('/raids', 'ApiController@getRaids');
 });
 

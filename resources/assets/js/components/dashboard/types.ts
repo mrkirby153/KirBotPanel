@@ -2,6 +2,7 @@ import {CommandReducerState} from "./commands/reducer";
 import {PermissionReducerState} from "./permissions/reducer";
 import {RootReducerState} from "./reducer";
 import {GeneralReducerState} from "./general/reducer";
+import {InfractionReducerState} from "./infractions/reducer";
 
 export interface SetSettingAction {
     guild: string,
@@ -22,4 +23,5 @@ export interface RootStore {
     commands: CommandReducerState,
     permissions: PermissionReducerState
     general: GeneralReducerState
+    infractions: InfractionReducerState
 }
