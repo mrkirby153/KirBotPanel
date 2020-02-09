@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css'
 import './infractions.scss'
@@ -9,12 +9,62 @@ import {useDispatch} from "react-redux";
 import * as Actions from './actions';
 import {useTypedSelector} from "../reducers";
 import {Infraction} from "./types";
+import Modal from "../../Modal";
+
+
+interface InfractionTableRowProps {
+    title: string,
+    value: any
+}
+
+const InfractionTableRow: React.FC<InfractionTableRowProps> = (props) => {
+    return <tr>
+        <td>{props.title}</td>
+        <td>{props.value}</td>
+    </tr>
+};
+
+interface InfractionDetailsModelProps {
+    infraction: Infraction
+    onClose: Function
+}
+
+const InfractionDetailsModel: React.FC<InfractionDetailsModelProps> = (props) => {
+    let infraction = props.infraction;
+    let modUsername = infraction.mod_username ? `${infraction.mod_username}#${infraction.mod_discrim} (${infraction.mod_id})` : infraction.mod_id;
+    let username = infraction.username ? `${infraction.username}#${infraction.discriminator} (${infraction.user_id})` : infraction.user_id;
+    return (
+        <Modal title={'Infraction ' + infraction.id} open={true} onClose={props.onClose}>
+            <table className="table table-striped table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th className="col-xs-1"/>
+                    <th className="col-xs-11"/>
+                </tr>
+                </thead>
+                <tbody>
+                <InfractionTableRow title="ID" value={infraction.id}/>
+                <InfractionTableRow title="Moderator" value={modUsername}/>
+                <InfractionTableRow title="User" value={username}/>
+                <InfractionTableRow title="Type" value={infraction.type}/>
+                <InfractionTableRow title="Reason" value={infraction.reason}/>
+                <InfractionTableRow title="Active" value={infraction.active ? 'Yes' : 'No'}/>
+                <InfractionTableRow title="Created At" value={infraction.inf_created_at}/>
+                <InfractionTableRow title="Expires At" value={infraction.expires_at || 'Never'}/>
+                </tbody>
+            </table>
+        </Modal>
+    )
+};
+
 
 const Infractions: React.FC = () => {
 
     const dispatch = useDispatch();
 
     const infractions = useTypedSelector(state => state.infractions);
+
+    const [viewingInfraction, setViewingInfraction] = useState<Infraction | null>(null);
 
     const columns = [
         {
@@ -28,7 +78,7 @@ const Infractions: React.FC = () => {
                 {
                     Header: 'Tag',
                     id: 'user-usernameDiscrim',
-                    accessor: (d: Infraction) => d.username? `${d.username}#${d.discriminator}` : 'Unknown',
+                    accessor: (d: Infraction) => d.username ? `${d.username}#${d.discriminator}` : 'Unknown',
                     sortable: false
                 },
                 {
@@ -83,12 +133,12 @@ const Infractions: React.FC = () => {
     ];
 
     return (
-        <div>
+        <React.Fragment>
             <ReactTable columns={columns} data={infractions.data}
                         getTdProps={(state, rowInfo, column, instance) => {
                             return {
                                 onClick: () => {
-                                    // this.openModal(rowInfo.original)
+                                    setViewingInfraction(rowInfo.original)
                                 }
                             }
                         }} className={"-striped -highlight pointer"}
@@ -103,7 +153,10 @@ const Infractions: React.FC = () => {
                             dispatch(Actions.getInfractions(state.page, state.pageSize, state.sorted, state.filtered))
                         }}
                         pages={infractions.max_pages}/>
-        </div>
+            {viewingInfraction &&
+            <InfractionDetailsModel infraction={viewingInfraction}
+                                    onClose={() => setTimeout(() => setViewingInfraction(null), 250)}/>}
+        </React.Fragment>
     )
 };
 
