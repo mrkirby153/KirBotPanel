@@ -126,7 +126,14 @@ const LogChannel: React.FC<LogChannelProps> = (props) => {
                     </ConfirmButton>
                 </div>
             </div>
-            <Modal title={`Edit #${settings.channel.channel_name}`} open={editing} onClose={onClose}>
+            <Modal title={`Edit #${settings.channel.channel_name}`} open={editing} controlled footer={() => {
+                return (
+                    <React.Fragment>
+                        <button type="button" className="btn btn-secondary" onClick={() => isEditing(false)}>Close</button>
+                        <button type="button" className="btn btn-primary" onClick={onClose}>Save</button>
+                    </React.Fragment>
+                )
+            }}>
                 <div className="btn-group">
                     <button className={"btn btn-primary " + (mode == LogMode.Include ? 'active' : '')}
                             onClick={() => setMode(LogMode.Include)}>Include

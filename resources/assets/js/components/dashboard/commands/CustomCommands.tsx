@@ -1,5 +1,5 @@
 import React, {FormEvent, useEffect, useState} from 'react';
-import {RootStateOrAny, useDispatch, useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import * as Actions from './actions';
 import {CustomCommand} from "./types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -26,7 +26,7 @@ const CustomCommands: React.FC = () => {
     const [respectWhitelist, setRespectWhitelist] = useState(false);
     const [clearance, setClearance] = useState(0);
 
-    const commands: CustomCommand[] = useSelector((state: RootStore)  => state.commands.commands);
+    const commands: CustomCommand[] = useSelector((state: RootStore) => state.commands.commands);
 
     const saving: boolean = useSelector((state: RootStore) => state.commands.saveCommandInProg);
     const errors: JsonRequestErrors = useSelector((state: RootStore) => state.commands.saveCommandErrors);
@@ -82,8 +82,10 @@ const CustomCommands: React.FC = () => {
         )
     });
 
-    const save = (e: FormEvent) => {
-        e.preventDefault();
+    const save = (e: FormEvent|null = null) => {
+        if(e) {
+            e.preventDefault();
+        }
         dispatch(Actions.clearSaveErrors());
         dispatch(Actions.saveCustomCommand({
             id: editingId,
@@ -129,7 +131,16 @@ const CustomCommands: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <Modal title={(editingId ? 'Edit' : 'Add') + ' Command'} open={modalOpen} onClose={onModalClose}>
+            <Modal title={(editingId ? 'Edit' : 'Add') + ' Command'} open={modalOpen} controlled footer={() => {
+                return (
+                    <React.Fragment>
+                        <button type="button" className="btn btn-danger" onClick={() => setModalOpen(false)}>
+                            <FontAwesomeIcon icon={"times"}/> Cancel
+                        </button>
+                        <button type="submit" className="btn btn-primary" onClick={() => save()}><FontAwesomeIcon icon={"save"}/> Save</button>
+                    </React.Fragment>
+                )
+            }}>
                 <Form busy={saving} onSubmit={save}>
                     <Field help="The command's name" errors={errors.errors['name']}>
                         <label>Command Name</label>
@@ -149,12 +160,6 @@ const CustomCommands: React.FC = () => {
                         <DashboardInput type="number" min={0} className="form-control" name="clearance" required
                                         value={clearance} onChange={e => setClearance(parseInt(e.target.value))}/>
                     </Field>
-                    <div className="btn-group float-right">
-                        <button type="button" className="btn btn-danger" onClick={() => setModalOpen(false)}>
-                            <FontAwesomeIcon icon={"times"}/> Cancel
-                        </button>
-                        <button type="submit" className="btn btn-primary"><FontAwesomeIcon icon={"save"}/> Save</button>
-                    </div>
                 </Form>
             </Modal>
         </React.Fragment>

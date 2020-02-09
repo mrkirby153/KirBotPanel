@@ -34,7 +34,7 @@ const InfractionDetailsModel: React.FC<InfractionDetailsModelProps> = (props) =>
     let modUsername = infraction.mod_username ? `${infraction.mod_username}#${infraction.mod_discrim} (${infraction.mod_id})` : infraction.mod_id;
     let username = infraction.username ? `${infraction.username}#${infraction.discriminator} (${infraction.user_id})` : infraction.user_id;
     return (
-        <Modal title={'Infraction ' + infraction.id} open={true} onClose={props.onClose}>
+        <Modal title={'Infraction ' + infraction.inf_id} open={true} onClose={props.onClose} closeButton>
             <table className="table table-striped table-bordered table-hover">
                 <thead>
                 <tr>
@@ -43,7 +43,7 @@ const InfractionDetailsModel: React.FC<InfractionDetailsModelProps> = (props) =>
                 </tr>
                 </thead>
                 <tbody>
-                <InfractionTableRow title="ID" value={infraction.id}/>
+                <InfractionTableRow title="ID" value={infraction.inf_id}/>
                 <InfractionTableRow title="Moderator" value={modUsername}/>
                 <InfractionTableRow title="User" value={username}/>
                 <InfractionTableRow title="Type" value={infraction.type}/>
@@ -155,7 +155,7 @@ const Infractions: React.FC = () => {
                         pages={infractions.max_pages}/>
             {viewingInfraction &&
             <InfractionDetailsModel infraction={viewingInfraction}
-                                    onClose={() => setTimeout(() => setViewingInfraction(null), 250)}/>}
+                                    onClose={() => setViewingInfraction(null)}/>}
         </React.Fragment>
     )
 };

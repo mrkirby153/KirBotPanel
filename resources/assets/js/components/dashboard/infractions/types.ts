@@ -4,7 +4,7 @@ export interface Infraction {
     discriminator: number,
     expires_at: string | null,
     guild: string,
-    id: number,
+    inf_id: number,
     issuer: string,
     metadata: null,
     mod_discrim: number,
