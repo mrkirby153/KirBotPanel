@@ -1,11 +1,14 @@
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useDispatch} from "react-redux";
 import {useTypedSelector} from "../reducers";
 import ld_find from 'lodash/find';
+import ld_defer from 'lodash/defer';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {SpamRuleSetting} from "./types";
 import Field from "../../Field";
 import {DashboardInput} from "../../DashboardInput";
+import * as Actions from './actions';
+import Swal from "sweetalert2";
 
 interface SpamRuleComponentProps {
     id: string
@@ -54,14 +57,18 @@ const SpamItem: React.FC<SpamItemProps> = (props) => {
                     <div className="col-auto">
                         <Field>
                             <label>Count</label>
-                            <DashboardInput type="number" placeholder="Count" className="form-control"/>
+                            <DashboardInput type="number" placeholder="Count" className="form-control"
+                                            value={setting.count}
+                                            onChange={e => dispatch(Actions.setSpamItem(props.id, props.name, 'count', e.target.value))}/>
                         </Field>
                     </div>
                     <div className="col-auto">
                         <Field>
                             <label>Period</label>
                             <div className="input-group">
-                                <DashboardInput type="number" placeholder="Period" className="form-control"/>
+                                <DashboardInput type="number" placeholder="Period" className="form-control"
+                                                value={setting.period}
+                                                onChange={e => dispatch(Actions.setSpamItem(props.id, props.name, 'period', e.target.value))}/>
                                 <div className="input-group-append">
                                     <div className="input-group-text">Seconds</div>
                                 </div>
@@ -82,19 +89,90 @@ const SpamRule: React.FC<SpamRuleComponentProps> = (props) => {
         return ld_find(rules, {_id: props.id})
     });
 
+    const [editing, setEditing] = useState(rule && rule._level == undefined);
+    const editRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        // Focus the text box if undefined
+        if (rule && rule._level == undefined)
+            ld_defer(() => {
+                if (editRef.current)
+                    editRef.current.focus();
+            })
+    }, [rule]);
+
+    if (!rule) {
+        return null;
+    }
+
+    const startEditing = () => {
+        setEditing(true);
+        ld_defer(() => {
+            if (editRef.current)
+                editRef.current.focus();
+        });
+    };
+
+    const stopEditing = () => {
+        if (!rule._level) {
+            // Prevent defocusing if invalid
+            ld_defer(() => {
+                if (editRef.current)
+                    editRef.current.focus();
+            })
+        } else {
+            setEditing(false)
+        }
+    };
+
+    const deleteRule = () => {
+        Swal.fire({
+            title: 'Delete Rule',
+            text: 'Are you sure you want to delete this rule?',
+            type: 'warning',
+            showConfirmButton: true,
+            showCancelButton: true
+        }).then(e => {
+            if (e.value) {
+                dispatch(Actions.deleteSpamRule(props.id))
+            }
+        })
+    };
+
     if (!rule) {
         return null;
     }
 
     let items = Object.keys(available_rules).map(key => {
         return <SpamItem name={key} id={props.id} key={key}/>
-    })
+    });
+
+    let spanStyle = {};
+    if (editing) {
+        spanStyle["display"] = "none";
+    }
+    if (window.Panel.Server.readonly) {
+        spanStyle["cursor"] = "default";
+    }
 
 
     return (
         <div className="spam-rule">
-            <span className="level">{rule._level}</span>
-            <FontAwesomeIcon icon={"minus-square"} className="delete-button"/>
+            <div className="form-row" style={!editing ? {display: 'none'} : {}}>
+                <div className="col-auto">
+                    <div className="input-group input-group-sm">
+                        <div className="input-group-prepend">
+                            <div className="input-group-text">Level</div>
+                        </div>
+                        <DashboardInput type="number" value={rule._level} className="form-control form-control-sm"
+                                        onBlur={stopEditing} ref={editRef}
+                                        onChange={e => dispatch(Actions.setLevel(props.id, e.target.value))}/>
+                    </div>
+                </div>
+            </div>
+            <span className="level" style={spanStyle} onClick={startEditing}>{rule._level}</span>
+            {!window.Panel.Server.readonly && !editing &&
+            <FontAwesomeIcon icon={"minus-square"} className="delete-button" onClick={deleteRule}/>}
             <div className="spam-items">
                 {items}
             </div>

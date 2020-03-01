@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {FormEvent, useEffect, useState} from 'react';
 import {Tab} from "../tabs";
 import reducer from "./reducer";
 import spamRootSaga from "./saga";
@@ -8,19 +8,33 @@ import * as Actions from './actions';
 import {SpamPunishment, SpamSettings} from "./types";
 import {useTypedSelector} from "../reducers";
 import {DashboardInput, DashboardSelect} from "../../DashboardInput";
-import ld_isEmpty from 'lodash/isEmpty';
+import ld_isEqual from 'lodash/isEqual';
 import SpamRule from "./SpamRule";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import toastr from 'toastr';
 
 const Spam: React.FC = () => {
     const dispatch = useDispatch();
 
     const storeSettings = useTypedSelector(state => state.spam);
-    const [spamSettings, setSpamSettings, saveSpamSettings] = useGuildSetting<SpamSettings>(window.Panel.Server.id, 'spam_settings', {}, false);
+
+    const spamDefaults: SpamSettings = {
+        punishment_duration: "",
+        punishment: SpamPunishment.NONE,
+        clean_duration: "",
+        clean_amount: "",
+        rules: []
+    };
+
+    const [spamSettings, setSpamSettings] = useGuildSetting<SpamSettings>(window.Panel.Server.id, 'spam_settings', spamDefaults, true);
+
+    const [lastLoaded, setLastLoaded] = useState<any>(null);
 
     const loadSpamRules = () => {
-        if (!ld_isEmpty(spamSettings))
+        if (!ld_isEqual(lastLoaded, spamSettings)) {
             dispatch(Actions.loadSpamRules(spamSettings.rules || [], spamSettings.punishment || SpamPunishment.NONE, spamSettings.punishment_duration, spamSettings.clean_duration, spamSettings.clean_amount))
+            setLastLoaded({...spamSettings});
+        }
     };
 
     useEffect(() => {
@@ -32,16 +46,24 @@ const Spam: React.FC = () => {
             return <SpamRule id={rule._id} key={rule._id}/>
     });
 
+    const save = (e: FormEvent) => {
+        console.log(storeSettings);
+        e.preventDefault();
+        let {changed, ...rest} = storeSettings;
+        setSpamSettings({...rest});
+        toastr.success('Settings Saved!');
+    };
+
     return (
         <React.Fragment>
             <div className="spam-rules">
                 {rules}
             </div>
-            <button className="w-100 btn btn-outline-info">
+            <button className="w-100 btn btn-outline-info" onClick={() => dispatch(Actions.createSpamRule())}>
                 <FontAwesomeIcon icon={"plus"}/>
             </button>
             <hr/>
-            <form>
+            <form onSubmit={save}>
                 <div className="form-row align-items-center">
                     <div className="col-auto">
                         <label htmlFor="punishment">Punishment</label>
@@ -89,6 +111,9 @@ const Spam: React.FC = () => {
                         </div>
                     </div>
                 </div>
+                {!window.Panel.Server.readonly && storeSettings.changed && <div className="form-row mt-2">
+                    <button className="btn btn-success" type="submit">Save</button>
+                </div>}
             </form>
         </React.Fragment>
     );

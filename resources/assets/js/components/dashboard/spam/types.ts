@@ -15,9 +15,9 @@ export interface SpamRuleSetting {
 }
 
 export interface SpamSettings {
-    punishment?: SpamPunishment
-    punishment_duration?: number | null,
-    clean_duration?: number | null,
-    clean_amount?: number | null,
-    rules?: SpamRule[]
+    punishment: SpamPunishment
+    punishment_duration: string | null,
+    clean_duration: string | null,
+    clean_amount: string | null,
+    rules: SpamRule[]
 }
