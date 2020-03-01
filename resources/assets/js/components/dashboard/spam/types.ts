@@ -1,0 +1,23 @@
+export enum SpamPunishment {
+    NONE = "NONE", MUTE = "MUTE", KICK = "KICK", BAN = "BAN", TEMP_BAN = "TEMPBAN", TEMP_MUTE = "TEMP_MUTE"
+}
+
+export interface SpamRule {
+    _id?: string,
+    _level?: string,
+
+    [key: string]: SpamRuleSetting | string | undefined
+}
+
+export interface SpamRuleSetting {
+    count: string | number,
+    period: string | number
+}
+
+export interface SpamSettings {
+    punishment?: SpamPunishment
+    punishment_duration?: number | null,
+    clean_duration?: number | null,
+    clean_amount?: number | null,
+    rules?: SpamRule[]
+}
