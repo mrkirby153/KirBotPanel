@@ -92,7 +92,7 @@ const reducer: Reducer<SpamReducerState, SpamAction> = (state = defaultState, ac
         }
         case getType(Actions.createSpamRule): {
             const newRule: SpamRule = {
-                _level: undefined,
+                _level: "",
                 _id: makeId(5)
             };
             return {

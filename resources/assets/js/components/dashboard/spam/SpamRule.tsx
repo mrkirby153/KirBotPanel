@@ -94,7 +94,7 @@ const SpamRule: React.FC<SpamRuleComponentProps> = (props) => {
 
     useEffect(() => {
         // Focus the text box if undefined
-        if (rule && rule._level == undefined)
+        if (rule && rule._level == "")
             startEditing()
     }, [rule]);
 
@@ -102,23 +102,35 @@ const SpamRule: React.FC<SpamRuleComponentProps> = (props) => {
         return null;
     }
 
+    const focusEditor = () => {
+        if (editRef.current) {
+            if (document.activeElement != editRef.current) {
+                let ref = editRef.current;
+                ld_defer(() => {
+                    ref.focus();
+                })
+            }
+        }
+    };
+
     const startEditing = () => {
         setEditing(true);
-        ld_defer(() => {
-            if (editRef.current)
-                editRef.current.focus();
-        });
+        focusEditor();
     };
 
     const stopEditing = () => {
         if (!rule._level) {
             // Prevent defocusing if invalid
-            ld_defer(() => {
-                if (editRef.current)
-                    editRef.current.focus();
-            })
+            focusEditor();
         } else {
             setEditing(false)
+        }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.keyCode == 13) {
+            // Enter was pressed, stop editing
+            stopEditing();
         }
     };
 
@@ -163,7 +175,8 @@ const SpamRule: React.FC<SpamRuleComponentProps> = (props) => {
                         </div>
                         <DashboardInput type="number" value={rule._level} className="form-control form-control-sm"
                                         onBlur={stopEditing} ref={editRef}
-                                        onChange={e => dispatch(Actions.setLevel(props.id, e.target.value))}/>
+                                        onChange={e => dispatch(Actions.setLevel(props.id, e.target.value))}
+                                        onKeyDown={handleKeyDown}/>
                     </div>
                 </div>
             </div>

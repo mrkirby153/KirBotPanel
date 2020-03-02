@@ -97,7 +97,12 @@ const CensorRule: React.FC<CensorRuleProps> = (props) => {
 
     const focusLevelEdit = () => {
         if (editRef.current) {
-            editRef.current.focus();
+            if (document.activeElement != editRef.current) {
+                let ref = editRef.current;
+                ld_defer(() => {
+                    ref.focus();
+                })
+            }
         }
     };
 
@@ -116,16 +121,14 @@ const CensorRule: React.FC<CensorRuleProps> = (props) => {
     };
 
     useEffect(() => {
-        if (rule && rule._level == undefined) {
+        if (rule && rule._level == "") {
             startEditing();
         }
     }, [rule]);
 
     const startEditing = () => {
         setEditing(true);
-        ld_defer(() => {
-            focusLevelEdit();
-        })
+        focusLevelEdit();
     };
 
     if (!rule) {
@@ -134,11 +137,16 @@ const CensorRule: React.FC<CensorRuleProps> = (props) => {
 
     const stopEditing = () => {
         if (!rule._level) {
-            ld_defer(() => {
-                focusLevelEdit();
-            })
+            focusLevelEdit();
         } else {
             setEditing(false);
+        }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.keyCode == 13) {
+            // Enter was pressed, stop editing
+            stopEditing();
         }
     };
 
@@ -160,7 +168,8 @@ const CensorRule: React.FC<CensorRuleProps> = (props) => {
                         </div>
                         <DashboardInput type="number" value={rule._level} className="form-control form-control-sm"
                                         onBlur={stopEditing} ref={editRef}
-                                        onChange={e => dispatch(Actions.modifyCensorLevel(props.id, e.target.value))}/>
+                                        onChange={e => dispatch(Actions.modifyCensorLevel(props.id, e.target.value))}
+                                        onKeyDown={handleKeyDown}/>
                     </div>
                 </div>
             </div>

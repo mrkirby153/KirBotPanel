@@ -91,12 +91,13 @@ const reducer: Reducer<CensorReducerState, CensorAction> = (state = defaultState
         case getType(Actions.deleteCensorRule): {
             return {
                 ...state,
-                rules: state.rules.filter(rule => rule._id != action.payload)
+                rules: state.rules.filter(rule => rule._id != action.payload),
+                changed: true
             }
         }
         case getType(Actions.createCensorRule): {
             let newRule: CensorRule = {
-                _level: undefined,
+                _level: "",
                 _id: makeId(5),
                 zalgo: false,
                 blocked_tokens: [],
