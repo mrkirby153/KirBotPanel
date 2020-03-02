@@ -4,6 +4,7 @@ import {RootReducerState} from "./reducer";
 import {GeneralReducerState} from "./general/reducer";
 import {InfractionReducerState} from "./infractions/reducer";
 import {SpamReducerState} from "./spam/reducer";
+import {CensorReducerState} from "./censor/reducer";
 
 export interface SetSettingAction {
     guild: string,
@@ -26,4 +27,5 @@ export interface RootStore {
     general: GeneralReducerState,
     infractions: InfractionReducerState,
     spam: SpamReducerState,
+    censor: CensorReducerState
 }

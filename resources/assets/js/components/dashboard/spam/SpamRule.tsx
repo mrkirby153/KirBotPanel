@@ -95,10 +95,7 @@ const SpamRule: React.FC<SpamRuleComponentProps> = (props) => {
     useEffect(() => {
         // Focus the text box if undefined
         if (rule && rule._level == undefined)
-            ld_defer(() => {
-                if (editRef.current)
-                    editRef.current.focus();
-            })
+            startEditing()
     }, [rule]);
 
     if (!rule) {

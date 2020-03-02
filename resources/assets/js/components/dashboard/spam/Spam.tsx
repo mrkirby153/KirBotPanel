@@ -47,7 +47,6 @@ const Spam: React.FC = () => {
     });
 
     const save = (e: FormEvent) => {
-        console.log(storeSettings);
         e.preventDefault();
         let {changed, ...rest} = storeSettings;
         setSpamSettings({...rest});

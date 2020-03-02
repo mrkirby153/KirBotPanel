@@ -24,7 +24,8 @@ export function traverseObject(path, obj): any {
     let splitPath = path.split('.');
     let toReturn = obj;
     splitPath.forEach(p => {
-        toReturn = toReturn[p];
+        if (p)
+            toReturn = toReturn[p];
     });
     return toReturn;
 }

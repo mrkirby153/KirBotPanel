@@ -1,158 +1,72 @@
-import React from 'react';
-import CensorRule from "./CensorRule";
-import {deepClone, makeId} from "../../../utils";
-import SettingsRepository from "../../../settings_repository";
-import toastr from 'toastr';
+import React, {useEffect, useState} from 'react';
 import {Tab} from "../tabs";
+import reducer from "./reducer";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {useDispatch} from "react-redux";
+import {useGuildSetting} from "../utils/hooks";
+import {CensorSettings} from "./types";
+import ld_isEqual from 'lodash/isEqual';
+import * as Actions from './actions';
+import {useTypedSelector} from "../reducers";
+import CensorRule from "./CensorRule";
+import toastr from 'toastr';
+
+const Censor: React.FC = () => {
+
+    const dispatch = useDispatch();
+
+    const defaultCensorSettings = {
+        rules: []
+    };
+
+    const reducerCensorSettings = useTypedSelector(state => state.censor.rules);
+    const changed = useTypedSelector(state => state.censor.changed);
+
+    const [censorSettings, setCensorSettings] = useGuildSetting<CensorSettings>(window.Panel.Server.id, 'censor_settings', defaultCensorSettings, true)
+
+    const [lastSaved, setLastSaved] = useState();
+
+    const loadSettings = (settings: CensorSettings) => {
+        if (!ld_isEqual(lastSaved, settings)) {
+            dispatch(Actions.loadCensorRules(settings.rules));
+            setLastSaved({...settings});
+        }
+    };
+
+    const updateSettings = () => {
+        setLastSaved(null);
+        setCensorSettings({
+            rules: reducerCensorSettings
+        });
+        toastr.success('Settings saved!');
+    };
 
 
-interface CensorState {
-    data: any,
-    changed: boolean,
-    saving: boolean
-}
+    useEffect(() => {
+        loadSettings({...censorSettings})
+    }, [censorSettings]);
 
-const RULE_TEMPLATE = {
-    _id: '',
-    level: '',
-    data: {
-        invites: {
-            enabled: false,
-            guild_whitelist: [],
-            guild_blacklist: []
-        },
-        domains: {
-            enabled: false,
-            whitelist: [],
-            blacklist: []
-        },
-        blocked_tokens: [],
-        blocked_words: [],
-        zalgo: false
-    }
+    const components = reducerCensorSettings.map(setting => {
+        if (setting._id)
+            return <CensorRule id={setting._id} key={setting._id}/>
+    });
+
+    return (
+        <React.Fragment>
+            {components}
+            <button className="w-100 btn btn-outline-info" disabled={window.Panel.Server.readonly}
+                    onClick={() => dispatch(Actions.createCensorRule())}>
+                <FontAwesomeIcon icon={"plus"}/>
+            </button>
+            {!window.Panel.Server.readonly && changed && <div className="form-row mt-2">
+                <button className="btn btn-success" disabled={window.Panel.Server.readonly}
+                        onClick={updateSettings}>Save
+                </button>
+            </div>}
+        </React.Fragment>
+    )
 };
 
-class Censor extends React.Component<{}, CensorState> {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            saving: false,
-            changed: false,
-            data: this.explodeJson(SettingsRepository.getSetting('censor_settings'))
-        }
-    }
-
-    explodeJson = (data) => {
-        if (!data) {
-            return [];
-        }
-        let cloned = deepClone(data);
-        cloned = Object.keys(cloned).filter(key => key != "_id").map(key => {
-            return {
-                level: key,
-                _id: makeId(5),
-                data: cloned[key]
-            }
-        });
-        return cloned;
-    };
-
-    onChange = (index, newData) => {
-        let newState = deepClone(this.state.data);
-        let newObj = {
-            _id: this.state.data[index]._id,
-            level: this.state.data[index].level,
-            data: newData
-        };
-        newState.splice(index, 1, newObj);
-        this.setState({
-            data: newState,
-            changed: true
-        })
-    };
-
-    onLevelChange = (index, newLevel) => {
-        let newState = [...this.state.data];
-        let newObj = {
-            _id: this.state.data[index]._id,
-            level: newLevel,
-            data: this.state.data[index].data
-        };
-        newState.splice(index, 1, newObj);
-        this.setState({
-            data: newState,
-            changed: true
-        })
-    };
-
-    deleteRule = (index) => {
-        let newState = [...this.state.data];
-        newState.splice(index, 1);
-        this.setState({
-            data: newState,
-            changed: true
-        })
-    };
-
-    addRule = () => {
-        if(window.Panel.Server.readonly)
-            return;
-        let newData = deepClone(this.state.data);
-        let data = deepClone(RULE_TEMPLATE);
-        data._id = makeId(5);
-        newData.push(data);
-        this.setState({
-            data: newData,
-            changed: true
-        })
-    };
-
-    buildCensorJson = () => {
-        let json = {"_id": window.Panel.Server.id};
-        this.state.data.forEach(rule => {
-            let {level, ...rest} = rule;
-            json[level] = rest.data;
-        });
-        if(this.state.data.length == 0) {
-            return {}
-        }
-        return json;
-    };
-
-    saveSettings = () => {
-        this.setState({
-            saving: true,
-        });
-        SettingsRepository.setSetting('censor_settings', this.buildCensorJson(), true).then(resp => {
-            toastr.success('Settings saved');
-            this.setState({
-                saving: false,
-                changed: false
-            })
-        });
-    };
-
-    render() {
-        let components = this.state.data.map((data, index) => {
-            return <CensorRule level={data.level} key={data._id} data={data.data}
-                               onChange={data => this.onChange(index, data)}
-                               onLevelChange={n => this.onLevelChange(index, n)}
-                               onDelete={() => this.deleteRule(index)}/>
-        });
-        return (
-            <div>
-                {components}
-                <button className="w-100 btn btn-outline-info" onClick={this.addRule} disabled={window.Panel.Server.readonly}><i className="fas fa-plus"/>
-                </button>
-                {this.state.changed && <div className="form-row mt-2">
-                    <button className="btn btn-success" onClick={this.saveSettings} disabled={this.state.saving}>Save
-                    </button>
-                </div>}
-            </div>
-        );
-    }
-}
 const tab: Tab = {
     key: 'censor',
     name: 'Censor',
@@ -160,7 +74,8 @@ const tab: Tab = {
     route: {
         path: '/censor',
         component: Censor
-    }
+    },
+    reducer: reducer
 };
 
 export default tab;
