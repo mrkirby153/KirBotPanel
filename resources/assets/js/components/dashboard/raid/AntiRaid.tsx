@@ -1,76 +1,59 @@
-import React, {Component} from 'react';
+import React from 'react';
+import {Tab} from "../tabs";
+import {useGuildSetting} from "../utils/hooks";
+import {DashboardSwitch} from "../../DashboardInput";
 import DetectionSettings from "./DetectionSettings";
 import AlertSettings from "./AlertSettings";
-import SettingsRepository from "../../../settings_repository";
-import {DashboardSwitch} from "../../DashboardInput";
+import reducer from "./reducer";
+import raidRootSaga from "./saga";
 import PastRaids from "./PastRaids";
-import {Tab} from "../tabs";
 
-interface AntiRaidState {
-    enabled: boolean
-}
+const AntiRaid: React.FC = () => {
 
-class AntiRaid extends Component<{}, AntiRaidState> {
-    constructor(props) {
-        super(props);
+    const [raidEnabled, setRaidEnabled] = useGuildSetting(window.Panel.Server.id, 'anti_raid_enabled', false, true);
 
-        this.state = {
-            enabled: SettingsRepository.getSetting('anti_raid_enabled', 0) == 1
-        };
-
-        this.onChange = this.onChange.bind(this);
-    }
-
-    onChange(e) {
-        let {checked} = e.target;
-        this.setState({
-            enabled: checked
-        });
-
-        SettingsRepository.setSetting('anti_raid_enabled', checked, true);
-    }
-
-    render() {
-        return (
-            <div>
-                <h2>Anti-Raid Settings</h2>
-
-                <p>Raid reports are kept for a maximum of 30 days after the raid.</p>
-                <DashboardSwitch id="master-switch" label="Master Switch" checked={this.state.enabled} onChange={this.onChange}/>
-                <hr/>
-                <h2>Detection Settings</h2>
-                <div className="row">
-                    <div className="col-12">
-                        <DetectionSettings enabled={this.state.enabled}/>
-                    </div>
-                </div>
-                <hr/>
-                <h2>Alert Settings</h2>
-                <div className="row">
-                    <div className="col-12">
-                        <AlertSettings enabled={this.state.enabled}/>
-                    </div>
-                </div>
-                <hr/>
-                <h2>Recent Raids</h2>
-                <div className="row">
-                    <div className="col-12">
-                        <PastRaids/>
-                    </div>
+    return (
+        <React.Fragment>
+            <h2>Anti-Raid Settings</h2>
+            <p>
+                Raid reports are kept for a maximum of 30 days after the raid.
+            </p>
+            <DashboardSwitch label="Master Switch" id="master-switch" checked={raidEnabled} onChange={e => setRaidEnabled(e.target.checked)}/>
+            <hr/>
+            <h2>Detection Settings</h2>
+            <div className="row">
+                <div className="col-12">
+                    <DetectionSettings/>
                 </div>
             </div>
-        )
-    }
-}
+            <hr/>
+            <h2>Alert Settings</h2>
+            <div className="row">
+                <div className="col-12">
+                   <AlertSettings/>
+                </div>
+            </div>
+            <hr/>
+            <h2>Recent Raids</h2>
+            <div className="row">
+                <div className="col-12">
+                    <PastRaids/>
+                </div>
+            </div>
+        </React.Fragment>
+    )
+};
 
 const tab: Tab = {
-    key: 'anti-raid',
+    key: 'antiraid',
     name: 'Anti-Raid',
     icon: 'shield-alt',
     route: {
         path: '/raid',
         component: AntiRaid
-    }
+    },
+    reducer: reducer,
+    saga: raidRootSaga
 };
 
 export default tab;

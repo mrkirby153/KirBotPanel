@@ -1,71 +1,55 @@
-import React, {Component} from 'react';
+import React from 'react';
+import {useGuildSetting} from "../utils/hooks";
 import Field from "../../Field";
-import SettingsRepository from "../../../settings_repository";
 import {DashboardSelect} from "../../DashboardInput";
 
-interface AlertSettingsState {
-    anti_raid_alert_role: string,
-    anti_raid_alert_channel: string
-}
+const AlertSettings: React.FC = () => {
+    const [enabled] = useGuildSetting(window.Panel.Server.id, 'anti_raid_enabled', false);
 
-interface AlertSettingsProps {
-    enabled: boolean
-}
+    const [role, setRole] = useGuildSetting(window.Panel.Server.id, 'anti_raid_alert_role', '', true);
+    const [channel, setChannel] = useGuildSetting(window.Panel.Server.id, 'anti_raid_alert_channel', '', true);
 
-export default class AlertSettings extends Component<AlertSettingsProps, AlertSettingsState> {
-    constructor(props) {
-        super(props);
+    let channels = window.Panel.Server.channels.filter(e => e.type == 'TEXT').map(chan => {
+        return <option key={chan.id} value={chan.id}>#{chan.channel_name}</option>
+    });
+    let roles = window.Panel.Server.roles.filter(e => e.id != e.server_id).map(role => {
+        return <option key={role.id} value={role.id}>{role.name}</option>
+    });
 
-        this.state = SettingsRepository.getMultiple(['anti_raid_alert_role', 'anti_raid_alert_channel']);
-
-        this.onChange = this.onChange.bind(this);
-    }
-
-    onChange(e) {
-        let {name, value} = e.target;
-        // @ts-ignore
-        this.setState({
-            [name]: value
-        });
-        SettingsRepository.setSetting(name, value, true);
-    }
-
-    render() {
-        let channels = window.Panel.Server.channels.filter(e => e.type == 'TEXT').map(channel => {
-            return <option key={channel.id} value={channel.id}>#{channel.channel_name}</option>
-        });
-        let roles = window.Panel.Server.roles.filter(e => e.id != e.server_id).map(role => {
-            return <option key={role.id} value={role.id}>{role.name}</option>
-        });
-        let alertRole = this.state.anti_raid_alert_role ? this.state.anti_raid_alert_role : "";
-        return(
-            <div>
-                <div className="row">
-                    <div className="col-12">
-                        <div className="form-row">
-                            <div className="col-6">
-                                <Field help="The role to ping when a potential raid is detected">
-                                    <label htmlFor="anti_raid_alert_role"><b>Alert Role</b></label>
-                                    <DashboardSelect name="anti_raid_alert_role" className="form-control" value={alertRole} onChange={this.onChange} disabled={!this.props.enabled}>
-                                        <option value={''}>None</option>
-                                        {roles}
-                                        <option value={'@here'}>@here</option>
-                                        <option value={'@everyone'}>@everyone</option>
-                                    </DashboardSelect>
-                                </Field>
-                            </div>
-                            <div className="col-6">
-                                <Field help="The channel where the raid alert will be sent">
-                                    <label htmlFor="anti_raid_alert_channel"><b>Alert Channel</b></label>
-                                    <DashboardSelect name="anti_raid_alert_channel" className="form-control" value={this.state.anti_raid_alert_channel} onChange={this.onChange} disabled={!this.props.enabled}>
-                                        {channels}
-                                    </DashboardSelect>
-                                </Field>
-                            </div>
+    return (
+        <React.Fragment>
+            <div className="row">
+                <div className="col-12">
+                    <div className="form-row">
+                        <div className="col-6">
+                            <Field help="The role to ping when a potential raid is detected">
+                                <label htmlFor="anti-raid-alert-role"><b>Alert Role</b></label>
+                                <DashboardSelect name="anti-raid-alert-role" className="form-control"
+                                                 disabled={!enabled} value={role}
+                                                 onChange={e => setRole(e.target.value)}>
+                                    <option value={''}>None</option>
+                                    {roles}
+                                    <option value={'@here'}>@here</option>
+                                    <option value={'@everyone'}>@everyone</option>
+                                </DashboardSelect>
+                            </Field>
+                        </div>
+                        <div className="col-6">
+                            <Field help="The channel where the raid alert will be sent">
+                                <label htmlFor="anti-raid-alert-channel"><b>Alert Channel</b></label>
+                                <DashboardSelect name="anti-raid-alert-channel" className="form-control"
+                                                 disabled={!enabled} value={channel}
+                                                 onChange={e => setChannel(e.target.value)}>
+                                    <option value={''}>None</option>
+                                    {channels}
+                                </DashboardSelect>
+                            </Field>
                         </div>
                     </div>
                 </div>
             </div>
-        )
-    }
-}
+        </React.Fragment>
+    )
+};
+
+export default AlertSettings;
