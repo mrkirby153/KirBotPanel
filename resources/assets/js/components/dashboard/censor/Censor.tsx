@@ -24,7 +24,7 @@ const Censor: React.FC = () => {
 
     const [censorSettings, setCensorSettings] = useGuildSetting<CensorSettings>(window.Panel.Server.id, 'censor_settings', defaultCensorSettings, true)
 
-    const [lastSaved, setLastSaved] = useState();
+    const [lastSaved, setLastSaved] = useState<any>();
 
     const loadSettings = (settings: CensorSettings) => {
         if (!ld_isEqual(lastSaved, settings)) {

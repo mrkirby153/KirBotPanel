@@ -24,6 +24,7 @@ public/fonts/vendor
 public/js/app\.js
 public/js/vendor\.js
 public/js/manifest\.js
+public/js/vendor.js.LICENSE.txt
 
 public/mix-manifest\.json
 
