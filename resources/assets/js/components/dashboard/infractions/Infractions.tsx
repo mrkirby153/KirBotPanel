@@ -10,6 +10,8 @@ import * as Actions from './actions';
 import {useTypedSelector} from "../reducers";
 import {Infraction} from "./types";
 import Modal from "../../Modal";
+import {DashboardSwitch} from "../../DashboardInput";
+import {useGuildSetting} from "../utils/hooks";
 
 
 interface InfractionTableRowProps {
@@ -65,6 +67,8 @@ const Infractions: React.FC = () => {
     const infractions = useTypedSelector(state => state.infractions);
 
     const [viewingInfraction, setViewingInfraction] = useState<Infraction | null>(null);
+
+    const [manualInfraction, setManualInfraction] = useGuildSetting(window.Panel.Server.id, 'log_manual_inf', false, true);
 
     const columns = [
         {
@@ -134,6 +138,7 @@ const Infractions: React.FC = () => {
 
     return (
         <React.Fragment>
+            <DashboardSwitch label="Log Manual Actions" id="manual-log" switchSize="small" checked={manualInfraction} onChange={e => setManualInfraction(e.target.checked)}/>
             <ReactTable columns={columns} data={infractions.data}
                         getTdProps={(state, rowInfo, column, instance) => {
                             return {

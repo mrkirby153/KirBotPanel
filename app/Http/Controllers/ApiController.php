@@ -55,6 +55,7 @@ class ApiController extends Controller
         'command_silent_fail',
         'bot_nick',
         'muted_role',
+        'log_manual_inf',
     ];
 
     public function __construct()
