@@ -19,6 +19,6 @@ class AdminApiController extends Controller
         $key = $request->input('key');
         $value = $request->input('value');
         SettingsRepository::set($guild, $key, $value);
-        return Guild::get();
+        return Guild::get()->load('settings');
     }
 }
