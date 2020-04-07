@@ -2,7 +2,7 @@ import {ActionType, getType} from "typesafe-actions";
 import * as Actions from './actions';
 import {Reducer} from "redux";
 import {CensorRule} from "./types";
-import {makeId, setObject, traverseObject} from "../../../utils";
+import {deepEquals, makeId, setObject, traverseObject} from "../../../utils";
 import ld_find from 'lodash/find';
 
 export interface CensorReducerState {
@@ -44,6 +44,20 @@ const reducer: Reducer<CensorReducerState, CensorAction> = (state = defaultState
                 ...state,
                 rules: rules,
                 changed: true
+            }
+        }
+        case getType(Actions.massEdit): {
+            let rules = [...state.rules];
+            let rule = ld_find(rules, {_id: action.payload.ruleId});
+            if(!rule){
+                console.warn("Attempting to modify a rule that does not exist")
+            }
+            const modified = !deepEquals(traverseObject(action.payload.path, rule), action.payload.value);
+            setObject(action.payload.path, rule, action.payload.value);
+            return {
+                ...state,
+                rules: rules,
+                changed: state.changed || modified
             }
         }
         case getType(Actions.addValue): {

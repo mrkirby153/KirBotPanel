@@ -27,7 +27,12 @@ export const addValue = createAction('CENSOR/ADD_VALUE', (ruleId: string, path: 
 })();
 
 export const checkValue = createAction('CENSOR/CHECK_VALUE', (ruleId: string, path: string, value: boolean) => {
-    console.log(`Constructing check value with rule id = ${ruleId} Path = ${path} and value = ${value}`);
+    return {
+        ruleId, path, value
+    }
+})();
+
+export const massEdit = createAction('CENSOR/MASS_EDIT', (ruleId: string, path: string, value: string[]) => {
     return {
         ruleId, path, value
     }

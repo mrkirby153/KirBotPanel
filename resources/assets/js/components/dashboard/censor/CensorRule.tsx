@@ -54,6 +54,34 @@ const ListGroup: React.FC<ListGroupProps> = (props) => {
 
     const sectionParts: string[] = traverseObject(props.section, rule);
 
+    const [massAdd, setMassAdd] = useState(false);
+    const [massModifyText, setMassModifyText] = useState("");
+
+    const onAddClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        if (e.shiftKey) {
+            setMassAdd(true);
+            setMassModifyText(sectionParts.join("\n"));
+        } else {
+            dispatch(Actions.addValue(props.id, props.section));
+        }
+    };
+
+    const cancelMassEdit = () => {
+        setMassModifyText("");
+        setMassAdd(false);
+    };
+
+    const saveMassEdit = () => {
+        let parts = massModifyText.split("\n");
+        if(parts.length == 1 && !parts[0]) {
+            dispatch(Actions.massEdit(props.id, props.section, []));
+        } else {
+            dispatch(Actions.massEdit(props.id, props.section, parts));
+        }
+        setMassModifyText("");
+        setMassAdd(false);
+    };
+
     let components: React.ReactElement[] = [];
     if (sectionParts) {
         sectionParts.forEach((data, index) => {
@@ -75,10 +103,22 @@ const ListGroup: React.FC<ListGroupProps> = (props) => {
     }
     return (
         <div className="container-fluid">
-            {components}
-            <button className="btn btn-success" disabled={window.Panel.Server.readonly}
-                    onClick={() => dispatch(Actions.addValue(props.id, props.section))}>Add
-            </button>
+            {massAdd ?
+                <React.Fragment>
+                    <textarea className="form-control" value={massModifyText} onChange={e => setMassModifyText(e.target.value)}/>
+                    <p className="text-sm-center text-muted mb-1">Enter one item per line</p>
+                    <div className="btn-group btn-group-sm">
+                        <button className="btn btn-success" onClick={saveMassEdit}>Save</button>
+                        <button className="btn btn-warning" onClick={cancelMassEdit}>Cancel</button>
+                    </div>
+                </React.Fragment>
+                :
+                <React.Fragment>
+                    {components}
+                    <button className="btn btn-success" disabled={window.Panel.Server.readonly}
+                            onClick={onAddClick}>Add
+                    </button>
+                </React.Fragment>}
         </div>
     )
 };
