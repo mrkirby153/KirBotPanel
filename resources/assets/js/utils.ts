@@ -19,13 +19,28 @@ export function deepEquals(first: any, second: any): boolean {
  * Traverses an object and grabs the value at the given path
  * @param path The path in the object
  * @param obj The object to traverse
+ * @param defaultValue The default value to set if it does not exist
  */
-export function traverseObject(path, obj): any {
+export function traverseObject(path: string, obj: any, defaultValue: any = undefined): any {
     let splitPath = path.split('.');
     let toReturn = obj;
-    splitPath.forEach(p => {
-        if (p)
-            toReturn = toReturn[p];
+    splitPath.forEach((p, index) => {
+        // console.log(index);
+        // console.log(splitPath.length);
+        if (p) {
+            if(index + 1 >= splitPath.length && defaultValue != undefined) {
+                // This is the 2nd to last traversal and a default value was set
+                if(toReturn[p] == undefined) {
+                    console.log(`Setting toReturn[${p}] = ${JSON.stringify(defaultValue)}`);
+                    toReturn[p] = defaultValue;
+                    toReturn = defaultValue;
+                } else {
+                    toReturn = toReturn[p];
+                }
+            } else {
+                toReturn = toReturn[p];
+            }
+        }
     });
     return toReturn;
 }

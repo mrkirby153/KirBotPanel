@@ -218,13 +218,17 @@ const CensorRule: React.FC<CensorRuleProps> = (props) => {
                 </Section>
                 <Section name="Word Blacklist" open={wordsOpen} onClick={() => setWordsOpen(!wordsOpen)}>
                     <div className="row">
-                        <div className="col-6">
+                        <div className="col-4">
                             <div className="subsection-header">Blocked Tokens</div>
                             <ListGroup id={props.id} section="blocked_tokens"/>
                         </div>
-                        <div className="col-6">
+                        <div className="col-4">
                             <div className="subsection-header">Blocked Words</div>
                             <ListGroup id={props.id} section="blocked_words"/>
+                        </div>
+                        <div className="col-4">
+                            <div className="subsection-header">Blocked Nicknames</div>
+                            <ListGroup id={props.id} section="blocked_nicks"/>
                         </div>
                     </div>
                 </Section>

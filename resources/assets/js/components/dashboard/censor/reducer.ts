@@ -53,7 +53,7 @@ const reducer: Reducer<CensorReducerState, CensorAction> = (state = defaultState
                 console.warn("Attempting to modify a rule that does not exist");
                 return state;
             }
-            traverseObject(action.payload.path, rule).push("");
+            traverseObject(action.payload.path, rule, []).push("");
             return {
                 ...state,
                 rules: rules,
@@ -102,6 +102,7 @@ const reducer: Reducer<CensorReducerState, CensorAction> = (state = defaultState
                 zalgo: false,
                 blocked_tokens: [],
                 blocked_words: [],
+                blocked_nicks: [],
                 invites: {
                     enabled: false,
                     guild_blacklist: [],

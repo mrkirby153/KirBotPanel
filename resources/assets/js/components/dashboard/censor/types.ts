@@ -13,6 +13,7 @@ export interface CensorRule {
     },
     blocked_tokens: string[],
     blocked_words: string[],
+    blocked_nicks
     zalgo: boolean
 }
 
