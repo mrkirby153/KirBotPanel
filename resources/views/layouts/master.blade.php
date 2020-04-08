@@ -24,28 +24,23 @@
 
 <body>
 <!-- The main app div -->
-<div id="app">
-    @if(env('APP_ENV') == 'local')
-        <div class="alert alert-warning mb-0 text-center" role="alert">
-            The panel is running in development mode.
-        </div>
+@if(env('APP_ENV') == 'local')
+    <div class="alert alert-warning mb-0 text-center dev-banner" role="alert">
+        The panel is running in development mode.
+    </div>
 @endif
 <!-- Begin Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="/">{{config('app.name', 'Laravel')}}</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nav-mount"
-                aria-controls="nav-mount" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-end" id="nav-mount">
-        </div>
-    </nav>
-    <!-- End Navbar -->
-    <!-- Put everything in a container -->
-    <div class="container-fluid">
-        @yield('content')
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/">{{config('app.name', 'Laravel')}}</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nav-mount"
+            aria-controls="nav-mount" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="nav-mount">
     </div>
-</div>
+</nav>
+<!-- End Navbar -->
+@yield('content')
 
 @include('footer')
 <!-- Scripts -->

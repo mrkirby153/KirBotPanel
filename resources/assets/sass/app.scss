@@ -29,10 +29,25 @@
   filter: grayscale(100%);
 }
 
-#app {
-  margin-bottom: 20px;
+html, body {
+  height: 100%;
+}
+body {
+  display: grid;
+  grid-template-rows: min-content min-content 1fr;
+  grid-template-areas: "dev" "nav" "content";
+}
+.home-wrapper {
+  margin: auto;
+  grid-area: content;
+}
+nav {
+  grid-area: nav;
 }
 
+.dev-banner {
+  grid-area: dev;
+}
 
 @keyframes spin {
   0% {

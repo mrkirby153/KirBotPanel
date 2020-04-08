@@ -3,5 +3,7 @@
 @section('title', $server->name)
 
 @section('content')
-    <div id="dash-mount"></div>
+    <div class="container-fluid">
+        <div id="dash-mount"></div>
+    </div>
 @endsection
