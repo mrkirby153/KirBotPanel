@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Intervention\Image\AbstractFont;
 use Redis;
 use Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DashController extends Controller
 {
@@ -29,6 +30,13 @@ class DashController extends Controller
     {
         return redirect('https://discordapp.com/oauth2/authorize?client_id=' . env('DISCORD_KEY') . '&permissions=' . env('DISCORD_PERMISSIONS',
                 8) . '&scope=bot');
+    }
+
+    public function redirectToSupportServer() {
+        if(env('SUPPORT_INVITE') == null) {
+            throw new NotFoundHttpException("The SUPPORT_INVITE environment variable was not set");
+        }
+        return redirect(env('SUPPORT_INVITE'));
     }
 
     public function showDashboard(Guild $server)

@@ -9,8 +9,11 @@
                 <h1 class="header">KirBot</h1>
                 <h2 class="tagline">A modular and highly configurable moderation bot</h2>
                 <div class="action-buttons">
-                    <a class="btn btn-lg btn-primary" href="/add">Add KirBot to your server</a>
-                    <a class="btn btn-lg btn-secondary" href="/docs">Read the documentation</a>
+                    <a class="btn btn-lg btn-primary" href="/add"><i class="fas fa-plus-circle"></i> Add KirBot to your server</a>
+                    <a class="btn btn-lg btn-secondary" href="/docs"><i class="fas fa-book"></i> Read the documentation</a>
+                    @if(env('SUPPORT_INVITE') != null)
+                        <a class="btn btn-lg btn-secondary" href="{{ route('join') }}"><i class="fas fa-question-circle"></i> Join the support server</a>
+                    @endif
                 </div>
 
                 <div class="cards">

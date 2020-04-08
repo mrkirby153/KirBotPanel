@@ -36,3 +36,4 @@ Route::get('login', 'AuthController@doLogin')->name('login.do');
 Route::get('/auth/login', 'AuthController@showLogin')->name('login');
 Route::get('logout', 'AuthController@logout')->name('logout');
 Route::get('/add', 'DashController@redirectToAddUrl')->name('add');
+Route::get('/join', 'DashController@redirectToSupportServer')->name('join');
