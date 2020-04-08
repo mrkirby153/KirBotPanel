@@ -4,6 +4,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <meta name="csrf-token" content="{{csrf_token()}}"/>
+    <meta name="description" content="A modular an highly configurable Discord moderation bot"/>
     @if(!\Auth::guest())
         <meta name="api-token" content="{{Auth::user()->api_token}}"/>
     @endif
@@ -31,7 +32,7 @@
 @endif
 <!-- Begin Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">{{config('app.name', 'Laravel')}}</a>
+        <a class="navbar-brand" href="/">{{config('app.name', 'Laravel')}}</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nav-mount"
                 aria-controls="nav-mount" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>

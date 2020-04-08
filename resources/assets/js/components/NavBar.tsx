@@ -54,8 +54,8 @@ class NavBarDropdown extends Component<NavBarDropdownProps, NavBarDropdownState>
 function NavBarLeft(props: any) {
     return (
         <ul className="navbar-nav mr-auto">
-            <NavBarLink href="/" title="Home"/>
-            <NavBarLink href="/servers" title="Manage Servers"/>
+            <li className="nav-item"><a href="/add" target="_blank" className="nav-link">Add KirBot</a></li>
+            <NavBarLink href="/servers" title="Manage"/>
             <li className="nav-item"><a href="/docs" target="_blank" className="nav-link">Documentation</a></li>
         </ul>
     )

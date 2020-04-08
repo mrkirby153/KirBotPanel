@@ -1,0 +1,107 @@
+@import "~bootstrap/scss/mixins/breakpoints";
+
+$icon-size: 32px;
+
+
+#home-page {
+  .header {
+    text-align: center;
+    font-size: 4rem;
+  }
+
+  .tagline {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 40px;
+  }
+
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+  }
+
+
+  // On small screens, display the buttons on top of each other
+  @include media-breakpoint-down(md) {
+    .action-buttons {
+      flex-direction: column;
+      margin-bottom: 40px;
+
+      // Disable the top margin of the first button to prevent weird spacing
+      .btn:first-of-type {
+        margin-top: 0;
+      }
+
+      .btn {
+        margin-top: 10px;
+      }
+    }
+  }
+
+  // On large screens, display the buttons adjacent to each other
+  @include media-breakpoint-up(lg) {
+    .action-buttons {
+      flex-direction: row;
+      margin-bottom: 120px;
+    }
+    // Disable the left margin on the first button to prevent weird spacing
+    .btn:first-of-type {
+      margin-left: 0;
+    }
+
+    .btn {
+      margin-left: 10px;
+    }
+  }
+
+  .card {
+    .card-title {
+      text-align: center;
+      margin-top: 5px;
+    }
+
+    .card-icon {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      width: $icon-size;
+      height: $icon-size;
+    }
+
+    .card-text {
+      text-align: center;
+    }
+  }
+
+  // Give some padding between the cards when vertical
+  @include media-breakpoint-down(md) {
+    .card {
+      margin-bottom: 20px;
+    }
+  }
+
+  .cards {
+    display: flex;
+    .card {
+      flex: 1 1 0;
+    }
+  }
+
+  @include media-breakpoint-down(md) {
+    .cards {
+      flex-direction: column;
+    }
+  }
+
+  @include media-breakpoint-up(lg) {
+    .cards {
+      flex-direction: row;
+    }
+    .card {
+      margin-left: 10px;
+    }
+    .card:first-of-type {
+      margin-left: 0;
+    }
+  }
+}
