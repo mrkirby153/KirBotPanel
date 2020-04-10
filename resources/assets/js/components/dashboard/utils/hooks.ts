@@ -5,12 +5,12 @@ import {useEffect} from "react";
 import {addEventListener, removeEventListener} from "../reducerListener";
 import {useTypedSelector} from "../reducers";
 
-export function useGuildSetting<T>(guild: string, key: string, defaultValue: T, autoPersist: boolean = false): [T, ((value: T) => void), () => void] {
+export function useGuildSetting<T>(guild: string, key: string, defaultValue: T, autoPersist: boolean = false, alwaysPersist: boolean = false): [T, ((value: T) => void), () => void] {
     const dispatch = useDispatch();
     const storeValue: T = useTypedSelector(state => state.app.settings[key]);
 
     function set(value: T, persist: boolean = autoPersist) {
-        dispatch(setSetting(guild, key, value == defaultValue ? null : value, persist))
+        dispatch(setSetting(guild, key, value == defaultValue ? (!alwaysPersist ? null : value) : value, persist))
     }
 
     function save() {

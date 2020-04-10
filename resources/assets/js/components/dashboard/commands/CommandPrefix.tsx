@@ -5,7 +5,7 @@ import {useGuildSetting} from "../utils/hooks";
 
 const CommandPrefix: React.FC = () => {
 
-    const [prefix, setPrefix] = useGuildSetting(window.Panel.Server.id, 'command_prefix', '!', true);
+    const [prefix, setPrefix] = useGuildSetting(window.Panel.Server.id, 'command_prefix', '!', true, true);
 
     return (
         <React.Fragment>
