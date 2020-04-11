@@ -121,7 +121,8 @@ const LogChannel: React.FC<LogChannelProps> = (props) => {
                     <ConfirmButton className="btn btn-danger"
                                    onConfirm={() => dispatch(deleteLogSetting(props.id))}
                                    confirmText={<React.Fragment><i
-                                       className="fas fa-times"/> Confirm?</React.Fragment>}>
+                                       className="fas fa-times"/> Confirm?</React.Fragment>}
+                                    disabled={window.Panel.Server.readonly}>
                         <i className="fas fa-times"/> Delete
                     </ConfirmButton>
                 </div>

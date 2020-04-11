@@ -113,7 +113,7 @@ const CommandAliases: React.FC = () => {
                     <div className="btn-group">
                         <ConfirmButton className="btn btn-danger" onConfirm={() => {
                             dispatch(Actions.deleteCommandAlias(alias.id))
-                        }} confirmText={<FontAwesomeIcon icon={"check"}/>}>
+                        }} confirmText={<FontAwesomeIcon icon={"check"}/>} disabled={window.Panel.Server.readonly}>
                             <FontAwesomeIcon icon={"times"}/>
                         </ConfirmButton>
                     </div>

@@ -17,7 +17,7 @@ interface PersistenceToggleProps extends SwitchProps {
 
 const PersistenceToggle: React.FC<PersistenceToggleProps> = (props) => {
     let {mode, field, ...rest} = props;
-    return <Switch data-mode={mode} checked={(field & mode) > 0} {...rest}/>
+    return <Switch data-mode={mode} checked={(field & mode) > 0} {...rest} disabled={window.Panel.Server.readonly}/>
 };
 const UserPersistence: React.FC = () => {
 

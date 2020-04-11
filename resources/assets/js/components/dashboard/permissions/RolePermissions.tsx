@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import * as Actions from './actions';
 import {RoleClearance} from "./types";
 import {DashboardInput, DashboardSelect} from "../../DashboardInput";
@@ -128,7 +128,8 @@ const RolePermissions: React.FC = () => {
                             <tfoot>
                             <tr>
                                 {adding ? <AddingComponent onClose={() => setAdding(false)}/> :
-                                    <button className="btn btn-success" onClick={() => setAdding(true)}><FontAwesomeIcon
+                                    <button className="btn btn-success" onClick={() => setAdding(true)}
+                                            disabled={window.Panel.Server.readonly}><FontAwesomeIcon
                                         icon={"plus"}/> Add</button>}
                             </tr>
                             </tfoot>

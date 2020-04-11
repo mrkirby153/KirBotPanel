@@ -58,7 +58,7 @@ const Spam: React.FC = () => {
             <div className="spam-rules">
                 {rules}
             </div>
-            <button className="w-100 btn btn-outline-info" onClick={() => dispatch(Actions.createSpamRule())}>
+            <button className="w-100 btn btn-outline-info" onClick={() => dispatch(Actions.createSpamRule())} disabled={window.Panel.Server.readonly}>
                 <FontAwesomeIcon icon={"plus"}/>
             </button>
             <hr/>
@@ -111,7 +111,7 @@ const Spam: React.FC = () => {
                     </div>
                 </div>
                 {!window.Panel.Server.readonly && storeSettings.changed && <div className="form-row mt-2">
-                    <button className="btn btn-success" type="submit">Save</button>
+                    <button className="btn btn-success" type="submit" disabled={window.Panel.Server.readonly}>Save</button>
                 </div>}
             </form>
         </React.Fragment>

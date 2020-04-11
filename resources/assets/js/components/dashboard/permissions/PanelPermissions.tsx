@@ -167,11 +167,11 @@ const PanelPermissions: React.FC = () => {
                             </tbody>
                             <tfoot>
                             {adding ? <AddingComponent onClose={() => setAdding(false)}/> : <tr>
-                                <th colSpan={3}>
-                                    <button className="btn btn-success" onClick={() => setAdding(true)}>
+                                <td colSpan={3}>
+                                    <button className="btn btn-success" onClick={() => setAdding(true)} disabled={window.Panel.Server.readonly}>
                                         <FontAwesomeIcon icon={"plus"}/> Add
                                     </button>
-                                </th>
+                                </td>
                             </tr>}
                             </tfoot>
                         </table>

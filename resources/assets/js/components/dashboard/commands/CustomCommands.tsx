@@ -73,7 +73,7 @@ const CustomCommands: React.FC = () => {
                         </button>
                         <ConfirmButton className="btn btn-sm btn-danger" onConfirm={() => {
                             dispatch(Actions.deleteCustomCommand(command.id))
-                        }} confirmText={<FontAwesomeIcon icon={"check"}/>}>
+                        }} confirmText={<FontAwesomeIcon icon={"check"}/>} disabled={window.Panel.Server.readonly}>
                             <FontAwesomeIcon icon={"times"}/>
                         </ConfirmButton>
                     </div>
