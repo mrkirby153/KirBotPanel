@@ -4,7 +4,7 @@
 
 
 @section('content')
-    <div class="container-fluid">
+    <div class="container-fluid dash-container">
         <div class="row justify-content-center mt-2">
             <div class="col-8">
                 <div id="admin-settings-mount"></div>
