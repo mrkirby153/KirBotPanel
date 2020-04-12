@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Guild;
 use Illuminate\Http\Request;
 use Intervention\Image\AbstractFont;
-use Redis;
+use Illuminate\Support\Facades\Redis;
 use Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
