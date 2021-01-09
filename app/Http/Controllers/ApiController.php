@@ -11,7 +11,7 @@ use App\Models\Role;
 use App\Models\RolePermission;
 use App\Models\ServerPermission;
 use App\Utils\Redis\RedisMessage;
-use App\Utils\RedisMessenger;
+use App\Utils\Redis\RedisMessenger;
 use App\Utils\SettingsRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

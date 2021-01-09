@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Models\scopes\GuildSettingsScope;
 use App\Utils\Redis\RedisMessage;
-use App\Utils\RedisMessenger;
+use App\Utils\Redis\RedisMessenger;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 

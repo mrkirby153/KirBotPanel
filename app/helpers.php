@@ -7,5 +7,5 @@ function syncServer($server) {
     if ($server instanceof \App\Models\Server) {
         $server = $server->id;
     }
-    \App\Utils\RedisMessenger::dispatch(new \App\Utils\Redis\RedisMessage("sync", $server));
+    \App\Utils\Redis\RedisMessenger::dispatch(new \App\Utils\Redis\RedisMessage("sync", $server));
 }
