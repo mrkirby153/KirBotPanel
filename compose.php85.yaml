@@ -1,0 +1,8 @@
+# Merge with the production Compose file; keep its ports, mounts, db and redis.
+services:
+  web:
+    image: mrkirby153/laravel:php85
+    environment:
+      PRODUCTION: "1"
+      APP_ENV: production
+      APP_DEBUG: "false"
